@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Lotofacil.Domain.Entities.Contest>
+@{
+    ViewData["Title"] = "Listar Concursos";
+}
+@if (Model.Any())
+{
+
+}
+else
+{
+<div class="container-fluid">
+    <div class="row">
+    <div class="card" >
+        <div class="card-body text-center">
+            <img src="../SEODash-1.0.0/src/assets/images/backgrounds/gato3.png" alt="image" class="img-fluid" width="205">
+            <h4 class="mt-7">Não existe concursos registrados</h4>
+            <p class="card-subtitle mt-2 mb-3">Que tal começar a cadastrar alguns?</p>
+            <a href="/Contest/Create" class="btn btn-primary mb-3">Ir para página de cadastro de concursos</a>
+        </div>
+    </div>
+    </div>
+</div>
+}
+@section Scripts {
+   <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,19 @@
+# Ignorar configurações de usuário específicas do Visual Studio
+.vs/
+*.user
+*.suo
+
+# Ignorar configurações de build
+bin/
+obj/
+
+# Ignorar pacotes
+packages/
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de configuração sensíveis
+appsettings.json
+appsettings.Development.json
+.env

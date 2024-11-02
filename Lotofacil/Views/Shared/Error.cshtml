@@ -1,0 +1,77 @@
+﻿@model Lotofacil.Application.ViewsModel.ErrorViewModel
+@{
+    ViewData["Title"] = "Erro";
+}
+
+<h2>Ocorreu um erro</h2>
+
+@if (Model.ErrorType == Lotofacil.Domain.Enums.ErrorType.Critical)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="~/adminlte/dist/img/backgrounds/gato3.png" alt="Imagem de erro crítico" class="img-fluid" width="205">
+                        <h4 class="mt-7">Erro Crítico</h4>
+                        <p class="card-subtitle mt-2 mb-3">@Model.Message</p>
+                        @if (!string.IsNullOrEmpty(Model.ExceptionDetails))
+                        {
+                            <p class="text-muted">Detalhes técnicos: @Model.ExceptionDetails</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (Model.ErrorType == Lotofacil.Domain.Enums.ErrorType.NoRecords)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="~/adminlte/dist/img/backgrounds/gato3.png" alt="Imagem de sem registros" class="img-fluid" width="205">
+                        <h4 class="mt-7">Nenhum Registro Encontrado</h4>
+                        <p class="card-subtitle mt-2 mb-3">Não há registros disponíveis para exibição. @Model.Message</p>
+                        <a href="/BaseContest/Create" class="btn btn-primary mt-3">Adicionar Novo Registro</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (Model.ErrorType == Lotofacil.Domain.Enums.ErrorType.NotFound)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="~/adminlte/dist/img/backgrounds/gato3.png" alt="Imagem de recurso não encontrado" class="img-fluid" width="205">
+                        <h4 class="mt-7">Recurso Não Encontrado</h4>
+                        <p class="card-subtitle mt-2 mb-3">O recurso que você está tentando acessar não foi encontrado.</p>
+                        <a href="/Home/Index" class="btn btn-secondary mt-3">Voltar para a Página Inicial</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="~/adminlte/dist/img/backgrounds/gato3.png" alt="Imagem de erro" class="img-fluid" width="205">
+                        <h4 class="mt-7">Erro Desconhecido</h4>
+                        <p class="card-subtitle mt-2 mb-3">Um erro inesperado ocorreu. Tente novamente mais tarde.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
