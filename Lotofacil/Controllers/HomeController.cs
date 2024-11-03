@@ -27,7 +27,9 @@ namespace Lotofacil.Controllers
 
                 if (!baseContests.Any())
                 {
-                    return View("SemRegistros"); // View personalizada para quando não houver registros
+                    return View("Error", new ErrorViewModel(
+                    "Nenhum registro encontrado na tabela Contests.", null, 2) // Código que representa ErrorType.NoRecords
+                    );
                 }
 
                 var viewModel = new HomeViewModel
@@ -40,11 +42,8 @@ namespace Lotofacil.Controllers
             }
             catch (Exception ex) 
             {
-                return View("Error", new ErrorViewModel
-                {
-                    Message = "Erro ao acessar os dados do banco de dados da tabela BaseContests.",
-                    ExceptionDetails = ex.Message
-                });
+                return View("Error", new ErrorViewModel("Erro ao acessar os dados do banco de dados da tabela Contests.",
+                    ex.Message, 1));
             }
         }
 
@@ -68,11 +67,8 @@ namespace Lotofacil.Controllers
             }
             catch(Exception ex)
             {
-                return View("Error", new ErrorViewModel
-                {
-                    Message = "Erro ao acessar os dados do banco de dados da tabela BaseContests.",
-                    ExceptionDetails = ex.Message
-                });
+                return View("Error", new ErrorViewModel("Erro ao acessar os dados do banco de dados da tabela Contests.",
+                    ex.Message, 1));
             }
             
         }

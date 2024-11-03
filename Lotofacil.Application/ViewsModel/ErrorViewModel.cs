@@ -5,9 +5,27 @@ namespace Lotofacil.Application.ViewsModel
 {
     public class ErrorViewModel
     {
-        public string ?Message { get; set; }
-        public string ?ExceptionDetails { get; set; }
+        public ErrorViewModel(string ?message, string ?excepetiondetails, int errorTypeCode)
+        {
+            Message = message;
+            ExceptionDetails = excepetiondetails;
+            ErrorType = MapErrorType(errorTypeCode);
+        }
 
-        public ErrorType ErrorType { get; set; }
+        public string ?Message { get; private set; }
+        public string ?ExceptionDetails { get; private set; }
+
+        public ErrorType ErrorType { get; private set; }
+
+        private ErrorType MapErrorType (int errorTypeCode)
+        {
+            return errorTypeCode switch
+            {
+                1 => ErrorType.Critical,
+                2 => ErrorType.NoRecords,
+                3 => ErrorType.NotFound,
+                _ => ErrorType.NotFound,
+            };
+        }
     }
 }
