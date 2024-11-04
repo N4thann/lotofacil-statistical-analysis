@@ -151,11 +151,6 @@ namespace Lotofacil.Controllers
             return numbersList;
         }
 
-        private string FormatNumbersToSave(List<int> numbers)
-        {
-            return string.Join("-", numbers.Select(n => n.ToString("D2")));
-        }
-
         private void CompareContests(List<BaseContest> baseContests, List<int> contestNumbers, Contest contest)
         {
 

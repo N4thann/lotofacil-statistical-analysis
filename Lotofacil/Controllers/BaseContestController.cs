@@ -47,15 +47,15 @@ namespace Lotofacil.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateBaseContestViewModel baseContest)
+        public async Task<IActionResult> Create(CreateContestViewModel baseContest)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) 
             {
-                BaseContest contest = new BaseContest(baseContest.Id, baseContest.Name, baseContest.Data, baseContest.BaseContestName);
+                BaseContest contest = new BaseContest(baseContest.Name, baseContest.Data, baseContest.Numbers);
 
                 _context.Add(contest);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("List", "BaseContest");
             }
             return View(baseContest);
         }

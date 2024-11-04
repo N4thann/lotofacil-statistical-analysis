@@ -5,9 +5,8 @@ namespace Lotofacil.Domain.Entities
 {
     public class BaseContest
     {
-        public BaseContest(int id, string name, DateTime data, string numbers)
+        public BaseContest(string name, DateTime data, string numbers)
         {
-            Id = id;
             Name = name;
             Data = data;
             Numbers = numbers;

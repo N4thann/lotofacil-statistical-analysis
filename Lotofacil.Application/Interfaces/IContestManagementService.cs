@@ -2,5 +2,6 @@
 {
     public interface IContestManagementService
     {
+        string FormatNumbersToSave(List<int> numbers);
     }
 }
