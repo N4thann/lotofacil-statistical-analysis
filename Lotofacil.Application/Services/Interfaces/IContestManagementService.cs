@@ -1,4 +1,4 @@
-﻿namespace Lotofacil.Application.Interfaces
+﻿namespace Lotofacil.Application.Services.Interfaces
 {
     public interface IContestManagementService
     {

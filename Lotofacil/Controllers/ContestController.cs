@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Lotofacil.Domain.Entities;
-using Lotofacil.Application.Interfaces;
+using Lotofacil.Application.Services.Interfaces;
 
 namespace Lotofacil.Controllers
 {
