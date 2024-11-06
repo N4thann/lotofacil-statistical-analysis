@@ -3,26 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lotofacil.Domain.Entities
 {
-    public class ContestActivityLog
+    public class ContestActivityLog : ContestEntity
     {
-        [Key]
-        [Column("Id")]
-        public int Id{ get; set; }
-
-        [Required]
-        [Column("ContestName")]
-        [MaxLength(20), MinLength(6)]
-        public string ContestName { get; set; }
-
-        [Required]
-        [Column("ContestData")]
-        public DateTime ContestData { get; set; }
-
-        [Required]
-        [MaxLength(45), MinLength(30)]
-        [Column("ContestNumbers")]
-        public string ContestNumbers { get; set; }
-
         [Required]
         [Column("MatchedAnyBaseContest")]
         public bool MatchedAnyBaseContest { get; set; }

@@ -81,7 +81,7 @@ namespace Lotofacil.Controllers
 
                 var ContestList = GetContestNumbers(model.Contest.Numbers);
 
-                model.Contest.Numbers = FormatNumbersToSave(ContestList);
+                //model.Contest.Numbers = FormatNumbersToSave(ContestList);
 
                 _context.Contests.Add(model.Contest);
                 _context.SaveChanges();

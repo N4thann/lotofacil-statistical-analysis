@@ -21,6 +21,7 @@ namespace Lotofacil.Infra.Data.Repositories
         //Mesmo que esse método seja para uma listagem em uma tabela em que cada registro tenha uma opção
         //de edição, o AsNoTracking ainda irá otimizar apenas para o carregamento da tabela 
         //e posteriormente posso fazer uma procura sem o AsNoTracking para procurar o registro com GetByIdAsync
+        
         public async Task<IEnumerable<T>> GetAllAsync() => await _context.Set<T>()
                 .AsNoTracking().ToListAsync();
 

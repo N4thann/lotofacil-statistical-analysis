@@ -51,7 +51,7 @@ namespace Lotofacil.Controllers
         {
             if (ModelState.IsValid)
             {
-                baseContest.Numbers = _managementService.FormatNumbersToSave(baseContest.Numbers);
+                //baseContest.Numbers = _managementService.FormatNumbersToSave(baseContest.Numbers);
                 BaseContest contest = new BaseContest(baseContest.Name, baseContest.Data, baseContest.Numbers);
 
                 _context.Add(contest);
