@@ -35,16 +35,33 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .HasColumnName("Data")
                    .IsRequired();
 
-            // Propriedade BaseNumbers
+            // Propriedade Numbers
             builder.Property(b => b.Numbers)
                    .HasColumnName("Numbers")
                    .HasMaxLength(45)
                    .IsRequired();
 
+            // Configuração dos atributos Matched11 a Matched15
+            builder.Property(b => b.Matched11)
+                   .HasColumnName("Matched11");
+
+            builder.Property(b => b.Matched12)
+                   .HasColumnName("Matched12");
+
+            builder.Property(b => b.Matched13)
+                   .HasColumnName("Matched13");
+
+            builder.Property(b => b.Matched14)
+                   .HasColumnName("Matched14");
+
+            builder.Property(b => b.Matched15)
+                   .HasColumnName("Matched15");
+
             // Relacionamento com Contest (ContestsAbove11)
             builder.HasMany(b => b.ContestsAbove11)
-                   .WithOne() // Supondo que o Contest não tenha uma FK direta de volta
-                   .HasForeignKey("BaseContestId"); // Adicione a FK para vincular ao BaseContest
+                   .WithOne() // Sem FK de volta para BaseContest em Contest
+                   .HasForeignKey("BaseContestId") // Chave estrangeira para BaseContest
+                   .OnDelete(DeleteBehavior.Cascade); // Configuração de exclusão em cascata
         }
     }
 }

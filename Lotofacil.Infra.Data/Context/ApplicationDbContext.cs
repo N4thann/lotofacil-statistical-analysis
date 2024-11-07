@@ -12,6 +12,13 @@ namespace Lotofacil.Infra.Data.Context
 
         public DbSet<Contest> Contests { get; set; }
         public DbSet<BaseContest> BaseContests { get; set; }
+        public DbSet<ContestActivityLog> ContestActivityLogs { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+        }
 
     }
 }
