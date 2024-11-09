@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lotofacil.Domain.Entities
 {
-    public class BaseContest : ContestEntity
+    public class BaseContest : ContestBaseEntity
     {
         public BaseContest(string name, DateTime data, string numbers)
         {
@@ -20,5 +20,11 @@ namespace Lotofacil.Domain.Entities
         public int Matched15 { get; set; }
 
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
+
+        public void AddMatched(int matched)
+        {
+            matched = +1;
+        }
+
     }
 }
