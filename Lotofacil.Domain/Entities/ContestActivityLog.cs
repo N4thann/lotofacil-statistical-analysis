@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lotofacil.Domain.Entities
 {
-    public class ContestActivityLog : ContestEntity
+    public class ContestActivityLog : ContestBaseEntity
     {
         public bool MatchedAnyBaseContest { get; set; }
 

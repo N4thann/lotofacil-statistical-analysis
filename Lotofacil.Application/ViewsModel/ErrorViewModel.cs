@@ -24,7 +24,7 @@ namespace Lotofacil.Application.ViewsModel
                 1 => ErrorType.Critical,
                 2 => ErrorType.NoRecords,
                 3 => ErrorType.NotFound,
-                _ => ErrorType.NotFound,
+                _ => ErrorType.Unspecified,
             };
         }
     }

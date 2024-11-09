@@ -2,6 +2,8 @@
 {
     public interface IContestManagementService
     {
-        string FormatNumbersToSave(List<int> numbers);
+        string FormatNumbersToSave(string numbers);
+        public DateTime SetDataHour(DateTime data);
     }
+    
 }

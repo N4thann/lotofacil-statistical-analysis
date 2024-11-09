@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Domain.Entities
 {
-    public abstract class ContestEntity
+    public abstract class ContestBaseEntity
     {
         public int Id { get; set; }
 

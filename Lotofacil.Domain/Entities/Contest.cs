@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lotofacil.Domain.Entities
 {
-    public class Contest : ContestEntity
+    public class Contest : ContestBaseEntity
     {
+
     }
 }

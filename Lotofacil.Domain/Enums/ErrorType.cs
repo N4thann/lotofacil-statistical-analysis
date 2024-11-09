@@ -10,6 +10,7 @@ namespace Lotofacil.Domain.Enums
     {
         Critical, // Erro crítico, geralmente falha de sistema
         NoRecords, // Nenhum registro encontrado
-        NotFound // Recurso não encontrado
+        NotFound, // Recurso não encontrado
+        Unspecified
     }
 }
