@@ -13,17 +13,34 @@ namespace Lotofacil.Domain.Entities
             ContestsAbove11 = new List<Contest>();
         }
 
-        public int Matched11 { get; set; }
-        public int Matched12 { get; set; }
-        public int Matched13 { get; set; }
-        public int Matched14 { get; set; }
-        public int Matched15 { get; set; }
+        public int Matched11 { get; private set; }
+        public int Matched12 { get; private set; }
+        public int Matched13 { get; private set; }
+        public int Matched14 { get; private set; }
+        public int Matched15 { get; private set; }
 
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
 
-        public void AddMatched(int matched)
+        public void AddMatched11()
         {
-            matched = +1;
+            Matched11 = +1;
+        }
+        public void AddMatched12()
+        {
+            Matched12 = +1;
+        }
+
+        public void AddMatched13()
+        {
+            Matched13 = +1;
+        }
+        public void AddMatched14()
+        {
+            Matched14 = +1;
+        }
+        public void AddMatched15()
+        {
+            Matched15 = +1;
         }
 
     }
