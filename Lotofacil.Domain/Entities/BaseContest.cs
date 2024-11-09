@@ -9,7 +9,7 @@ namespace Lotofacil.Domain.Entities
         {
             Name = name;
             Data = data;
-            Numbers = numbers;
+            Numbers = FormatNumbersToSave(numbers);
             ContestsAbove11 = new List<Contest>();
         }
 
@@ -41,6 +41,17 @@ namespace Lotofacil.Domain.Entities
         public void AddMatched15()
         {
             Matched15 = +1;
+        }
+
+        public string FormatNumbersToSave(string numbers)
+        {
+            // Converte a string em uma lista de substrings de dois caracteres
+            var formattedNumbers = Enumerable
+                .Range(0, numbers.Length / 2)
+                .Select(i => numbers.Substring(i * 2, 2));
+
+            // Junta as substrings com "-"
+            return string.Join("-", formattedNumbers);
         }
 
     }
