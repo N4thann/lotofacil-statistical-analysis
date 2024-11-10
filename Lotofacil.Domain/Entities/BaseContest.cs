@@ -42,7 +42,6 @@ namespace Lotofacil.Domain.Entities
         {
             Matched15 = +1;
         }
-
         public string FormatNumbersToSave(string numbers)
         {
             // Converte a string em uma lista de substrings de dois caracteres
@@ -53,6 +52,5 @@ namespace Lotofacil.Domain.Entities
             // Junta as substrings com "-"
             return string.Join("-", formattedNumbers);
         }
-
     }
 }

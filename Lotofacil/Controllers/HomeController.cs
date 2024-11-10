@@ -21,30 +21,7 @@ namespace Lotofacil.Controllers
 
         public IActionResult Index()
         {
-            try
-            {
-                var baseContests = _context.BaseContests.AsNoTracking().ToList();
-
-                if (!baseContests.Any())
-                {
-                    return View("Error", new ErrorViewModel(
-                    "Nenhum registro encontrado na tabela Contests.", null, 2) // Código que representa ErrorType.NoRecords
-                    );
-                }
-
-                var viewModel = new HomeViewModel
-                {
-                    BaseContestList = baseContests,
-                    Contest = new Contest(),
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception ex) 
-            {
-                return View("Error", new ErrorViewModel("Erro ao acessar os dados do banco de dados da tabela Contests.",
-                    ex.Message, 1));
-            }
+            return View();
         }
 
         public IActionResult Dash1()
@@ -73,33 +50,6 @@ namespace Lotofacil.Controllers
             
         }
 
-        public IActionResult CreateContest(HomeViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                model.Contest.Data = model.Contest.Data.Date.AddHours(20);
-
-                var ContestList = GetContestNumbers(model.Contest.Numbers);
-
-                //model.Contest.Numbers = FormatNumbersToSave(ContestList);
-
-                _context.Contests.Add(model.Contest);
-                _context.SaveChanges();
-              
-                var baseContests = _context.BaseContests.Include(x => x.ContestsAbove11).ToList();
-
-                CompareContests(baseContests, ContestList, model.Contest);
-
-                _context.BaseContests.UpdateRange(baseContests);
-                _context.SaveChanges();
-
-                return RedirectToAction("Index", "Home", model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
         private List<int> GetContestNumbers(string numbers)
         {
             if (string.IsNullOrWhiteSpace(numbers) || numbers.Length % 2 != 0)
@@ -151,23 +101,6 @@ namespace Lotofacil.Controllers
             return numbersList;
         }
 
-        private void CompareContests(List<BaseContest> baseContests, List<int> contestNumbers, Contest contest)
-        {
-
-            foreach (var item in baseContests)
-            {
-                var baseNumbers = GetBaseContestNumbers(item.Numbers);
-
-                int hits = contestNumbers.Intersect(baseNumbers).Count();
-
-                if (hits == 11) item.Matched11++;
-                if (hits == 12) item.Matched12++;
-                if (hits == 13) item.Matched13++;
-                if (hits == 14) item.Matched14++;
-                if (hits == 15) item.Matched15++;
-                if (hits > 10) item.ContestsAbove11.Add(contest); 
-            }
-        }
         public IActionResult Privacy()
         {
             return View();

@@ -4,27 +4,6 @@
     ViewData["Title"] = "Página Inicial";
 }
 
-@if (Model.BaseContestList.Any())
-{
-
-}
-else
-{
-    <div class="container-fluid">
-     <div class="row">
-      <div class="col-lg-4">
-        <div class="card" >
-            <div class="card-body text-center">
-                <img src="~/adminlte/dist/img/backgrounds/gato3.png" alt="image" class="img-fluid" width="205">
-                <h4 class="mt-7">Não existe concursos base registrados</h4>
-                <p class="card-subtitle mt-2 mb-3">Que tal começar a cadastrar alguns?</p>
-                <a href="/BaseContest/Create" class="btn btn-primary mb-3">Ir para página de cadastro de concursos base</a>
-            </div>
-        </div>
-      </div>
-      </div>
-    </div>
-}
 
 @section Scripts {
       <partial name="_ValidationScriptsPartial" />

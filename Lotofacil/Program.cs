@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+//Método configurado na camada Infra.IoC
 builder.Services.AddInfrastructure(builder.Configuration);
 
 

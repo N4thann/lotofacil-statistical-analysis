@@ -5,16 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Lotofacil.Application.Services.Interfaces;
 
 namespace Lotofacil.Controllers
 {
     public class BaseContestController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBaseContestService _baseContestService;
 
-        public BaseContestController(ApplicationDbContext context)
+        public BaseContestController(ApplicationDbContext context, IBaseContestService baseContestService)
         {
             _context = context;
+            _baseContestService = baseContestService;
+
         }
 
         [HttpGet()]
@@ -51,10 +55,7 @@ namespace Lotofacil.Controllers
         {
             if (ModelState.IsValid) 
             {
-                BaseContest contest = new BaseContest(baseContest.Name, baseContest.Data, baseContest.Numbers);
-
-                _context.Add(contest);
-                await _context.SaveChangesAsync();
+                await _baseContestService.CreateAsync(baseContest);   
                 return RedirectToAction("List", "BaseContest");
             }
             return View(baseContest);
