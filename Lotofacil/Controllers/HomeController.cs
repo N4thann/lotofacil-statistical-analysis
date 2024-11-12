@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace Lotofacil.Controllers
+namespace Lotofacil.Presentation.Controllers
 {
     public class HomeController : Controller
     {

@@ -2,23 +2,27 @@
 using Lotofacil.Domain.Entities;
 using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using System;
 using Lotofacil.Application.Services.Interfaces;
+using FluentValidation;
+using FluentValidation.Results;
+using Lotofacil.Presentation.Extensions;
 
-namespace Lotofacil.Controllers
+namespace Lotofacil.Presentation.Controllers
 {
     public class BaseContestController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
+        private readonly IValidator<BaseContest> _validator;
 
-        public BaseContestController(ApplicationDbContext context, IBaseContestService baseContestService)
+        public BaseContestController(ApplicationDbContext context, 
+            IBaseContestService baseContestService,
+            IValidator<BaseContest> validator)
         {
             _context = context;
             _baseContestService = baseContestService;
-
+            _validator = validator;
         }
 
         [HttpGet()]
@@ -51,14 +55,22 @@ namespace Lotofacil.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateContestViewModel baseContest)
+        public async Task<IActionResult> Create(CreateContestViewModel baseContestVM)
         {
-            if (ModelState.IsValid) 
+            var baseContest = new BaseContest(baseContestVM.Name, baseContestVM.Data, baseContestVM.Numbers);
+
+            ValidationResult result = await _validator.ValidateAsync(baseContest);
+
+            if(!result.IsValid)
             {
-                await _baseContestService.CreateAsync(baseContest);   
-                return RedirectToAction("List", "BaseContest");
+                result.AddToModelState(this.ModelState);
+
+                return View("Create", baseContestVM);
             }
-            return View(baseContest);
+
+            await _baseContestService.CreateAsync(baseContestVM);
+            TempData["notice"] = "Concurso Base Criado com Sucesso!";
+            return RedirectToAction("List", "BaseContest");
         }
 
         public async Task<IActionResult> Details(string contestName)

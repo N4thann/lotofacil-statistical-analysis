@@ -2,21 +2,30 @@
 using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Application.Services.Interfaces;
+using FluentValidation.Results;
+using FluentValidation;
+using Lotofacil.Presentation.Extensions;
 
-namespace Lotofacil.Controllers
+namespace Lotofacil.Presentation.Controllers
 {
     public class ContestController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IContestManagementService _managementService;
+        private readonly IValidator _validator;
+        private readonly IContestService _contestService;
 
-        public ContestController(ApplicationDbContext context, IContestManagementService managementService)
+        public ContestController(ApplicationDbContext context, 
+            IContestManagementService managementService,
+            IValidator validator,
+            IContestService contestService)
         {
             _context = context;
             _managementService = managementService;
+            _validator = validator;
+            _contestService = contestService;
         }
 
         public IActionResult List()
@@ -47,18 +56,22 @@ namespace Lotofacil.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateContestViewModel baseContest)
+        public async Task<IActionResult> Create(CreateContestViewModel contestVM)
         {
-            if (ModelState.IsValid)
-            {
-                //baseContest.Numbers = _managementService.FormatNumbersToSave(baseContest.Numbers);
-                BaseContest contest = new BaseContest(baseContest.Name, baseContest.Data, baseContest.Numbers);
+            var contest = new Contest(contestVM.Name, contestVM.Data, contestVM.Numbers);
 
-                _context.Add(contest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("List", "Contest");
+            ValidationResult result = await _validator.ValidateAsync(contest);
+
+            if (!result.IsValid)
+            {
+                result.AddToModelState(this.ModelState);
+
+                return View("Create", contestVM);
             }
-            return View(baseContest);
+
+            await _contestService.CreateAsync(contestVM);
+            TempData["notice"] = "Concurso Criado com Sucesso!";
+            return RedirectToAction("List", "BaseContest");
         }
 
     }
