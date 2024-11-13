@@ -10,18 +10,10 @@ namespace Lotofacil.Application.ViewsModel
 {
     public class CreateContestViewModel //Serve para as duas entidades: Contest e BaseContest
     {
-        [Required]
-        [Column("Name")]
-        [MaxLength(20), MinLength(6)]
         public string Name { get; set; }
 
-        [Required]
-        [Column("Data")]
         public DateTime Data { get; set; }
 
-        [Required]
-        [MaxLength(45), MinLength(30)]
-        [Column("Numbers")]
         public string Numbers { get; set; }
     }
 }

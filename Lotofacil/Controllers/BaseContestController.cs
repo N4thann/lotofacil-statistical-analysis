@@ -14,11 +14,11 @@ namespace Lotofacil.Presentation.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
-        private readonly IValidator<BaseContest> _validator;
+        private readonly IValidator<CreateContestViewModel> _validator;
 
         public BaseContestController(ApplicationDbContext context, 
             IBaseContestService baseContestService,
-            IValidator<BaseContest> validator)
+            IValidator<CreateContestViewModel> validator)
         {
             _context = context;
             _baseContestService = baseContestService;
@@ -57,9 +57,7 @@ namespace Lotofacil.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateContestViewModel baseContestVM)
         {
-            var baseContest = new BaseContest(baseContestVM.Name, baseContestVM.Data, baseContestVM.Numbers);
-
-            ValidationResult result = await _validator.ValidateAsync(baseContest);
+            ValidationResult result = await _validator.ValidateAsync(baseContestVM);
 
             if(!result.IsValid)
             {

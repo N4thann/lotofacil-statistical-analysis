@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Application.Validators
 {
-    public class ContestValidator : AbstractValidator<ContestBaseEntity>
+    public class ContestValidator : AbstractValidator<CreateContestViewModel>
     {
         public ContestValidator() 
         {

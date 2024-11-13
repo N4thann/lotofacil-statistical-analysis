@@ -14,12 +14,12 @@ namespace Lotofacil.Presentation.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IContestManagementService _managementService;
-        private readonly IValidator _validator;
+        private readonly IValidator<CreateContestViewModel> _validator;
         private readonly IContestService _contestService;
 
         public ContestController(ApplicationDbContext context, 
             IContestManagementService managementService,
-            IValidator validator,
+            IValidator<CreateContestViewModel> validator,
             IContestService contestService)
         {
             _context = context;
@@ -58,9 +58,7 @@ namespace Lotofacil.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateContestViewModel contestVM)
         {
-            var contest = new Contest(contestVM.Name, contestVM.Data, contestVM.Numbers);
-
-            ValidationResult result = await _validator.ValidateAsync(contest);
+            ValidationResult result = await _validator.ValidateAsync(contestVM);
 
             if (!result.IsValid)
             {
@@ -68,10 +66,10 @@ namespace Lotofacil.Presentation.Controllers
 
                 return View("Create", contestVM);
             }
-
+            //Dentro desse serviço é transformado em um objeto do tipo Contest para salvar no banco
             await _contestService.CreateAsync(contestVM);
             TempData["notice"] = "Concurso Criado com Sucesso!";
-            return RedirectToAction("List", "BaseContest");
+            return RedirectToAction("List", "Contest");
         }
 
     }

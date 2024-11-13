@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using Lotofacil.Application.Validators;
+using System;
+using Lotofacil.Domain.Entities;
+using Lotofacil.Application.ViewsModel;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -25,6 +28,7 @@ namespace Lotofacil.Infra.IoC
 
             // Registrando serviços da camada de aplicação
             services.AddScoped<IBaseContestService, BaseContestService>();
+            services.AddScoped<IContestService, ContestService>();
             services.AddScoped<IContestManagementService, ContestManagementService>(); // Exemplo, caso precise
 
             // Registrando o repositório genérico
@@ -33,7 +37,9 @@ namespace Lotofacil.Infra.IoC
             //Com esse método, todos os validadores no mesmo assembly que o
             //PersonValidator (ou seja, na mesma biblioteca ou projeto) serão registrados automaticamente.
             //Escopo Automático: O AddValidatorsFromAssemblyContaining utiliza o Transient como escopo padrão.
-            services.AddValidatorsFromAssemblyContaining<ContestValidator>();
+            //services.AddValidatorsFromAssemblyContaining<ContestValidator>();
+
+            services.AddScoped<IValidator<CreateContestViewModel>, ContestValidator>();
 
 
             return services;

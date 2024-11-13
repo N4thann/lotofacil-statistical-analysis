@@ -41,17 +41,13 @@
         }
         public string FormatNumbersToSave(string numbers)
         {
-            // Converte a string em uma lista de inteiros
-            var numberList = new List<int>();
-            for (int i = 0; i < numbers.Length; i += 2)
-            {
-                // Pega cada par de caracteres e converte para inteiro
-                var num = int.Parse(numbers.Substring(i, 2));
-                numberList.Add(num);
-            }
+            // Converte a string em uma lista de substrings de dois caracteres
+            var formattedNumbers = Enumerable
+                .Range(0, numbers.Length / 2)
+                .Select(i => numbers.Substring(i * 2, 2));
 
-            // Converte a lista de inteiros para o formato de string desejado
-            return string.Join("-", numberList.Select(n => n.ToString("D2")));
+            // Junta as substrings com "-"
+            return string.Join("-", formattedNumbers);
         }
     }
 }
