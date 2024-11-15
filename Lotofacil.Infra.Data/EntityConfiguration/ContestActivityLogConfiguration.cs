@@ -58,3 +58,6 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
         }
     }
 }
+/*Essa abordagem foi utilizada para evitar que as entidades ficassem poluídas com 
+ * o uso dos Data Annotations, assim fiz essa configuração para definir as propriedades
+ * dos atributos das tabelas(Não confundir com as validações no frontend com Fluent Validations)*/

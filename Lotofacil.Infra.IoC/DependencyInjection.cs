@@ -29,7 +29,7 @@ namespace Lotofacil.Infra.IoC
             // Registrando serviços da camada de aplicação
             services.AddScoped<IBaseContestService, BaseContestService>();
             services.AddScoped<IContestService, ContestService>();
-            services.AddScoped<IContestManagementService, ContestManagementService>(); // Exemplo, caso precise
+            services.AddTransient<IContestManagementService, ContestManagementService>(); // Exemplo, caso precise
 
             // Registrando o repositório genérico
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -39,7 +39,7 @@ namespace Lotofacil.Infra.IoC
             //Escopo Automático: O AddValidatorsFromAssemblyContaining utiliza o Transient como escopo padrão.
             //services.AddValidatorsFromAssemblyContaining<ContestValidator>();
 
-            services.AddScoped<IValidator<CreateContestViewModel>, ContestValidator>();
+            services.AddTransient<IValidator<CreateContestViewModel>, ContestValidator>();
 
 
             return services;
