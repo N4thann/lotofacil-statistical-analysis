@@ -1,5 +1,6 @@
 ﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace Lotofacil.Application.Services

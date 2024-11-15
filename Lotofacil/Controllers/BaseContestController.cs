@@ -7,6 +7,7 @@ using Lotofacil.Application.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Lotofacil.Presentation.Extensions;
+using System.Runtime.InteropServices;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -30,13 +31,10 @@ namespace Lotofacil.Presentation.Controllers
         {
             try
             {
-                var baseContests =  await _context.BaseContests
-                    .OrderByDescending(cb => cb.Data)
-                    .ThenBy(cb => cb.Name)
-                    .ToListAsync();
+               var baseContestList = await _baseContestService.GetAllBaseContestAsync();
 
-                return baseContests.Any()
-                    ? View(baseContests)
+               return baseContestList.Any()
+                    ? View(baseContestList)
                     : View("Error", new ErrorViewModel(
                     "Nenhum registro encontrado na tabela Contests.", null, 2) // Código que representa ErrorType.NoRecords
                     );
