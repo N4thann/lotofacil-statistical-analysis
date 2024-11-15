@@ -28,14 +28,11 @@ namespace Lotofacil.Presentation.Controllers
             _contestService = contestService;
         }
 
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
             try
             {
-                var contest = _context.Contests
-                .OrderByDescending(c => c.Data)
-                .AsNoTracking()
-                .ToList();
+                var contest = await _contestService.GetAllContestAsync();
 
                 return contest.Any()
                     ? View(contest)

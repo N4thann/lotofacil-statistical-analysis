@@ -20,6 +20,11 @@ namespace Lotofacil.Application.Services
             _contestMS = contestMS;
         }
 
+        public async Task<IEnumerable<Contest>> GetAllContestAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
+
         public async Task CreateAsync(CreateContestViewModel contestVM)
         {
             //Deve ser atribuído assim, visto que o objeto só pode ser criado passando os parâmetros para o construtor

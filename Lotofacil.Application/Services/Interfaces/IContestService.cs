@@ -1,4 +1,5 @@
 ﻿using Lotofacil.Application.ViewsModel;
+using Lotofacil.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Lotofacil.Application.Services.Interfaces
     public interface IContestService
     {
         Task CreateAsync(CreateContestViewModel contestVM);
+        Task<IEnumerable<Contest>> GetAllContestAsync();
     }
 }
