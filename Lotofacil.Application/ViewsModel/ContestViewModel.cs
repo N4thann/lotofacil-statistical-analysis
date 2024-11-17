@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Application.ViewsModel
 {
-    public class CreateContestViewModel //Serve para as duas entidades: Contest e BaseContest
+    public class ContestViewModel //Serve para as duas entidades: Contest e BaseContest
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-
         public DateTime Data { get; set; }
-
         public string Numbers { get; set; }
     }
 }

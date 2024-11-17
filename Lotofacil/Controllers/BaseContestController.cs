@@ -1,27 +1,21 @@
-﻿using Lotofacil.Infra.Data.Context;
-using Lotofacil.Domain.Entities;
-using Lotofacil.Application.ViewsModel;
+﻿using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lotofacil.Application.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Lotofacil.Presentation.Extensions;
-using System.Runtime.InteropServices;
 
 namespace Lotofacil.Presentation.Controllers
 {
     public class BaseContestController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
-        private readonly IValidator<CreateContestViewModel> _validator;
+        private readonly IValidator<ContestViewModel> _validator;
 
-        public BaseContestController(ApplicationDbContext context, 
-            IBaseContestService baseContestService,
-            IValidator<CreateContestViewModel> validator)
+        public BaseContestController(IBaseContestService baseContestService,
+            IValidator<ContestViewModel> validator)
         {
-            _context = context;
             _baseContestService = baseContestService;
             _validator = validator;
         }
@@ -53,7 +47,7 @@ namespace Lotofacil.Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateContestViewModel baseContestVM)
+        public async Task<IActionResult> Create(ContestViewModel baseContestVM)
         {
             ValidationResult result = await _validator.ValidateAsync(baseContestVM);
 
@@ -68,7 +62,7 @@ namespace Lotofacil.Presentation.Controllers
             TempData["notice"] = "Concurso Base Criado com Sucesso!";
             return RedirectToAction("List", "BaseContest");
         }
-
+        /*
         public async Task<IActionResult> Details(string contestName)
         {
             if (string.IsNullOrEmpty(contestName))
@@ -91,29 +85,17 @@ namespace Lotofacil.Presentation.Controllers
 
             return View(baseContest);
         }
+        */
 
         [HttpGet()]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var baseContest = _context.BaseContests
-                .FirstOrDefault(g => g.Id == id);
-
-            if (id == null || baseContest == null)
-            {
-                return View("Error", new ErrorViewModel(
-                    "Recurso não encontrado.", null, 3));
-            }
-
-            CreateContestViewModel baseContestVM = new CreateContestViewModel();
-            baseContestVM.Name = baseContest.Name;
-            baseContestVM.Data = baseContest.Data;
-            baseContestVM.Numbers = baseContest.Numbers;
-
-            return View(baseContestVM);
+            return View(await _baseContestService.ShowOnScreen(id));
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Edit(int id, CreateContestViewModel baseContestVM)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ContestViewModel baseContestVM)
         {
             ValidationResult result = await _validator.ValidateAsync(baseContestVM);
 
@@ -124,40 +106,41 @@ namespace Lotofacil.Presentation.Controllers
                 return View("Edit", baseContestVM);
             }
 
-            await _baseContestService.EditBaseContestAsync(id, baseContestVM);
-            TempData["notice"] = "Concurso Base Editado com Sucesso!";
-            return RedirectToAction("List", "BaseContest");
+            try
+            {
+                await _baseContestService.EditBaseContestAsync(baseContestVM);
+                TempData["notice"] = "Concurso Base Editado com Sucesso!";
+                return RedirectToAction("List", "BaseContest");
+
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel("Erro ao editar o registro.",
+                    ex.Message, 1));
+            }
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
-            if(id == null) return View("Error", "Id nulo");
-
-            var baseContest = _context.BaseContests.FirstOrDefault(c => c.Id == id);
-
-            if (baseContest == null) return View("Error", "Nenhum concurso encontrado.");
-
-            return View(baseContest);
+            var contestViewModel = await _baseContestService.ShowOnScreen(id);
+            return View(contestViewModel);
         }
 
         [HttpPost(), ActionName("Delete")]//Quando for chamado esse método tem que chamar por "delete" graças ao ActionName
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contest = _context.BaseContests.FirstOrDefault(c => c.Id == id);
-
-            if (contest is null) return View("Error", "Nenhum concurso encontrado.");
-
-            _context.BaseContests.Remove(contest);
-            _context.SaveChanges();
-
-            return RedirectToAction("List");
+            try
+            {
+                await _baseContestService.DeleteByIdAsync(id);
+                TempData["notice"] = "Concurso Base deletado com Sucesso!";
+                return RedirectToAction("List", "BaseContest");
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel("Erro ao deletar o resgistro.",
+                    ex.Message, 1));
+            }          
         }
-
-        private bool BaseContestExists(int id)
-        {
-            return (_context.BaseContests?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
     }
 }

@@ -10,11 +10,13 @@ namespace Lotofacil.Application.Services.Interfaces
 {
     public interface IBaseContestService
     {
-        Task CreateAsync(CreateContestViewModel contestVM);
+        Task CreateAsync(ContestViewModel contestVM);
 
-        Task EditBaseContestAsync(int id, CreateContestViewModel contestVM);
+        Task EditBaseContestAsync(ContestViewModel contestVM);
 
-        Task DeleteAsync(int id);
+        Task DeleteByIdAsync(int id);
+
+        Task<ContestViewModel> ShowOnScreen(int id);
 
         Task<IEnumerable<BaseContest>> GetAllBaseContestAsync();
     }

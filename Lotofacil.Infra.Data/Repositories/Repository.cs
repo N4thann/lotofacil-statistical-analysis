@@ -39,6 +39,10 @@ namespace Lotofacil.Infra.Data.Repositories
         public async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
+
+            if (entity == null)
+                throw new KeyNotFoundException($"Entidade com ID {id} não encontrada.");
+
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }

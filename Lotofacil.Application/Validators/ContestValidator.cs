@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Application.Validators
 {
-    public class ContestValidator : AbstractValidator<CreateContestViewModel>
+    public class ContestValidator : AbstractValidator<ContestViewModel>
     {
         public ContestValidator() 
         {

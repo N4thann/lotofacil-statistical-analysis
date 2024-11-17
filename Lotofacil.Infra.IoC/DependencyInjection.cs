@@ -39,7 +39,7 @@ namespace Lotofacil.Infra.IoC
             //Escopo Automático: O AddValidatorsFromAssemblyContaining utiliza o Transient como escopo padrão.
             //services.AddValidatorsFromAssemblyContaining<ContestValidator>();
 
-            services.AddTransient<IValidator<CreateContestViewModel>, ContestValidator>();
+            services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();
 
 
             return services;
