@@ -100,43 +100,33 @@ namespace Lotofacil.Presentation.Controllers
 
             if (id == null || baseContest == null)
             {
-                return NotFound();
+                return View("Error", new ErrorViewModel(
+                    "Recurso não encontrado.", null, 3));
             }
 
-            if (baseContest == null)
-            {
-                return View("Error", "Nenhum concurso base encontrado.");
-            }
+            CreateContestViewModel baseContestVM = new CreateContestViewModel();
+            baseContestVM.Name = baseContest.Name;
+            baseContestVM.Data = baseContest.Data;
+            baseContestVM.Numbers = baseContest.Numbers;
 
-            return View(baseContest);
+            return View(baseContestVM);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Edit(int id, Contest concurso)
+        public async Task<IActionResult> Edit(int id, CreateContestViewModel baseContestVM)
         {
-            ModelState.Remove("ConcursosAcimaDe11");
-            if (ModelState.IsValid)
-            {
-                _context.Entry(concurso).State = EntityState.Modified;
+            ValidationResult result = await _validator.ValidateAsync(baseContestVM);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BaseContestExists(concurso.Id))//deixar esse método genérico em repositories
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+            if (!result.IsValid)
+            {
+                result.AddToModelState(this.ModelState);
+
+                return View("Edit", baseContestVM);
             }
-            return View(concurso);
+
+            await _baseContestService.EditBaseContestAsync(id, baseContestVM);
+            TempData["notice"] = "Concurso Base Editado com Sucesso!";
+            return RedirectToAction("List", "BaseContest");
         }
 
         [HttpGet()]

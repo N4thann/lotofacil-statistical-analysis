@@ -12,6 +12,8 @@ namespace Lotofacil.Application.Services.Interfaces
     {
         Task CreateAsync(CreateContestViewModel contestVM);
 
+        Task EditBaseContestAsync(int id, CreateContestViewModel contestVM);
+
         Task DeleteAsync(int id);
 
         Task<IEnumerable<BaseContest>> GetAllBaseContestAsync();

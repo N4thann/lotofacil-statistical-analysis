@@ -32,7 +32,15 @@ namespace Lotofacil.Application.Services
 
             await _repository.AddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
         }
+        public async Task EditBaseContestAsync(int id, CreateContestViewModel contestVM)
+        {
+            var baseContest = await _repository.GetByIdAsync(id);
+            baseContest.Name = contestVM.Name; 
+            baseContest.Data = _contestMS.SetDataHour(contestVM.Data);
+            baseContest.Numbers = _contestMS.FormatNumbersToSave(contestVM.Numbers);
 
+            await _repository.UpdateAsync(baseContest);
+        }
         public async Task DeleteAsync(int id)
         {
 
