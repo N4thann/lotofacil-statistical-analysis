@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lotofacil", "Lotofacil\Lotofacil.csproj", "{393B513C-3D94-41CF-905B-B12B66B8DA24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lotofacil.Web", "Lotofacil\Lotofacil.Web.csproj", "{393B513C-3D94-41CF-905B-B12B66B8DA24}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lotofacil.Domain", "Lotofacil.Domain\Lotofacil.Domain.csproj", "{D93C7CA6-FC0C-427D-8732-7C395359D64A}"
 EndProject

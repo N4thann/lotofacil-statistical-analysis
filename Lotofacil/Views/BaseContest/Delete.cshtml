@@ -43,12 +43,38 @@
                 </dl>
             </div>
             <div class="card-footer">
-                <form asp-action="Delete">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <input type="submit" value="Deletar" class="btn btn-danger" />
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-danger">
+                        Deletar
+                    </button>
                     <a asp-action="Index" class="btn btn-danger float-right">Voltar para a página anterior</a>
-                </form>
             </div>
         </div>
     </div>
 </section>
+
+
+
+@*Ação de clicar no botão deletar abrindo essa div com o modal*@
+<div class="modal fade" id="modal-danger">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmação</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Realmente deseja deletar esse registro?</p>
+            </div>
+            <form asp-action="Delete">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Fechar</button>
+                    <input type="submit" value="Deletar" class="btn btn-outline-light"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

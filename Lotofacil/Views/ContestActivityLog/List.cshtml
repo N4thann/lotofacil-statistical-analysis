@@ -1,18 +1,18 @@
 ﻿@model IEnumerable<Lotofacil.Domain.Entities.BaseContest>
 @{
-    ViewData["Title"] = "Listar Concursos Base";
+    ViewData["Title"] = "Listar Logs";
 }
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Lista de Concursos Base</h1>
+                <h1>Listar Logs de registros</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="/Home/Index">Página Inicial</a></li>
-                    <li class="breadcrumb-item active">Concursos Base</li>
+                    <li class="breadcrumb-item active">Logs</li>
                 </ol>
             </div>
         </div>
@@ -23,7 +23,7 @@
 {
     <div class="card card-orange" style="margin:16px;">
         <div class="card-header">
-            <h3 class="card-title">Concursos Base</h3>
+            <h3 class="card-title">Logs de registros</h3>
         </div>
         <div class="card-body">
             <table class="table table-striped projects" id="tabela">
@@ -37,8 +37,6 @@
                         </th>
                         <th style="width: 40%">
                             Números
-                        </th>
-                        <th style="width: 25%">
                         </th>
                     </tr>
                 </thead>
@@ -61,18 +59,6 @@
                                     @Html.DisplayFor(modelItem => item.Numbers)
                                 </a>
                             </td>
-                            <td class="project-actions text-right">
-                                <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.Id">
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    Editar
-                                </a>
-                                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                    Deletar
-                                </a>
-                            </td>
                         </tr>
                     }
                 </tbody>
@@ -82,5 +68,5 @@
 }
 
 @section Scripts {
-  <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }
