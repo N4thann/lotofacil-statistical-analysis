@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Infra.Data.EntityConfiguration
 {
-    public class BaseContestConfiguration : IEntityTypeConfiguration<BaseContest>
+    public class BaseContestConfiguration : IEntityTypeConfiguration<BaseContest>//Utilizando o Fluent API
     {
         public void Configure(EntityTypeBuilder<BaseContest> builder)
         {
@@ -62,6 +62,7 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .WithOne() // Sem FK de volta para BaseContest em Contest
                    .HasForeignKey("BaseContestId") // Chave estrangeira para BaseContest
                    .OnDelete(DeleteBehavior.Cascade); // Configuração de exclusão em cascata
+                    //Ao Excluir um BaseContest, todos os Contests relacionados a ele serão excluídos também
         }
     }
 }

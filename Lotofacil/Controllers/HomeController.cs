@@ -43,6 +43,5 @@ namespace Lotofacil.Presentation.Controllers
         {
             return View();
         }
-
     }
 }

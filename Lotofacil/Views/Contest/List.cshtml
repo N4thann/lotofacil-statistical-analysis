@@ -26,14 +26,24 @@
             <h3 class="card-title">Concursos</h3>
         </div>
         <div class="card-body">
-            <table class="table table-striped projects" id="tabela">
+            <table class="table table-striped projects text-center" id="tabela">
                 <thead>
                     <tr class="text-lg">
                         <th style="width: 20%">
                             Nome
                         </th>
                         <th style="width: 20%">
-                            Data
+                            <a asp-action="List" asp-route-sortOrder="@ViewData["SortOrder"]">
+                                Data
+                                @if (ViewData["SortOrder"]?.ToString() == "DateAsc")
+                                {
+                                    <i class="fas fa-arrow-up"></i>
+                                }
+                                else if (ViewData["SortOrder"]?.ToString() == "DateDesc")
+                                {
+                                    <i class="fas fa-arrow-down"></i>
+                                }
+                            </a>
                         </th>
                         <th style="width: 60%">
                             Concursos

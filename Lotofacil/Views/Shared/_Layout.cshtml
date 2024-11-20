@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="~/adminlte/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/adminlte/dist/css/adminlte.min.css">
+
+    <!-- ChartJS -->
+    <script src="../../plugins/chart.js/Chart.min.js"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 </head>
@@ -83,7 +86,7 @@
                 },
                 "lengthMenu": [10, 25, 50, 100],
                 "responsive": true,
-                "ordering": true,
+                "ordering": false,
                 "lengthChange": true,
                 "autoWidth": false
             });

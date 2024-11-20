@@ -28,14 +28,25 @@ namespace Lotofacil.Presentation.Controllers
             _contestService = contestService;
         }
 
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string sortOrder)
         {
             try
             {
-                var contest = await _contestService.GetAllContestAsync();
+                var contests = await _contestService.GetAllContestAsync();
 
-                return contest.Any()
-                    ? View(contest)
+                // Ordenação baseada no parâmetro recebido
+                contests = sortOrder switch
+                {
+                    "DateAsc" => contests.OrderBy(c => c.Data).ToList(),
+                    "DateDesc" => contests.OrderByDescending(c => c.Data).ToList(),
+                    _ => contests
+                };
+
+                // Passar o estado da ordenação para a View
+                ViewData["SortOrder"] = sortOrder == "DateAsc" ? "DateDesc" : "DateAsc";
+
+                return contests.Any()
+                    ? View(contests)
                     : View("Error", new ErrorViewModel(
                     "Nenhum registro encontrado na tabela Contests.", null, 2) // Código que representa ErrorType.NoRecords
                     );
