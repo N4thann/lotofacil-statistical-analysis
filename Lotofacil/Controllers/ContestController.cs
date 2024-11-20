@@ -32,15 +32,7 @@ namespace Lotofacil.Presentation.Controllers
         {
             try
             {
-                var contests = await _contestService.GetAllContestAsync();
-
-                // Ordenação baseada no parâmetro recebido
-                contests = sortOrder switch
-                {
-                    "DateAsc" => contests.OrderBy(c => c.Data).ToList(),
-                    "DateDesc" => contests.OrderByDescending(c => c.Data).ToList(),
-                    _ => contests
-                };
+                var contests = await _contestService.GetContestsOrderedAsync(sortOrder);
 
                 // Passar o estado da ordenação para a View
                 ViewData["SortOrder"] = sortOrder == "DateAsc" ? "DateDesc" : "DateAsc";

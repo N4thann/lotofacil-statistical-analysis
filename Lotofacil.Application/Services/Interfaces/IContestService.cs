@@ -11,6 +11,6 @@ namespace Lotofacil.Application.Services.Interfaces
     public interface IContestService
     {
         Task CreateAsync(ContestViewModel contestVM);
-        Task<IEnumerable<Contest>> GetAllContestAsync();
+        Task<IEnumerable<Contest>> GetContestsOrderedAsync(string sortOrder);
     }
 }

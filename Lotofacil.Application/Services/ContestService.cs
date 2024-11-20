@@ -2,6 +2,7 @@
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,17 @@ namespace Lotofacil.Application.Services
             _contestMS = contestMS;
         }
 
-        public async Task<IEnumerable<Contest>> GetAllContestAsync()
+        public async Task<IEnumerable<Contest>> GetContestsOrderedAsync(string sortOrder)
         {
-            return await _repository.GetAllAsync();
+
+            var contests = await _repository.GetAllAsync();
+
+            return sortOrder switch
+            {
+                "DateAsc" => contests.OrderBy(c => c.Data),
+                "DateDesc" => contests.OrderByDescending(c => c.Data),
+                _ => contests
+            };
         }
 
         public async Task CreateAsync(ContestViewModel contestVM)
