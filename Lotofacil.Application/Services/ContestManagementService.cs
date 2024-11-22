@@ -1,5 +1,7 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using ClosedXML.Excel;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
+using Lotofacil.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -49,6 +51,46 @@ namespace Lotofacil.Application.Services
                 }
             }
             return sb.ToString();
+        }
+
+        public MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs)
+        {
+            //Instalar pacote ClosedXML
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("ContestActivityLogs");
+
+            // Cabeçalhos
+            worksheet.Cell(1, 1).Value = "Nome do Concurso";
+            worksheet.Cell(1, 2).Value = "Data";
+            worksheet.Cell(1, 3).Value = "Números";
+            worksheet.Cell(1, 4).Value = "Coincidiu com Base";
+            worksheet.Cell(1, 5).Value = "Nome Base";
+            worksheet.Cell(1, 6).Value = "Números Base";
+            worksheet.Cell(1, 7).Value = "Data Criação";
+
+            // Adicionar registros
+            var row = 2;
+            foreach (var log in logs)
+            {
+                worksheet.Cell(row, 1).Value = log.Name;
+                worksheet.Cell(row, 2).Value = log.Data.ToString("yyyy-MM-dd");
+                worksheet.Cell(row, 3).Value = log.Numbers;
+                worksheet.Cell(row, 4).Value = log.MatchedAnyBaseContest ? "Sim" : "Não";
+                worksheet.Cell(row, 5).Value = log.BaseContestName ?? "N/A";
+                worksheet.Cell(row, 6).Value = log.BaseContestNumbers ?? "N/A";
+                worksheet.Cell(row, 7).Value = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                row++;
+            }
+
+            // Ajustar largura das colunas
+            worksheet.Columns().AdjustToContents();
+
+            // Gerar memória para retorno
+            var memoryStream = new MemoryStream();
+            workbook.SaveAs(memoryStream);
+            memoryStream.Position = 0;
+
+            return memoryStream;
         }
 
     }

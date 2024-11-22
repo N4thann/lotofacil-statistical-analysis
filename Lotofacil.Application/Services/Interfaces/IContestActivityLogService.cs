@@ -1,0 +1,16 @@
+﻿using Lotofacil.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lotofacil.Application.Services.Interfaces
+{
+    public interface IContestActivityLogService
+    {
+        IQueryable<ContestActivityLog> GetQueryableContestActivityLogs();
+        Task<List<ContestActivityLog>> GetFilteredContestActivityLogsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize);
+        Task<int> CountFilteredContestActivityLogsAsync(string? name, DateTime? startDate, DateTime? endDate);
+    }
+}
