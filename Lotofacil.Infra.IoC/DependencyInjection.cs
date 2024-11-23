@@ -11,6 +11,8 @@ using Lotofacil.Application.Validators;
 using System;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Application.ViewsModel;
+using Hangfire;
+using Lotofacil.Application.BackgroundJobs;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -40,6 +42,17 @@ namespace Lotofacil.Infra.IoC
             //services.AddValidatorsFromAssemblyContaining<ContestValidator>();
 
             services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();
+            services.AddTransient<IJobHandler, MainJobHandler>();
+
+            // Configuração do Hangfire
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                      .UseSimpleAssemblyNameTypeSerializer()
+                      .UseRecommendedSerializerSettings()
+                      .UseSqlServerStorage(connectionString);
+            });
+            services.AddHangfireServer();
 
 
             return services;

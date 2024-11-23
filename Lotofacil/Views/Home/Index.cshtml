@@ -13,9 +13,9 @@
         <div class="card-body">
             <!-- Botão grande acima da tabela -->
             <div class="mb-4">
-                <a href="/Contest/Create" class="btn btn-primary btn-lg btn-block">
-                    <ion-icon name="reload-outline"></ion-icon> Atualizar registros
-                </a>
+                <form asp-action="ExecuteJobManually" method="post">
+                    <button type="submit" class="btn btn-primary">Atualizar registros</button>
+                </form>
             </div>
             <!-- Tabela de concursos -->
             <table class="table table-striped projects text-center" id="tabela">
