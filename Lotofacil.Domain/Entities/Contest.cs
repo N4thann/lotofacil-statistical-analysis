@@ -9,6 +9,8 @@ namespace Lotofacil.Domain.Entities
             Name = name;
             Data = data;
             Numbers = numbers;
-        }       
+            Processed = false;//No cadastro do Concurso não foi processado, apenas no serviço principal
+        }
+        public bool Processed { get; private set; }
     }
 }
