@@ -9,6 +9,8 @@ namespace Lotofacil.Application.Services.Interfaces
         List<int> ConvertFormattedStringToList(string input);
         string FormatNumbersToSave(string input);
         MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs);
+
+        int CalculateIntersection(List<int> list1, List<int> list2);
     }   
 }
 /*

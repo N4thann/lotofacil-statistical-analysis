@@ -33,6 +33,8 @@ namespace Lotofacil.Application.Services
 
             return numbersList;
         }
+
+
         public string FormatNumbersToSave(string input)
         {
             if (input.Length % 2 != 0 || input.Length == 0)
@@ -51,6 +53,11 @@ namespace Lotofacil.Application.Services
                 }
             }
             return sb.ToString();
+        }
+
+        public int CalculateIntersection(List<int> list1, List<int> list2)
+        {
+            return list1.Intersect(list2).Count();
         }
 
         public MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs)
