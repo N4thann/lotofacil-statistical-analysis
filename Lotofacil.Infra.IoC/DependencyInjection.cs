@@ -43,17 +43,16 @@ namespace Lotofacil.Infra.IoC
             // Registrando serviços da camada de aplicação
             services.AddScoped<IBaseContestService, BaseContestService>();
             services.AddScoped<IContestService, ContestService>();
-            services.AddTransient<IContestManagementService, ContestManagementService>(); // Exemplo, caso precise
+            services.AddTransient<IContestManagementService, ContestManagementService>();
 
             // Registrando o repositório genérico
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            //Com esse método, todos os validadores no mesmo assembly que o
-            //PersonValidator (ou seja, na mesma biblioteca ou projeto) serão registrados automaticamente.
-            //Escopo Automático: O AddValidatorsFromAssemblyContaining utiliza o Transient como escopo padrão.
-            //services.AddValidatorsFromAssemblyContaining<ContestValidator>();
-
+            //Registrando serviços de validação com Fluent Validations
             services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();
+
+            //Registrando serviços relacionados aos BackgroundJobs
+            services.AddSingleton<JobService>();
             services.AddTransient<IJobHandler, MainJobHandler>();
 
             // Configuração do Hangfire
