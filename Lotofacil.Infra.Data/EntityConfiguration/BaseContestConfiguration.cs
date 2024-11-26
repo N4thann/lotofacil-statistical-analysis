@@ -57,6 +57,11 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             builder.Property(b => b.Matched15)
                    .HasColumnName("Matched15");
 
+            // Propriedade CreatedAt
+            builder.Property(b => b.CreatedAt)
+                   .HasColumnName("CreatedAt")
+                   .IsRequired();
+
             // Relacionamento com Contest (ContestsAbove11)
             builder.HasMany(b => b.ContestsAbove11)
                    .WithOne() // Sem FK de volta para BaseContest em Contest

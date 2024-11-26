@@ -10,6 +10,7 @@ namespace Lotofacil.Domain.Entities
             Data = data;
             Numbers = numbers;
             ContestsAbove11 = new List<Contest>();
+            CreatedAt = DateTime.Now;
         }
 
         public int Matched11 { get; private set; }
@@ -17,6 +18,7 @@ namespace Lotofacil.Domain.Entities
         public int Matched13 { get; private set; }
         public int Matched14 { get; private set; }
         public int Matched15 { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
 

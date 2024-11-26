@@ -41,10 +41,10 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .HasMaxLength(45)
                    .IsRequired();
 
-            //Propriedade Processed 
-            builder.Property(b => b.Processed)
-                .HasColumnName("Processed")
-                .IsRequired();
+            //Propriedade LastProcessed 
+            builder.Property(b => b.LastProcessed)
+                .HasColumnName("LastProcessed")
+                .IsRequired(false);
         }
     }
 }

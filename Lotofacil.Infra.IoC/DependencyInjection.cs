@@ -13,6 +13,9 @@ using Lotofacil.Domain.Entities;
 using Lotofacil.Application.ViewsModel;
 using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
+using Hangfire.SqlServer;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using Hangfire.Common;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -27,6 +30,15 @@ namespace Lotofacil.Infra.IoC
             // Registrando o DbContext com a string de conexão correta
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            //Faz uma limpeza nas tabelas que o Hangfire criou no banco de dados
+            //Por padrão, os jobs são marcados para expiração após 24 horas.
+            GlobalConfiguration.Configuration
+                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                {
+                    JobExpirationCheckInterval = TimeSpan.FromHours(1), // Intervalo de limpeza
+                    QueuePollInterval = TimeSpan.FromSeconds(15) // Frequência de verificação da fila
+                });
 
             // Registrando serviços da camada de aplicação
             services.AddScoped<IBaseContestService, BaseContestService>();

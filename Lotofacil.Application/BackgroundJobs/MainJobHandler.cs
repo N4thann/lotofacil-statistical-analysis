@@ -1,6 +1,7 @@
 ﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,6 @@ namespace Lotofacil.Application.BackgroundJobs
 
         public async Task ExecuteAsync()
         {
-            /*
             var baseContests = await _repositoryBC.GetAllAsync();
 
             var contests = await _repositoryC.GetAllAsync();
@@ -41,13 +41,14 @@ namespace Lotofacil.Application.BackgroundJobs
 
                 foreach (var y in contests)
                 {
+
                     var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
 
                     var allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
 
-                    y.Processed = true;
 
                     var log = new ContestActivityLog();
+
                     if (allHits > 10)
                     {
                         
@@ -57,6 +58,8 @@ namespace Lotofacil.Application.BackgroundJobs
                             x.Data,
                             y.Name,
                             y.Numbers);
+
+                        await _repositoryLog.AddAsync(log);
                     }
                     else
                     {
@@ -64,38 +67,30 @@ namespace Lotofacil.Application.BackgroundJobs
                             x.Name,
                             x.Numbers,
                             x.Data);
-                    }
-                    
 
-                    if (allHits == 11)
-                    {
-                        x.AddMatched11();
-                        x.ContestsAbove11.Add(y);
-                    }
-                    if (allHits == 12)
-                    {
-                        x.AddMatched12();
-                        x.ContestsAbove11.Add(y);
-                    }
-                    if (allHits == 13)
-                    {
-                        x.AddMatched13();
-                        x.ContestsAbove11.Add(y);
-                    }
-                    if (allHits == 14)
-                    {
-                        x.AddMatched14();
-                        x.ContestsAbove11.Add(y);
-                    }
-                    if (allHits == 15)
-                    {
-                        x.AddMatched15();
-                        x.ContestsAbove11.Add(y);
+                        await _repositoryLog.AddAsync(log);
                     }
 
+                    switch (allHits)
+                    {
+                        case 11: x.AddMatched11(); break;
+                        case 12: x.AddMatched12(); break;
+                        case 13: x.AddMatched13(); break;
+                        case 14: x.AddMatched14(); break;
+                        case 15: x.AddMatched15(); break;
+                    }
+
+                    x.ContestsAbove11.Add(y);
                 }
+
+                await _repositoryBC.UpdateAsync(x);
             }
-            */
+
+            foreach (var contest in contests)
+            {
+                await _repositoryC.UpdateAsync(contest);
+            }
         }
     }
 }
+//if (contest.LastProcessed == null || contest.LastProcessed < latestBaseContest.CreatedAt)
