@@ -1,12 +1,6 @@
 ﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
@@ -14,18 +8,15 @@ namespace Lotofacil.Application.BackgroundJobs
     {
         private readonly IRepository<BaseContest> _repositoryBC;
         private readonly IRepository<Contest> _repositoryC;
-        private readonly IRepository<ContestActivityLog> _repositoryLog;
         private readonly IContestManagementService _contestMS;
 
         public MainJobHandler(
             IRepository<BaseContest> repositoryBC, 
-            IRepository<Contest> repositoryC, 
-            IRepository<ContestActivityLog> repositoryLog, 
+            IRepository<Contest> repositoryC,  
             IContestManagementService contestMS)
         {
             _repositoryBC = repositoryBC;
             _repositoryC = repositoryC;
-            _repositoryLog = repositoryLog;
             _contestMS = contestMS;
         }
 
@@ -33,64 +24,53 @@ namespace Lotofacil.Application.BackgroundJobs
         {
             var baseContests = await _repositoryBC.GetAllAsync();
 
-            var contests = await _repositoryC.GetAllAsync();
+            var contests = await _repositoryC.GetAllAsync(); 
 
-            foreach (var x in baseContests)
+            if(baseContests.Any() && contests.Any())
             {
-                var numbersBC = _contestMS.ConvertFormattedStringToList(x.Numbers);
+                foreach (var x in baseContests)
+                {
+                    var numbersBC = _contestMS.ConvertFormattedStringToList(x.Numbers);
+
+                    foreach (var y in contests)
+                    {
+                        var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
+
+                        if (y.LastProcessed == null || y.LastProcessed < x.CreatedAt)
+                        {
+
+                            var allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
+
+                            switch (allHits)
+                            {
+                                case 11: x.AddMatched11(); break;
+                                case 12: x.AddMatched12(); break;
+                                case 13: x.AddMatched13(); break;
+                                case 14: x.AddMatched14(); break;
+                                case 15: x.AddMatched15(); break;
+                            }
+
+                            if(allHits > 10) x.ContestsAbove11.Add(y);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Concurso {y.Name}: já está atualizado.");
+                        }
+                    }
+
+                    await _repositoryBC.UpdateAsync(x);
+                }
 
                 foreach (var y in contests)
                 {
-
-                    var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
-
-                    var allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
-
-
-                    var log = new ContestActivityLog();
-
-                    if (allHits > 10)
-                    {
-                        
-                        log.InitializeWithBaseContest(
-                            x.Name,
-                            x.Numbers,
-                            x.Data,
-                            y.Name,
-                            y.Numbers);
-
-                        await _repositoryLog.AddAsync(log);
-                    }
-                    else
-                    {
-                        log.InitializeWithoutBaseContest(
-                            x.Name,
-                            x.Numbers,
-                            x.Data);
-
-                        await _repositoryLog.AddAsync(log);
-                    }
-
-                    switch (allHits)
-                    {
-                        case 11: x.AddMatched11(); break;
-                        case 12: x.AddMatched12(); break;
-                        case 13: x.AddMatched13(); break;
-                        case 14: x.AddMatched14(); break;
-                        case 15: x.AddMatched15(); break;
-                    }
-
-                    x.ContestsAbove11.Add(y);
+                    y.LastProcessed = DateTime.Now;
+                    await _repositoryC.UpdateAsync(y);
                 }
-
-                await _repositoryBC.UpdateAsync(x);
             }
-
-            foreach (var contest in contests)
+            else
             {
-                await _repositoryC.UpdateAsync(contest);
-            }
+                Console.WriteLine("A lista Contests ou BaseContest está vazia.");
+            }           
         }
-    }
+     }
 }
-//if (contest.LastProcessed == null || contest.LastProcessed < latestBaseContest.CreatedAt)

@@ -8,14 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using Lotofacil.Application.Validators;
-using System;
-using Lotofacil.Domain.Entities;
 using Lotofacil.Application.ViewsModel;
 using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
 using Hangfire.SqlServer;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using Hangfire.Common;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -52,8 +48,9 @@ namespace Lotofacil.Infra.IoC
             services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();
 
             //Registrando serviços relacionados aos BackgroundJobs
-            services.AddSingleton<JobService>();
+            services.AddScoped<JobService>();
             services.AddTransient<IJobHandler, MainJobHandler>();
+
 
             // Configuração do Hangfire
             services.AddHangfire(config =>
