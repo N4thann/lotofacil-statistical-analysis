@@ -3,7 +3,8 @@
 namespace Lotofacil.Domain.Entities
 {
     /// <summary>
-    /// Represents a BaseContest .
+    /// Represents the base contest, which serves as the reference point for comparisons with daily and recurring contests. 
+    /// It acts as the main contest for generating analyses, with all comparisons and insights derived from its perspective.
     /// </summary>
     public class BaseContest : ContestBaseEntity
     {
@@ -47,23 +48,37 @@ namespace Lotofacil.Domain.Entities
         /// </summary>
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
 
+        /// <summary>
+        /// Increments the current count of contests with 11 matches by 1.
+        /// </summary>
         public void AddHit11()
         {
             Hit11 = +1;
         }
+        /// <summary>
+        /// Increments the current count of contests with 12 matches by 1.
+        /// </summary>
         public void AddHit12()
         {
             Hit12 = +1;
         }
-
+        /// <summary>
+        /// Increments the current count of contests with 13 matches by 1.
+        /// </summary>
         public void AddHit13()
         {
             Hit13 = +1;
         }
+        /// <summary>
+        /// Increments the current count of contests with 14 matches by 1.
+        /// </summary>
         public void AddHit14()
         {
             Hit14 = +1;
         }
+        /// <summary>
+        /// Increments the current count of contests with 15 matches by 1.
+        /// </summary>
         public void AddHit15()
         {
             Hit15 = +1;

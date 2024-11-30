@@ -19,7 +19,9 @@ namespace Lotofacil.Domain.Entities
         /// </summary>
         public DateTime? LastProcessed { get; set; }
 
-        // Navegação muitos-para-muitos
+        /// <summary>
+        /// Gets or sets the collection of BaseContests where 11 or more matches were achieved.
+        /// </summary>
         public virtual ICollection<BaseContest> BaseContests { get; set; }
     }
 }
