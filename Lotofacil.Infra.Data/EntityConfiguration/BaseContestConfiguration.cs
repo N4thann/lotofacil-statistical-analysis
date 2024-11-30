@@ -41,21 +41,21 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .HasMaxLength(45)
                    .IsRequired();
 
-            // Configuração dos atributos Matched11 a Matched15
-            builder.Property(b => b.Matched11)
-                   .HasColumnName("Matched11");
+            // Configuração dos atributos Hit11 a Hit15
+            builder.Property(b => b.Hit11)
+                   .HasColumnName("Hit11");
 
-            builder.Property(b => b.Matched12)
-                   .HasColumnName("Matched12");
+            builder.Property(b => b.Hit12)
+                   .HasColumnName("Hit12");
 
-            builder.Property(b => b.Matched13)
-                   .HasColumnName("Matched13");
+            builder.Property(b => b.Hit13)
+                   .HasColumnName("Hit13");
 
-            builder.Property(b => b.Matched14)
-                   .HasColumnName("Matched14");
+            builder.Property(b => b.Hit14)
+                   .HasColumnName("Hit14");
 
-            builder.Property(b => b.Matched15)
-                   .HasColumnName("Matched15");
+            builder.Property(b => b.Hit15)
+                   .HasColumnName("Hit15");
 
             // Propriedade CreatedAt
             builder.Property(b => b.CreatedAt)

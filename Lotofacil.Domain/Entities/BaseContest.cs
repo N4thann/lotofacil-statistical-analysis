@@ -2,6 +2,9 @@
 
 namespace Lotofacil.Domain.Entities
 {
+    /// <summary>
+    /// Represents a BaseContest .
+    /// </summary>
     public class BaseContest : ContestBaseEntity
     {
         public BaseContest(string name, DateTime data, string numbers)
@@ -13,35 +16,57 @@ namespace Lotofacil.Domain.Entities
             CreatedAt = DateTime.Now;
         }
 
-        public int Matched11 { get; private set; }
-        public int Matched12 { get; private set; }
-        public int Matched13 { get; private set; }
-        public int Matched14 { get; private set; }
-        public int Matched15 { get; private set; }
+        /// <summary>
+        /// Gets the count of contests where 11 matches were achieved.
+        /// </summary>
+        public int Hit11 { get; private set; }
+        /// <summary>
+        /// Gets the count of contests where 12 matches were achieved.
+        /// </summary>
+        public int Hit12 { get; private set; }
+        /// <summary>
+        /// Gets the count of contests where 13 matches were achieved.
+        /// </summary>
+        public int Hit13 { get; private set; }
+        /// <summary>
+        /// Gets the count of contests where 14 matches were achieved.
+        /// </summary>
+        public int Hit14 { get; private set; }
+        /// <summary>
+        /// Gets the count of contests where 15 matches were achieved.
+        /// </summary>
+        public int Hit15 { get; private set; }
+
+        /// <summary>
+        /// Gets the date and time when the contest record was created.
+        /// </summary>
         public DateTime CreatedAt { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the collection of contests where 11 or more matches were achieved.
+        /// </summary>
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
 
-        public void AddMatched11()
+        public void AddHit11()
         {
-            Matched11 = +1;
+            Hit11 = +1;
         }
-        public void AddMatched12()
+        public void AddHit12()
         {
-            Matched12 = +1;
+            Hit12 = +1;
         }
 
-        public void AddMatched13()
+        public void AddHit13()
         {
-            Matched13 = +1;
+            Hit13 = +1;
         }
-        public void AddMatched14()
+        public void AddHit14()
         {
-            Matched14 = +1;
+            Hit14 = +1;
         }
-        public void AddMatched15()
+        public void AddHit15()
         {
-            Matched15 = +1;
+            Hit15 = +1;
         }
     }
 }

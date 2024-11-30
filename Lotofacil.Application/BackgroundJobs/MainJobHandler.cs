@@ -43,11 +43,11 @@ namespace Lotofacil.Application.BackgroundJobs
 
                             switch (allHits)
                             {
-                                case 11: x.AddMatched11(); break;
-                                case 12: x.AddMatched12(); break;
-                                case 13: x.AddMatched13(); break;
-                                case 14: x.AddMatched14(); break;
-                                case 15: x.AddMatched15(); break;
+                                case 11: x.AddHit11(); break;
+                                case 12: x.AddHit12(); break;
+                                case 13: x.AddHit13(); break;
+                                case 14: x.AddHit14(); break;
+                                case 15: x.AddHit15(); break;
                             }
 
                             if(allHits > 10) x.ContestsAbove11.Add(y);
