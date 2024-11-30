@@ -4,19 +4,16 @@ using Lotofacil.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Lotofacil.Migrations
+namespace Lotofacil.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241107021159_Criação nova tabela")]
-    partial class Criaçãonovatabela
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +21,21 @@ namespace Lotofacil.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BaseContestContest", b =>
+                {
+                    b.Property<int>("BaseContestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BaseContestId", "ContestId");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("BaseContestContest", (string)null);
+                });
 
             modelBuilder.Entity("Lotofacil.Domain.Entities.BaseContest", b =>
                 {
@@ -34,29 +46,33 @@ namespace Lotofacil.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedAt");
+
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2")
                         .HasColumnName("Data");
 
-                    b.Property<int>("Matched11")
+                    b.Property<int>("Hit11")
                         .HasColumnType("int")
-                        .HasColumnName("Matched11");
+                        .HasColumnName("Hit11");
 
-                    b.Property<int>("Matched12")
+                    b.Property<int>("Hit12")
                         .HasColumnType("int")
-                        .HasColumnName("Matched12");
+                        .HasColumnName("Hit12");
 
-                    b.Property<int>("Matched13")
+                    b.Property<int>("Hit13")
                         .HasColumnType("int")
-                        .HasColumnName("Matched13");
+                        .HasColumnName("Hit13");
 
-                    b.Property<int>("Matched14")
+                    b.Property<int>("Hit14")
                         .HasColumnType("int")
-                        .HasColumnName("Matched14");
+                        .HasColumnName("Hit14");
 
-                    b.Property<int>("Matched15")
+                    b.Property<int>("Hit15")
                         .HasColumnType("int")
-                        .HasColumnName("Matched15");
+                        .HasColumnName("Hit15");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -84,12 +100,13 @@ namespace Lotofacil.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BaseContestId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2")
                         .HasColumnName("Data");
+
+                    b.Property<DateTime?>("LastProcessed")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastProcessed");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -104,8 +121,6 @@ namespace Lotofacil.Migrations
                         .HasColumnName("Numbers");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BaseContestId");
 
                     b.ToTable("Contest", (string)null);
                 });
@@ -158,17 +173,19 @@ namespace Lotofacil.Migrations
                     b.ToTable("ContestActivityLog", (string)null);
                 });
 
-            modelBuilder.Entity("Lotofacil.Domain.Entities.Contest", b =>
+            modelBuilder.Entity("BaseContestContest", b =>
                 {
                     b.HasOne("Lotofacil.Domain.Entities.BaseContest", null)
-                        .WithMany("ContestsAbove11")
+                        .WithMany()
                         .HasForeignKey("BaseContestId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Lotofacil.Domain.Entities.BaseContest", b =>
-                {
-                    b.Navigation("ContestsAbove11");
+                    b.HasOne("Lotofacil.Domain.Entities.Contest", null)
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

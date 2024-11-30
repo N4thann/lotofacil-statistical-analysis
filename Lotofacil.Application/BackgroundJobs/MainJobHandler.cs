@@ -1,6 +1,7 @@
 ﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
@@ -38,8 +39,7 @@ namespace Lotofacil.Application.BackgroundJobs
 
                         if (y.LastProcessed == null || y.LastProcessed < x.CreatedAt)
                         {
-
-                            var allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
+                            var allHits = _contestMS.CalculateIntersection(numbersC, numbersBC);
 
                             switch (allHits)
                             {
@@ -50,14 +50,18 @@ namespace Lotofacil.Application.BackgroundJobs
                                 case 15: x.AddHit15(); break;
                             }
 
-                            if(allHits > 10) x.ContestsAbove11.Add(y);
+                            if(allHits > 10 && !x.ContestsAbove11.Contains(y))
+                            {
+                                x.ContestsAbove11.Add(y);
+                                y.BaseContests.Add(x);
+                                await _repositoryC.UpdateAsync(y);
+                            }                               
                         }
                         else
                         {
                             Console.WriteLine($"Concurso {y.Name}: já está atualizado.");
                         }
                     }
-
                     await _repositoryBC.UpdateAsync(x);
                 }
 

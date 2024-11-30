@@ -4,16 +4,19 @@ using Lotofacil.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Lotofacil.Migrations
+namespace Lotofacil.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20241130171223_criando novo banco com nova lógica")]
+    partial class criandonovobancocomnovalógica
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace Lotofacil.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BaseContestContest", b =>
+                {
+                    b.Property<int>("BaseContestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BaseContestId", "ContestId");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("BaseContestContest", (string)null);
+                });
 
             modelBuilder.Entity("Lotofacil.Domain.Entities.BaseContest", b =>
                 {
@@ -85,9 +103,6 @@ namespace Lotofacil.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BaseContestId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2")
                         .HasColumnName("Data");
@@ -109,8 +124,6 @@ namespace Lotofacil.Migrations
                         .HasColumnName("Numbers");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BaseContestId");
 
                     b.ToTable("Contest", (string)null);
                 });
@@ -163,17 +176,19 @@ namespace Lotofacil.Migrations
                     b.ToTable("ContestActivityLog", (string)null);
                 });
 
-            modelBuilder.Entity("Lotofacil.Domain.Entities.Contest", b =>
+            modelBuilder.Entity("BaseContestContest", b =>
                 {
                     b.HasOne("Lotofacil.Domain.Entities.BaseContest", null)
-                        .WithMany("ContestsAbove11")
+                        .WithMany()
                         .HasForeignKey("BaseContestId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Lotofacil.Domain.Entities.BaseContest", b =>
-                {
-                    b.Navigation("ContestsAbove11");
+                    b.HasOne("Lotofacil.Domain.Entities.Contest", null)
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

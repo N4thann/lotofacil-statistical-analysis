@@ -57,17 +57,32 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             builder.Property(b => b.Hit15)
                    .HasColumnName("Hit15");
 
+
             // Propriedade CreatedAt
             builder.Property(b => b.CreatedAt)
                    .HasColumnName("CreatedAt")
                    .IsRequired();
 
-            // Relacionamento com Contest (ContestsAbove11)
+            // Configuração do relacionamento muitos-para-muitos
             builder.HasMany(b => b.ContestsAbove11)
-                   .WithOne() // Sem FK de volta para BaseContest em Contest
-                   .HasForeignKey("BaseContestId") // Chave estrangeira para BaseContest
-                   .OnDelete(DeleteBehavior.Cascade); // Configuração de exclusão em cascata
-                    //Ao Excluir um BaseContest, todos os Contests relacionados a ele serão excluídos também
+                   .WithMany(c => c.BaseContests)
+                   .UsingEntity<Dictionary<string, object>>(
+                       "BaseContestContest", // Nome da tabela intermediária
+                       j => j
+                            .HasOne<Contest>()
+                            .WithMany()
+                            .HasForeignKey("ContestId")
+                            .OnDelete(DeleteBehavior.Cascade),
+                       j => j
+                            .HasOne<BaseContest>()
+                            .WithMany()
+                            .HasForeignKey("BaseContestId")
+                            .OnDelete(DeleteBehavior.Cascade),
+                       j =>
+                       {
+                           j.HasKey("BaseContestId", "ContestId"); // Chave composta
+                           j.ToTable("BaseContestContest");
+                       });
         }
     }
 }

@@ -12,10 +12,14 @@ namespace Lotofacil.Domain.Entities
             Name = name;
             Data = data;
             Numbers = numbers;
+            BaseContests = new List<BaseContest>();
         }
         /// <summary>
         /// Gets or sets the date of the contest when it was last processed.
         /// </summary>
         public DateTime? LastProcessed { get; set; }
+
+        // Navegação muitos-para-muitos
+        public virtual ICollection<BaseContest> BaseContests { get; set; }
     }
 }
