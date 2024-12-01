@@ -41,8 +41,9 @@ namespace Lotofacil.Infra.IoC
             services.AddScoped<IContestService, ContestService>();
             services.AddTransient<IContestManagementService, ContestManagementService>();
 
-            // Registrando o repositório genérico
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IBaseContestRepository, BaseContestRepository>();
+            services.AddScoped<IContestRepository, ContestRepository>();
 
             //Registrando serviços de validação com Fluent Validations
             services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();

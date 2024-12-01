@@ -53,35 +53,35 @@ namespace Lotofacil.Domain.Entities
         /// </summary>
         public void AddHit11()
         {
-            Hit11 = +1;
+            Hit11 += 1;
         }
         /// <summary>
         /// Increments the current count of contests with 12 matches by 1.
         /// </summary>
         public void AddHit12()
         {
-            Hit12 = +1;
+            Hit12 += 1;
         }
         /// <summary>
         /// Increments the current count of contests with 13 matches by 1.
         /// </summary>
         public void AddHit13()
         {
-            Hit13 = +1;
+            Hit13 += 1;
         }
         /// <summary>
         /// Increments the current count of contests with 14 matches by 1.
         /// </summary>
         public void AddHit14()
         {
-            Hit14 = +1;
+            Hit14 += 1;
         }
         /// <summary>
         /// Increments the current count of contests with 15 matches by 1.
         /// </summary>
         public void AddHit15()
         {
-            Hit15 = +1;
+            Hit15 += 1;
         }
     }
 }

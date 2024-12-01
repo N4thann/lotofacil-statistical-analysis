@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
@@ -57,7 +58,17 @@ namespace Lotofacil.Application.Services
 
         public int CalculateIntersection(List<int> list1, List<int> list2)
         {
-            return list1.Intersect(list2).Count();
+            int matches = 0;
+
+            foreach (var number in list1)
+            {
+                if (list2.Contains(number))
+                {
+                    matches++;
+                }
+            }
+
+            return matches;
         }
 
         public MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs)
