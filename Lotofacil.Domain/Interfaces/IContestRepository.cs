@@ -10,5 +10,6 @@ namespace Lotofacil.Domain.Interfaces
     public interface IContestRepository
     {
         Task<IEnumerable<Contest>> GetAllWithBaseContestsAsync();
+        Task UpdateContestAsync(Contest contest);
     }
 }

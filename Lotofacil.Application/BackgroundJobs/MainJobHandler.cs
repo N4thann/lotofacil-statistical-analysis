@@ -1,19 +1,20 @@
 ﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
     public class MainJobHandler : IJobHandler//Todos os BackgroundJobs devem implementar essa interface
     {
-        private readonly IRepository<BaseContest> _repositoryBC;
-        private readonly IRepository<Contest> _repositoryC;
+        private readonly IBaseContestRepository _repositoryBC;
+        private readonly IContestRepository _repositoryC;
         private readonly IContestManagementService _contestMS;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public MainJobHandler(
-            IRepository<BaseContest> repositoryBC, 
-            IRepository<Contest> repositoryC,  
+            IBaseContestRepository repositoryBC, 
+            IContestRepository repositoryC,  
             IContestManagementService contestMS)
         {
             _repositoryBC = repositoryBC;
@@ -43,11 +44,15 @@ namespace Lotofacil.Application.BackgroundJobs
         }
         private async Task SaveRelationshipsAsync()
         {
-            var baseContests = await _repositoryBC.GetAllAsync();
+            //Foi preciso criar repositórios específicos para recuperar as listas de ambas as entidades
+            //O método do repositório genérico não tinha o include das listas e tinha o asnotrackin
+            //Assim a abordagem do método do repositório genérico fica apenas listar as entidades
+            //Já os específicos temos o update e o GetAll adaptados
+            var baseContests = await _repositoryBC.GetAllWithContestsAbove11Async();
 
-            var contests = await _repositoryC.GetAllAsync();
+            var contests = await _repositoryC.GetAllWithBaseContestsAsync();
 
-            var allHits = 0;
+            int allHits = 0;
 
             if (baseContests.Any() && contests.Any())
             {
@@ -65,76 +70,40 @@ namespace Lotofacil.Application.BackgroundJobs
                         {
                             allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
 
+                            switch (allHits)
+                            {
+                                case 11: x.AddHit11(); break;
+                                case 12: x.AddHit12(); break;
+                                case 13: x.AddHit13(); break;
+                                case 14: x.AddHit14(); break;
+                                case 15: x.AddHit15(); break;
+                            }
+
                             if (allHits > 10 && !x.ContestsAbove11.Contains(y))
                             {
                                 x.ContestsAbove11.Add(y);
                                 y.BaseContests.Add(x);
-                                await _repositoryC.UpdateAsync(y);
+                                await _repositoryC.UpdateContestAsync(y);
                             }
                         }
                         else
                         {
                             Console.WriteLine($"Concurso {y.Name}: já está atualizado.");
                         }
-                        await _repositoryBC.UpdateAsync(x);
                     }
+                    await _repositoryBC.UpdateBaseContestAsync(x);
                 }
 
                 foreach (var y in contests)
                 {
                     y.LastProcessed = DateTime.Now;
-                    await _repositoryC.UpdateAsync(y);
-                }
-                await UpdateHitsAsync();
+                    await _repositoryC.UpdateContestAsync(y);
+                }               
             }
             else
             {
                 Console.WriteLine("A lista Contests ou BaseContest está vazia.");
             }
-        }
-
-        private async Task UpdateHitsAsync()
-        {
-            var baseContests = await _repositoryBC.GetAllAsync();
-
-            if (baseContests.Any())
-            {
-                foreach (var baseContest in baseContests)
-                {
-                    bool hasUpdates = false;
-
-                    foreach (var contest in baseContest.ContestsAbove11)
-                    {
-                        var numbersBC = _contestMS.ConvertFormattedStringToList(baseContest.Numbers);
-                        var numbersC = _contestMS.ConvertFormattedStringToList(contest.Numbers);
-
-                        var allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
-
-                        switch (allHits)
-                        {
-                            case 11: baseContest.AddHit11(); hasUpdates = true; break;
-                            case 12: baseContest.AddHit12(); hasUpdates = true; break;
-                            case 13: baseContest.AddHit13(); hasUpdates = true; break;
-                            case 14: baseContest.AddHit14(); hasUpdates = true; break;
-                            case 15: baseContest.AddHit15(); hasUpdates = true; break;
-                        }
-
-                    }
-
-                    if (hasUpdates)
-                    {
-                        Console.WriteLine($"Atualizando BaseContest: {baseContest.Name}, Hits: 11={baseContest.Hit11}, 12={baseContest.Hit12}, 13={baseContest.Hit13}, 14={baseContest.Hit14}, 15={baseContest.Hit15}");
-                        await _repositoryBC.UpdateAsync(baseContest);
-                    }
-                }
-
-                Console.WriteLine("Incrementos atualizados com sucesso.");
-            }
-            else
-            {
-                Console.WriteLine("A lista BaseContest está vazia.");
-            }
-
         }
     }
 }

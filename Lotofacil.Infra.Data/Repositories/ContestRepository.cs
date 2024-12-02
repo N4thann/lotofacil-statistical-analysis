@@ -2,19 +2,14 @@
 using Lotofacil.Domain.Interfaces;
 using Lotofacil.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lotofacil.Infra.Data.Repositories
 {
-    public class ContestRepository : Repository<Contest>, IContestRepository
+    public class ContestRepository : IContestRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public ContestRepository(ApplicationDbContext context) : base(context)
+        public ContestRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -24,6 +19,12 @@ namespace Lotofacil.Infra.Data.Repositories
             return await _context.Contests
                 .Include(bc => bc.BaseContests)
                 .ToListAsync();
+        }
+
+        public async Task UpdateContestAsync(Contest contest)
+        {
+            _context.Contests.Update(contest);
+            await _context.SaveChangesAsync();
         }
     }
 }

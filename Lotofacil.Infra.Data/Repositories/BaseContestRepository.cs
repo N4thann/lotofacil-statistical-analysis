@@ -8,13 +8,13 @@ namespace Lotofacil.Infra.Data.Repositories
     /*Ao herdar de um repositório genérico (Repository<T>), você evita duplicar implementações de métodos CRUD básicos, 
      * como AddAsync, UpdateAsync, DeleteAsync e GetAllAsync. 
      * Esses métodos são comuns a todas as entidades e podem ser definidos no repositório genérico.*/
-    public class BaseContestRepository : Repository<BaseContest>, IBaseContestRepository
+    public class BaseContestRepository : IBaseContestRepository
     {
         private readonly ApplicationDbContext _context;
 
         /*O : base(context) é usado quando uma classe herda de outra classe e deseja passar argumentos para o construtor da classe base. 
          * Isso é comum quando criamos repositórios que herdam de um repositório genérico.*/
-        public BaseContestRepository(ApplicationDbContext context) : base(context)
+        public BaseContestRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -24,6 +24,11 @@ namespace Lotofacil.Infra.Data.Repositories
             return await _context.BaseContests
                 .Include(bc => bc.ContestsAbove11)
                 .ToListAsync();
+        }
+        public async Task UpdateBaseContestAsync(BaseContest baseContest)
+        {
+            _context.BaseContests.Update(baseContest);
+            await _context.SaveChangesAsync();
         }
     }
 }
