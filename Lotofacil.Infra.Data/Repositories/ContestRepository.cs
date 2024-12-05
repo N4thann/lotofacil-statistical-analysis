@@ -18,6 +18,16 @@ namespace Lotofacil.Infra.Data.Repositories
         {
             return await _context.Contests
                 .Include(bc => bc.BaseContests)
+                .OrderBy(bc => bc.Data)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Contest>> GetAllWithBaseContestsOrderedAsync()
+        {
+            return await _context.Contests
+                .Include(bc => bc.BaseContests)
+                .OrderBy(bc => bc.LastProcessed)
                 .ToListAsync();
         }
 
@@ -26,5 +36,7 @@ namespace Lotofacil.Infra.Data.Repositories
             _context.Contests.Update(contest);
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

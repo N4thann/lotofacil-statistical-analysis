@@ -23,6 +23,8 @@ namespace Lotofacil.Infra.Data.Repositories
         {
             return await _context.BaseContests
                 .Include(bc => bc.ContestsAbove11)
+                .OrderBy(bc => bc.CreatedAt)
+                .AsSplitQuery()
                 .ToListAsync();
         }
         public async Task UpdateBaseContestAsync(BaseContest baseContest)
