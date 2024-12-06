@@ -41,7 +41,7 @@ namespace Lotofacil.Infra.IoC
             services.AddScoped<IContestService, ContestService>();
             services.AddTransient<IContestManagementService, ContestManagementService>();
 
-            services.AddScoped(typeof(IBaseContestRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IBaseContestRepository, BaseContestRepository>();
             services.AddScoped<IContestRepository, ContestRepository>();
 

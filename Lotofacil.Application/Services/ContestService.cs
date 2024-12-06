@@ -7,9 +7,9 @@ namespace Lotofacil.Application.Services
 {
     public class ContestService : IContestService
     {
-        private readonly IBaseContestRepository<Contest> _repository;
+        private readonly IRepository<Contest> _repository;
         private readonly IContestManagementService _contestMS;
-        public ContestService(IBaseContestRepository<Contest> repository, IContestManagementService contestMS)
+        public ContestService(IRepository<Contest> repository, IContestManagementService contestMS)
         {
             _repository = repository;
             _contestMS = contestMS;

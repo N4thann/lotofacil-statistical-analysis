@@ -9,17 +9,20 @@ namespace Lotofacil.Application.BackgroundJobs
     {
         private readonly IBaseContestRepository _repositoryBC;
         private readonly IContestRepository _repositoryC;
+        private readonly IRepository<ContestActivityLog> _repositoryLog;
         private readonly IContestManagementService _contestMS;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public MainJobHandler(
             IBaseContestRepository repositoryBC, 
             IContestRepository repositoryC,  
-            IContestManagementService contestMS)
+            IContestManagementService contestMS,
+            IRepository<ContestActivityLog> repositoryLog)
         {
             _repositoryBC = repositoryBC;
             _repositoryC = repositoryC;
             _contestMS = contestMS;
+            _repositoryLog = repositoryLog;
         }
 
         public async Task ExecuteAsync()
@@ -81,6 +84,15 @@ namespace Lotofacil.Application.BackgroundJobs
 
                             if (allHits > 10 && !x.ContestsAbove11.Contains(y))
                             {
+                                var log = new ContestActivityLog(
+                                    y.Name,
+                                    y.Numbers,
+                                    y.Data,
+                                    x.Name,
+                                    x.Numbers);
+
+                                await _repositoryLog.AddAsync(log);
+
                                 x.ContestsAbove11.Add(y);
                                 y.BaseContests.Add(x);
                                 await _repositoryC.UpdateContestAsync(y);

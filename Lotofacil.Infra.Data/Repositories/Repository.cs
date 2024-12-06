@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lotofacil.Infra.Data.Repositories
 {
-    public class Repository<T> : IBaseContestRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
 
