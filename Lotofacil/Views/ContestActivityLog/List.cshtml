@@ -54,7 +54,6 @@
                     <th>Nome do Concurso</th>
                     <th>Data</th>
                     <th>Números</th>
-                    <th>Coincidiu com Concurso Base</th>
                     <th>Nome Base</th>
                     <th>Números Base</th>
                     <th>Data Criação</th>
@@ -100,9 +99,8 @@
                                     <td>${log.name}</td>
                                     <td>${log.date}</td>
                                     <td>${log.numbers}</td>
-                                    <td>${log.matchedAnyBaseContest ? 'Sim' : 'Não'}</td>
-                                    <td>${log.baseContestName ?? 'N/A'}</td>
-                                    <td>${log.baseContestNumbers ?? 'N/A'}</td>
+                                    <td>${log.baseContestName}</td>
+                                    <td>${log.baseContestNumbers}</td>
                                     <td>${log.createTime}</td>
                                 </tr>
                             `);

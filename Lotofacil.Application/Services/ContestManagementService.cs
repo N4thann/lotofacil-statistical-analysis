@@ -81,10 +81,9 @@ namespace Lotofacil.Application.Services
             worksheet.Cell(1, 1).Value = "Nome do Concurso";
             worksheet.Cell(1, 2).Value = "Data";
             worksheet.Cell(1, 3).Value = "Números";
-            worksheet.Cell(1, 4).Value = "Coincidiu com Base";
-            worksheet.Cell(1, 5).Value = "Nome Base";
-            worksheet.Cell(1, 6).Value = "Números Base";
-            worksheet.Cell(1, 7).Value = "Data Criação";
+            worksheet.Cell(1, 4).Value = "Nome Base";
+            worksheet.Cell(1, 5).Value = "Números Base";
+            worksheet.Cell(1, 6).Value = "Data Criação";
 
             // Adicionar registros
             var row = 2;
@@ -93,10 +92,9 @@ namespace Lotofacil.Application.Services
                 worksheet.Cell(row, 1).Value = log.Name;
                 worksheet.Cell(row, 2).Value = log.Data.ToString("yyyy-MM-dd");
                 worksheet.Cell(row, 3).Value = log.Numbers;
-                worksheet.Cell(row, 4).Value = log.MatchedAnyBaseContest ? "Sim" : "Não";
-                worksheet.Cell(row, 5).Value = log.BaseContestName ?? "N/A";
-                worksheet.Cell(row, 6).Value = log.BaseContestNumbers ?? "N/A";
-                worksheet.Cell(row, 7).Value = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                worksheet.Cell(row, 4).Value = log.BaseContestName;
+                worksheet.Cell(row, 5).Value = log.BaseContestNumbers;
+                worksheet.Cell(row, 6).Value = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 row++;
             }
 

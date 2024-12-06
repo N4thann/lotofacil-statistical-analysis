@@ -5,45 +5,43 @@ namespace Lotofacil.Domain.Entities
 {
     public class ContestActivityLog : ContestBaseEntity
     {
-        public bool MatchedAnyBaseContest { get; private set; }
+        /// <summary>
+        /// Default constructor required by Entity Framework.
+        /// </summary>
+        public ContestActivityLog() { }
 
-        public string ?BaseContestName { get; private set; }
-
-        public string ?BaseContestNumbers { get; private set; }
-
-        public DateTime CreateTime { get; private set; }
-
-        //Inicializa os atributos quando um Concurso não deu Matched com nenhum Concurso Base
-        public void InitializeWithoutBaseContest(
-            string name, 
-            string numbers, 
-            DateTime data)
-        {
-            SetCommonAttributes(name, numbers, data);
-            MatchedAnyBaseContest = false;
-            BaseContestName = null;
-            BaseContestNumbers = null;
-        }
-        //Inicializa os atributos quando um Concurso deu Matched com um Concurso Base
-        public void InitializeWithBaseContest(
-            string name, 
-            string numbers, 
-            DateTime data, 
-            string baseContestName, 
-            string baseContestNumbers) 
-        {
-            SetCommonAttributes(name, numbers, data);
-            MatchedAnyBaseContest = true;
-            BaseContestName = baseContestName;
-            BaseContestNumbers = baseContestNumbers;
-        }
-        //Seta em ambos os métodos acima os mesmos atributos
-        private void SetCommonAttributes(string name, string numbers, DateTime data)
+        /// <summary>
+        /// Initializes a new instance of <see cref="ContestActivityLog"/> with contest 
+        /// and base contest details.
+        /// </summary>
+        /// <param name="name">The name of the Contest.</param>
+        /// <param name="numbers">The numbers associated with the Contest.</param>
+        /// <param name="data">The date of the Contest.</param>
+        /// <param name="bcName">The name of the BaseContest.</param>
+        /// <param name="bcNumbers">The numbers associated with the BaseContest.</param>
+        public ContestActivityLog(string name, string numbers, DateTime data, string bcName, string bcNumbers) 
         {
             Name = name;
             Numbers = numbers;
             Data = data;
+            BaseContestName = bcName;
+            BaseContestNumbers = bcNumbers;
             CreateTime = DateTime.Now;
         }
+
+        /// <summary>
+        /// Gets The name of the BaseContest associated with the Contest.
+        /// </summary>
+        public string BaseContestName { get; private set; }
+
+        /// <summary>
+        /// Gets The numbers associated with the BaseContest.
+        /// </summary>
+        public string BaseContestNumbers { get; private set; }
+
+        /// <summary>
+        /// Gets The timestamp when the log entry was created.
+        /// </summary>
+        public DateTime CreateTime { get; private set; }
     }
 }

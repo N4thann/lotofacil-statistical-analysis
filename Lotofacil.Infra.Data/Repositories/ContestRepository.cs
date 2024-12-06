@@ -23,14 +23,6 @@ namespace Lotofacil.Infra.Data.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Contest>> GetAllWithBaseContestsOrderedAsync()
-        {
-            return await _context.Contests
-                .Include(bc => bc.BaseContests)
-                .OrderBy(bc => bc.LastProcessed)
-                .ToListAsync();
-        }
-
         public async Task UpdateContestAsync(Contest contest)
         {
             _context.Contests.Update(contest);

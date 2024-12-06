@@ -1,11 +1,6 @@
 ﻿using Lotofacil.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lotofacil.Infra.Data.EntityConfiguration
 {
@@ -35,22 +30,16 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .HasMaxLength(45)
                    .IsRequired();
 
-            builder.Property(b => b.MatchedAnyBaseContest)
-                .HasColumnName("MatchedAnyBaseContest")
-                .IsRequired();
-
             builder.Property(c => c.BaseContestName)
                 .HasColumnName("BaseContestName")
                 .HasMaxLength(20) 
-                .IsRequired(false); // Nullable, então não é Required
-
-            // Em EntityFramework, HasMinLength não existe, apenas usamos HasMaxLength
+                .IsRequired();
 
             // Propriedade ContestNumbers
             builder.Property(c => c.BaseContestNumbers)
                 .HasColumnName("BaseContestNumbers")
                 .HasMaxLength(45)
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(c => c.CreateTime)
                 .HasColumnName("CreateTime")
