@@ -75,15 +75,21 @@ namespace Lotofacil.Application.Services
         {
             //Instalar pacote ClosedXML
             using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("ContestActivityLogs");
+            var worksheet = workbook.Worksheets.Add("Logs");
 
             // Cabeçalhos
             worksheet.Cell(1, 1).Value = "Nome do Concurso";
             worksheet.Cell(1, 2).Value = "Data";
             worksheet.Cell(1, 3).Value = "Números";
-            worksheet.Cell(1, 4).Value = "Nome Base";
-            worksheet.Cell(1, 5).Value = "Números Base";
-            worksheet.Cell(1, 6).Value = "Data Criação";
+            worksheet.Cell(1, 4).Value = "Nome do Concurso Base";
+            worksheet.Cell(1, 5).Value = "Números do Concurso Base";
+            worksheet.Cell(1, 6).Value = "Data de Criação";
+
+            // Estilizar cabeçalhos
+            var headerRange = worksheet.Range("A1:F1");
+            headerRange.Style.Font.FontColor = XLColor.White; // Texto branco
+            headerRange.Style.Fill.BackgroundColor = XLColor.Black; // Fundo preto
+            headerRange.Style.Font.Bold = true; // Negrito para dar destaque
 
             // Adicionar registros
             var row = 2;

@@ -37,7 +37,7 @@ namespace Lotofacil.Application.Services
                 .ToListAsync();
         }
 
-        public async Task<int> CountFilteredContestActivityLogsAsync(string? name, DateTime? startDate, DateTime? endDate)
+        public async Task<int> GetTotalCountAsync(string? name, DateTime? startDate, DateTime? endDate)
         {
             var query = GetQueryableContestActivityLogs();
 

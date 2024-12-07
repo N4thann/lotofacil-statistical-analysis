@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lotofacil.Application.ViewsModel
+﻿namespace Lotofacil.Application.ViewsModel
 {
     public class ContestViewModel //Serve para as duas entidades: Contest e BaseContest
     {

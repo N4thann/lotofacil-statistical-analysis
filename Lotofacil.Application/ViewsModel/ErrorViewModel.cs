@@ -1,5 +1,4 @@
 ﻿using Lotofacil.Domain.Enums;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace Lotofacil.Application.ViewsModel
 {

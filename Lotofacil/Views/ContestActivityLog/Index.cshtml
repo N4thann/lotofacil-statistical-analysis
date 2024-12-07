@@ -1,0 +1,84 @@
+﻿@model Lotofacil.Application.ViewsModel.ContestActivityLogViewModel
+
+@{
+    ViewData["Title"] = "Contest Activity Logs";
+}
+
+<h1>Logs de Concursos</h1>
+
+<!-- Formulário de Filtro -->
+<form method="get" asp-action="Index">
+    <div>
+        <label for="name">Pesquisar Concurso:</label>
+        <input type="text" id="name" name="name" value="@Model.NameFilter" placeholder="Enter name" />
+
+        <label for="startDate">Data Inicial:</label>
+        <input type="date" id="startDate" name="startDate" value="@Model.StartDateFilter?.ToString("yyyy-MM-dd")" />
+
+        <label for="endDate">Data Final:</label>
+        <input type="date" id="endDate" name="endDate" value="@Model.EndDateFilter?.ToString("yyyy-MM-dd")" />
+
+        <button type="submit">Filtrar</button>
+        <a asp-action="ExportToExcel"
+           asp-route-name="@Model.NameFilter"
+           asp-route-startDate="@Model.StartDateFilter"
+           asp-route-endDate="@Model.EndDateFilter"
+           class="btn btn-primary">
+            Geral Excel
+        </a>
+    </div>
+</form>
+
+<!-- Tabela com Rolagem Horizontal -->
+<div style="overflow-x: auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Concurso</th>
+                <th>Data</th>
+                <th>Números</th>
+                <th>Concurso Base</th>
+                <th>Números do Concurso Base</th>
+                <th>Data de Criação</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                    <tr>
+                        <td>@log.Name</td>
+                        <td>@log.Data.ToString("yyyy-MM-dd")</td>
+                        <td>@log.Numbers</td>
+                        <td>@log.BaseContestName</td>
+                        <td>@log.BaseContestNumbers</td>
+                        <td>@log.CreateTime.ToString("yyyy-MM-dd")</td>
+                    </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginação -->
+<div>
+    @if (Model.CurrentPage > 1)
+    {
+            <a asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Previous</a>
+    }
+
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        if (i == Model.CurrentPage)
+        {
+                    <strong>@i</strong>
+        }
+        else
+        {
+                    <a asp-action="Index" asp-route-page="@i" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">@i</a>
+        }
+    }
+
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+            <a asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Next</a>
+    }
+</div>

@@ -39,6 +39,7 @@ namespace Lotofacil.Infra.IoC
             // Registrando serviços da camada de aplicação
             services.AddScoped<IBaseContestService, BaseContestService>();
             services.AddScoped<IContestService, ContestService>();
+            services.AddScoped<IContestActivityLogService, ContestActivityLogService>();
             services.AddTransient<IContestManagementService, ContestManagementService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
