@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
+using Lotofacil.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,25 @@ namespace Lotofacil.Application.Validators
 {
     public class ContestValidator : AbstractValidator<ContestViewModel>
     {
-        public ContestValidator() 
+        private readonly IContestRepository _repository;
+        public ContestValidator(IContestRepository repository) 
         {
+            _repository = repository;
+
             RuleFor(x => x.Name)
-                .NotNull().WithMessage("O nome é obrigatório.")
-                .Length(6, 20).WithMessage("O nome deve ter entre 6 e 20 caracteres.");
+            .NotNull().WithMessage("O nome é obrigatório.")
+            .Length(1, 5).WithMessage("O nome do concurso deve ter entre 1 e 5 caracteres.")
+            .MustAsync(async (name, cancellation) =>
+            {
+                var formattedName = $"Concurso {name}";
+                return !await _repository.ExistsAsync(formattedName);
+            })
+            .WithMessage("Esse concurso já foi cadastrado.");
+
             RuleFor(x => x.Numbers)
                 .NotNull().WithMessage("Os números são obrigatórios.")
                 .Length(30).WithMessage("Os números devem ter exatamente 30 caracteres.");
+
             RuleFor(x => x.Data)
                 .NotNull().WithMessage("A data é obrigatória.")
                 .Must(data => data != default(DateTime)).WithMessage("A data deve ser válida.")

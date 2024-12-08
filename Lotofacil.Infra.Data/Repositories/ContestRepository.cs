@@ -28,7 +28,10 @@ namespace Lotofacil.Infra.Data.Repositories
             _context.Contests.Update(contest);
             await _context.SaveChangesAsync();
         }
-
+        public async Task<bool> ExistsAsync(string contestName)
+        {
+            return await _context.Contests.AnyAsync(c => c.Name == contestName);
+        }
 
     }
 }

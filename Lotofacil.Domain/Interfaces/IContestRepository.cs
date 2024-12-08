@@ -11,5 +11,6 @@ namespace Lotofacil.Domain.Interfaces
     {
         Task<IEnumerable<Contest>> GetAllWithBaseContestsAsync();
         Task UpdateContestAsync(Contest contest);
+        Task<bool> ExistsAsync(string contestName);
     }
 }

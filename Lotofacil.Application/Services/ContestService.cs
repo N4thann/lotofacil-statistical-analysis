@@ -30,8 +30,10 @@ namespace Lotofacil.Application.Services
 
         public async Task CreateAsync(ContestViewModel contestVM)
         {
+            var formattedName = $"Concurso {contestVM.Name}";
+
             //Deve ser atribuído assim, visto que o objeto só pode ser criado passando os parâmetros para o construtor
-            var contest = new Contest(contestVM.Name, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
+            var contest = new Contest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
 
             await _repository.AddAsync(contest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
         }
