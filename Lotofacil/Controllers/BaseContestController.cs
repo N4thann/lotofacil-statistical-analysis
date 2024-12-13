@@ -1,4 +1,4 @@
-﻿using Lotofacil.Application.ViewsModel;
+﻿ using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lotofacil.Application.Services.Interfaces;

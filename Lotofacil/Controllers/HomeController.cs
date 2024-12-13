@@ -40,6 +40,7 @@ namespace Lotofacil.Presentation.Controllers
                     ex.Message, 1));
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> ExecuteJobManually()
         {
@@ -54,6 +55,20 @@ namespace Lotofacil.Presentation.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet()]
+        public async Task<IActionResult> Dash()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel("Erro ao calcular os 2 concursos base com mais acertos.",
+                    ex.Message, 4));
+            }
         }
 
         public IActionResult Privacy()
