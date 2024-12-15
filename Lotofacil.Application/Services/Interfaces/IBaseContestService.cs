@@ -19,5 +19,8 @@ namespace Lotofacil.Application.Services.Interfaces
         Task<ContestViewModel> ShowOnScreen(int id);
 
         Task<IEnumerable<BaseContest>> GetAllBaseContestAsync();
+
+        Task<IEnumerable<BaseContest>> GetAllWithContestsAbove11Async();
+
     }
 }

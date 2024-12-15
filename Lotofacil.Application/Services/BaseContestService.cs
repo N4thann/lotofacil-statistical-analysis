@@ -14,10 +14,14 @@ namespace Lotofacil.Application.Services
     {
         private readonly IRepository<BaseContest> _repository;
         private readonly IContestManagementService _contestMS;
-        public BaseContestService(IRepository<BaseContest> repository, IContestManagementService contestMS)
+        private readonly IBaseContestRepository _repositoryBC;
+        public BaseContestService(IRepository<BaseContest> repository, 
+            IContestManagementService contestMS,
+            IBaseContestRepository repositoryBC)
         {
             _repository = repository;
             _contestMS = contestMS;
+            _repositoryBC = repositoryBC;
         }
 
         public async Task<IEnumerable<BaseContest>> GetAllBaseContestAsync()
@@ -57,6 +61,11 @@ namespace Lotofacil.Application.Services
                 Data = baseContest.Data,
                 Numbers = baseContest.Numbers
             };
+        }
+
+        public async Task<IEnumerable<BaseContest>> GetAllWithContestsAbove11Async()
+        {
+            return await _repositoryBC.GetAllWithContestsAbove11Async();
         }
 
         public async Task DeleteByIdAsync(int id)

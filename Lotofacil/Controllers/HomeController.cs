@@ -10,15 +10,17 @@ namespace Lotofacil.Presentation.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
+        private readonly IContestManagementService _contestMS;
         private readonly IJobHandler _jobHandler;
 
         public HomeController(ApplicationDbContext context, IBaseContestService baseContestService,
-            ILogger<HomeController> logger, IJobHandler jobHandler)
+            ILogger<HomeController> logger, IJobHandler jobHandler, IContestManagementService contestMS)
         {
             _context = context;
             _logger = logger;
             _baseContestService = baseContestService;
             _jobHandler = jobHandler;
+            _contestMS = contestMS;
         }
 
         [HttpGet()]
@@ -61,9 +63,69 @@ namespace Lotofacil.Presentation.Controllers
         public async Task<IActionResult> Dash()
         {
             try
-            {
-                return View();
+            { 
+                var baseContest = await _baseContestService.GetAllWithContestsAbove11Async();
+
+                // Calcula o somatório para cada concurso
+                var contestsWithSum = baseContest
+                    .Select(x => new
+                    {
+                        Contest = x,
+                        Sum = (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5)
+                    })
+                    .ToList();
+
+                // Ordena pelo maior somatório e pega os dois primeiros
+                var topTwoContests = contestsWithSum
+                    .OrderByDescending(x => x.Sum)
+                    .Take(2)
+                    .Select(x => x.Contest)
+                    .ToList();
+
+                // Lista para armazenar os ViewModels
+                var viewModel = new List<TopContestViewModel>();
+
+                // Processa os dois maiores concursos
+                foreach (var contest in topTwoContests)
+                {
+                    // Dicionário para contar as ocorrências dos números (1 a 25)
+                    var occurrences = new Dictionary<int, int>();
+                    for (int i = 1; i <= 25; i++)
+                    {
+                        occurrences[i] = 0;
+                    }
+
+                    // Calcula as ocorrências
+                    foreach (var subContest in contest.ContestsAbove11)
+                    {
+                        var numbers = _contestMS.ConvertFormattedStringToList(subContest.Numbers);
+
+                        foreach (var number in numbers)
+                        {
+                            if (occurrences.ContainsKey(number))
+                            {
+                                occurrences[number]++;
+                            }
+                        }
+                    }
+
+                    // Cria o ViewModel para o concurso
+                    viewModel.Add(new TopContestViewModel
+                    {
+                        Name = contest.Name,
+                        Data = contest.Data,
+                        Number = contest.Numbers,
+                        NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
+                        {
+                            Number = o.Key,
+                            Occurences = o.Value
+                        }).ToList()
+                    });
+                }
+
+                return View(viewModel);
             }
+
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel("Erro ao calcular os 2 concursos base com mais acertos.",

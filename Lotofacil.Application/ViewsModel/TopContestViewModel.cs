@@ -8,7 +8,7 @@ namespace Lotofacil.Application.ViewsModel
 {
     public class TopContestViewModel
     {
-        public int Name { get; set; }
+        public string Name { get; set; }
 
         public DateTime Data { get; set; }
 
