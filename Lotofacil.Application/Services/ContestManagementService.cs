@@ -12,7 +12,7 @@ namespace Lotofacil.Application.Services
     {
         public DateTime SetDataHour(DateTime data)
         {
-            return data.Date.AddHours(20);//Todos os concursos devem estar setados para 20 horas
+            return data.Date.AddHours(20);
         }
 
         public List<int> ConvertFormattedStringToList(string input)
