@@ -57,10 +57,15 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             builder.Property(b => b.Hit15)
                    .HasColumnName("Hit15");
 
-
             // Propriedade CreatedAt
             builder.Property(b => b.CreatedAt)
                    .HasColumnName("CreatedAt")
+                   .IsRequired();
+
+            // Propriedade Numbers
+            builder.Property(b => b.TopTenNumbers)
+                   .HasColumnName("TopTenNumbers")
+                   .HasMaxLength(29)
                    .IsRequired();
 
             // Configuração do relacionamento muitos-para-muitos

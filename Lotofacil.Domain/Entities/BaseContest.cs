@@ -44,6 +44,11 @@ namespace Lotofacil.Domain.Entities
         public DateTime CreatedAt { get; private set; }
 
         /// <summary>
+        /// Gets or sets the top Ten contest's numbers.
+        /// </summary>
+        public string TopTenNumbers { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of contests where 11 or more matches were achieved.
         /// </summary>
         public virtual ICollection<Contest> ContestsAbove11 { get; set; }
