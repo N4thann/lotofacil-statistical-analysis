@@ -1,46 +1,13 @@
 ﻿using Lotofacil.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lotofacil.Infra.Data.EntityConfiguration
 {
-    public class BaseContestConfiguration : IEntityTypeConfiguration<BaseContest>//Utilizando o Fluent API
+    public class BaseContestConfiguration : ContestBaseEntityConfiguration<BaseContest>
     {
-        public void Configure(EntityTypeBuilder<BaseContest> builder)
+        protected override void AppendConfig(EntityTypeBuilder<BaseContest> builder)
         {
-            // Nome da tabela
-            builder.ToTable("BaseContest");
-
-            // Chave primária
-            builder.HasKey(b => b.Id);
-
-            // Propriedade Id
-            builder.Property(b => b.Id)
-                   .HasColumnName("Id")
-                   .IsRequired();
-
-            // Propriedade Name
-            builder.Property(b => b.Name)
-                   .HasColumnName("Name")
-                   .HasMaxLength(20)
-                   .IsRequired();
-
-            // Propriedade Data
-            builder.Property(b => b.Data)
-                   .HasColumnName("Data")
-                   .IsRequired();
-
-            // Propriedade Numbers
-            builder.Property(b => b.Numbers)
-                   .HasColumnName("Numbers")
-                   .HasMaxLength(45)
-                   .IsRequired();
-
             // Configuração dos atributos Hit11 a Hit15
             builder.Property(b => b.Hit11)
                    .HasColumnName("Hit11");

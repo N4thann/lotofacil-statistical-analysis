@@ -4,31 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lotofacil.Infra.Data.EntityConfiguration
 {
-    public class ContestActivityLogConfiguration : IEntityTypeConfiguration<ContestActivityLog>
+    public class ContestActivityLogConfiguration : ContestBaseEntityConfiguration<ContestActivityLog>
     {
-        public void Configure(EntityTypeBuilder<ContestActivityLog> builder)
+        protected override void AppendConfig(EntityTypeBuilder<ContestActivityLog> builder)
         {
             builder.ToTable("ContestActivityLog");
-
-            builder.HasKey(b => b.Id);
-
-            builder.Property(b => b.Id)
-                   .HasColumnName("Id")
-                   .IsRequired();
-
-            builder.Property(b => b.Name)
-                   .HasColumnName("Name")
-                   .HasMaxLength(20)
-                   .IsRequired();
-
-            builder.Property(b => b.Data)
-                   .HasColumnName("Data")
-                   .IsRequired();
-
-            builder.Property(b => b.Numbers)
-                   .HasColumnName("Numbers")
-                   .HasMaxLength(45)
-                   .IsRequired();
 
             builder.Property(c => c.BaseContestName)
                 .HasColumnName("BaseContestName")
