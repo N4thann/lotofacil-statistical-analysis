@@ -86,7 +86,7 @@ namespace Lotofacil.Presentation.Controllers
                 var viewModel = new List<TopContestViewModel>();
 
                 // Processa os dois maiores concursos
-                foreach (var contest in topTwoContests)
+                foreach (var x in topTwoContests)
                 {
                     // Dicionário para contar as ocorrências dos números (1 a 25)
                     var occurrences = new Dictionary<int, int>();
@@ -96,15 +96,15 @@ namespace Lotofacil.Presentation.Controllers
                     }
 
                     // Calcula as ocorrências
-                    foreach (var subContest in contest.ContestsAbove11)
+                    foreach (var y in x.ContestsAbove11)
                     {
-                        var numbers = _contestMS.ConvertFormattedStringToList(subContest.Numbers);
+                        var numbers = _contestMS.ConvertFormattedStringToList(y.Numbers);
 
-                        foreach (var number in numbers)
+                        foreach (var i in numbers)
                         {
-                            if (occurrences.ContainsKey(number))
+                            if (occurrences.ContainsKey(i))
                             {
-                                occurrences[number]++;
+                                occurrences[i]++;
                             }
                         }
                     }
@@ -112,9 +112,9 @@ namespace Lotofacil.Presentation.Controllers
                     // Cria o ViewModel para o concurso
                     viewModel.Add(new TopContestViewModel
                     {
-                        Name = contest.Name,
-                        Data = contest.Data,
-                        Number = contest.Numbers,
+                        Name = x.Name,
+                        Data = x.Data,
+                        Number = x.Numbers,
                         NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
                         {
                             Number = o.Key,
