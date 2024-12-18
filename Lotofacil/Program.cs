@@ -9,11 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-//Método configurado na camada Infra.IoC
+//MÃ©todo configurado na camada Infra.IoC
 builder.Services.AddInfrastructure(builder.Configuration);
 
-/*Inicializar o servidor e o dashboard. Essa configuração é feita no pipeline de inicialização da aplicação, 
- * uma vez que está relacionado ao ciclo de vida do aplicativo.*/
+/*Inicializar o servidor e o dashboard. Essa configuraÃ§Ã£o Ã© feita no pipeline de inicializaÃ§Ã£o da aplicaÃ§Ã£o, 
+ * uma vez que estÃ¡ relacionado ao ciclo de vida do aplicativo.*/
 builder.Services.AddHangfire(config =>
 {
     config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -23,6 +23,25 @@ builder.Services.AddHangfire(config =>
 });
 builder.Services.AddHangfireServer();// Inicializa o servidor do Hangfire
 
+builder.Services.UseHangfireDashboard("/hangfire", new DashboardOptions {
+    Authorization = new[] { new CookieAuthorizationFilter() }
+});
+
+// Configurar jobs recorrentes usando o Hangfire
+using (var hangfireScope = app.Services.CreateScope())
+{
+    var recurringJobManager = hangfireScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+
+    recurringJobManager.AddOrUpdate<IJobHandler>(
+        "MainJobHandler", // Identificador do job
+        job => job.ExecuteAsync(),
+        "*/10 * * * *"); // Executa a cada 10 minutos
+
+    recurringJobManager.AddOrUpdate<IJobHandler>(
+        "TopTenJobHandler",
+        job => job.ExecuteAsync(),
+        "*/3 * * * *");
+}
 
 var app = builder.Build();
 
@@ -43,23 +62,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
-// Configurar jobs recorrentes usando o Hangfire
-using (var hangfireScope = app.Services.CreateScope())
-{
-    var recurringJobManager = hangfireScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-
-    recurringJobManager.AddOrUpdate<IJobHandler>(
-        "MainJobHandler", // Identificador do job
-        job => job.ExecuteAsync(),
-        "*/10 * * * *"); // Executa a cada 10 minutos
-
-    //recurringJobManager.AddOrUpdate<IJobHandler>(
-    //    "LogsJobHandler",
-    //    job => job.ExecuteAsync(),
-    //    "*/1 * * * *");
-
-}
 
 app.Run();
