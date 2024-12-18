@@ -53,18 +53,6 @@ namespace Lotofacil.Infra.IoC
             services.AddScoped<JobService>();
             services.AddTransient<IJobHandler, MainJobHandler>();
 
-
-            // Configuração do Hangfire
-            services.AddHangfire(config =>
-            {
-                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                      .UseSimpleAssemblyNameTypeSerializer()
-                      .UseRecommendedSerializerSettings()
-                      .UseSqlServerStorage(connectionString);
-            });
-            services.AddHangfireServer();
-
-
             return services;
         }
     }
