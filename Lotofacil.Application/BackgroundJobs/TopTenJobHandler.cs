@@ -9,6 +9,7 @@ namespace Lotofacil.Application.BackgroundJobs
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
         private readonly IBaseContestRepository _repositoryBC;
+        private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public TopTenJobHandler(IBaseContestRepository repositoryBC,
             IContestManagementService contestMS,
@@ -21,6 +22,7 @@ namespace Lotofacil.Application.BackgroundJobs
 
         public async Task ExecuteAsync()
         {
+            await _semaphore.WaitAsync();
             try
             {
                 // Obter todos os concursos base
@@ -56,8 +58,12 @@ namespace Lotofacil.Application.BackgroundJobs
                         .Select(x => x.Key)
                         .ToList();
 
+                    var top7NumbersOrder = top7Numbers
+                        .OrderBy(x => x)
+                        .Select(x => x.ToString("D2"));
+
                     // Atualizar o atributo na entidade BaseContest
-                    baseContest.TopTenNumbers = string.Join("-", top7Numbers);
+                    baseContest.TopTenNumbers = string.Join("-", top7NumbersOrder);
 
                     // Salvar alterações no serviço
                     await _repositoryBC.UpdateBaseContestAsync(baseContest);
@@ -66,6 +72,11 @@ namespace Lotofacil.Application.BackgroundJobs
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao processar o job: {ex.Message}");
+            }
+            finally
+            {
+                _semaphore.Release();
+                Console.WriteLine("Recurso liberado.");
             }
         }
         /*

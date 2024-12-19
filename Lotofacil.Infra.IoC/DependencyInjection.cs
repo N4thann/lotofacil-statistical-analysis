@@ -12,6 +12,7 @@ using Lotofacil.Application.ViewsModel;
 using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
 using Hangfire.SqlServer;
+using Microsoft.Extensions.Logging;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -32,8 +33,10 @@ namespace Lotofacil.Infra.IoC
             GlobalConfiguration.Configuration
                 .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
                 {
-                    JobExpirationCheckInterval = TimeSpan.FromHours(1), // Intervalo de limpeza
-                    QueuePollInterval = TimeSpan.FromSeconds(15) // Frequência de verificação da fila
+                    QueuePollInterval = TimeSpan.FromSeconds(15), // Frequência de polling das filas
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5), // Timeout para mensagens
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5), // Tempo máximo de execução de batch
+                    DisableGlobalLocks = true // Evita deadlocks
                 });
 
             // Registrando serviços da camada de aplicação
@@ -52,6 +55,21 @@ namespace Lotofacil.Infra.IoC
             //Registrando serviços relacionados aos BackgroundJobs
             services.AddScoped<JobService>();
             services.AddTransient<IJobHandler, MainJobHandler>();
+            services.AddTransient<IJobHandler, TopTenJobHandler>();
+
+            // Configuração do Hangfire
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                      .UseSimpleAssemblyNameTypeSerializer()
+                      .UseRecommendedSerializerSettings()
+                      .UseSqlServerStorage(connectionString);
+            });
+
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = 1; // Apenas um worker
+            });
 
             return services;
         }
