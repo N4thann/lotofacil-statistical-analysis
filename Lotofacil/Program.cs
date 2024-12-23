@@ -4,6 +4,12 @@ using Lotofacil.Infra.IoC;
 using Microsoft.EntityFrameworkCore;
 using Hangfire;
 using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Application.BackgroundJobs;
+using System.Web.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Lotofacil.Application.Services;
+
+using DocumentFormat.OpenXml.Spreadsheet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,21 +41,15 @@ app.MapControllerRoute(
 // Configuração do dashboard do Hangfire
 app.UseHangfireDashboard("/hangfire");
 
-// Configurar jobs recorrentes usando o Hangfire
-using (var hangfireScope = app.Services.CreateScope())
-{
-    var recurringJobManager = hangfireScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+RecurringJob.AddOrUpdate<MainJobHandler>(
+    "main-job",
+    x => x.ExecuteAsync(),
+    "*/4 * * * *");
 
-    recurringJobManager.AddOrUpdate<IJobHandler>(
-        "MainJobHandler", // Identificador do job
-        job => job.ExecuteAsync(),
-        "*/10 * * * *"); // Executa a cada 10 minutos
-
-    recurringJobManager.AddOrUpdate<IJobHandler>(
-        "TopTenJobHandler",
-        job => job.ExecuteAsync(),
-        "*/5 * * * *");
-}
+RecurringJob.AddOrUpdate<TopTenJobHandler>(
+    "Top-ten-job",
+    service => service.ExecuteAsync(),
+    "*/9 * * * *"); 
 
 
 app.Run();

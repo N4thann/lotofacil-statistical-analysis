@@ -2,6 +2,7 @@
 using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Application.Services;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -11,15 +12,13 @@ namespace Lotofacil.Presentation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
-        private readonly IJobHandler _jobHandler;
 
         public HomeController(ApplicationDbContext context, IBaseContestService baseContestService,
-            ILogger<HomeController> logger, IJobHandler jobHandler, IContestManagementService contestMS)
+            ILogger<HomeController> logger, IContestManagementService contestMS)
         {
             _context = context;
             _logger = logger;
             _baseContestService = baseContestService;
-            _jobHandler = jobHandler;
             _contestMS = contestMS;
         }
 
@@ -41,22 +40,6 @@ namespace Lotofacil.Presentation.Controllers
                 return View("Error", new ErrorViewModel("Erro ao acessar os dados do banco de dados da tabela Contests.",
                     ex.Message, 1));
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ExecuteJobManually()
-        {
-            try
-            {
-                await _jobHandler.ExecuteAsync();
-                TempData["Message"] = "Job executado com sucesso!";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = $"Erro ao executar o job: {ex.Message}";
-            }
-
-            return RedirectToAction("Index");
         }
 
         [HttpGet()]

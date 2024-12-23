@@ -28,6 +28,7 @@ namespace Lotofacil.Infra.IoC
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            // Configuração do Hangfire no DependencyInjection
             //Faz uma limpeza nas tabelas que o Hangfire criou no banco de dados
             //Por padrão, os jobs são marcados para expiração após 24 horas.
             GlobalConfiguration.Configuration
@@ -52,11 +53,6 @@ namespace Lotofacil.Infra.IoC
             //Registrando serviços de validação com Fluent Validations
             services.AddTransient<IValidator<ContestViewModel>, ContestValidator>();
 
-            //Registrando serviços relacionados aos BackgroundJobs
-            services.AddScoped<JobService>();
-            services.AddTransient<IJobHandler, MainJobHandler>();
-            services.AddTransient<IJobHandler, TopTenJobHandler>();
-
             // Configuração do Hangfire
             services.AddHangfire(config =>
             {
@@ -66,10 +62,7 @@ namespace Lotofacil.Infra.IoC
                       .UseSqlServerStorage(connectionString);
             });
 
-            services.AddHangfireServer(options =>
-            {
-                options.WorkerCount = 1; // Apenas um worker
-            });
+            services.AddHangfireServer();
 
             return services;
         }

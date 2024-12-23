@@ -1,11 +1,12 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.Services;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
-    public class MainJobHandler : IJobHandler//Todos os BackgroundJobs devem implementar essa interface
+    public class MainJobHandler
     {
         private readonly IBaseContestRepository _repositoryBC;
         private readonly IContestRepository _repositoryC;

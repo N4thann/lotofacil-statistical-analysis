@@ -4,7 +4,7 @@ using Lotofacil.Domain.Interfaces;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
-    public class TopTenJobHandler : IJobHandler
+    public class TopTenJobHandler
     {
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
@@ -18,11 +18,11 @@ namespace Lotofacil.Application.BackgroundJobs
             _repositoryBC = repositoryBC;
             _contestMS = contestMS;
             _baseContestService = baseContestService;
-        } 
+        }
 
         public async Task ExecuteAsync()
         {
-            await _semaphore.WaitAsync();
+           await _semaphore.WaitAsync();
             try
             {
                 // Obter todos os concursos base
