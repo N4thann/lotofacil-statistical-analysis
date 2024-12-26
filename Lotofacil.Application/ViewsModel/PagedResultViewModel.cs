@@ -3,7 +3,7 @@
 
 namespace Lotofacil.Application.ViewsModel
 {
-    public class ContestActivityLogViewModel
+    public class PagedResultViewModel
     {
         public List<ContestActivityLog> Logs { get; set; }
         public int CurrentPage { get; set; }

@@ -25,7 +25,7 @@ namespace Lotofacil.Web.Controllers
             var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, page, pageSize);
             var totalCount = await _contestActivityLogService.GetTotalCountAsync(name, startDate, endDate); // Implementação no serviço para pegar o total de registros
 
-            var model = new ContestActivityLogViewModel
+            var model = new PagedResultViewModel
             {
                 Logs = logs,
                 CurrentPage = page,
