@@ -22,7 +22,6 @@ namespace Lotofacil.Presentation.Controllers
             _contestMS = contestMS;
         }
 
-        [HttpGet()]
         public async Task<IActionResult> Index()
         {
             try
@@ -42,7 +41,6 @@ namespace Lotofacil.Presentation.Controllers
             }
         }
 
-        [HttpGet()]
         public async Task<IActionResult> Dash()
         {
             try
