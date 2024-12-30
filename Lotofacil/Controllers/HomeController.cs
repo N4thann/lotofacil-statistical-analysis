@@ -3,6 +3,7 @@ using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.Services;
+using Lotofacil.Domain.Entities;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -112,6 +113,33 @@ namespace Lotofacil.Presentation.Controllers
                 return View("Error", new ErrorViewModel("Erro ao calcular os 2 concursos base com mais acertos.",
                     ex.Message, 4));
             }
+        }
+
+        public async Task<IActionResult> Dash2(string? name, DateTime? startDate, DateTime? endDate, int page = 1, int pageSize = 10)
+        {
+            var datas = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, page, pageSize);
+            var totalCount = await _baseContestService.GetTotalCountAsync(name, startDate, endDate); // Implementação no serviço para pegar o total de registros
+
+            var model = new PagedResultViewModel<BaseContest>
+            {
+                Datas = datas,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                NameFilter = name,
+                StartDateFilter = startDate,
+                EndDateFilter = endDate
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ExportToExcel(string? name, DateTime? startDate, DateTime? endDate)
+        {
+            var datas = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, 1, int.MaxValue); // Pega todos os registros
+
+            var stream = _contestMS.GenerateExcel(datas); // Método utilitário para gerar o Excel
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ContestActivityLogs.xlsx");
         }
 
         public IActionResult Privacy()

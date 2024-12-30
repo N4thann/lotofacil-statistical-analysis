@@ -3,9 +3,9 @@
 
 namespace Lotofacil.Application.ViewsModel
 {
-    public class PagedResultViewModel
+    public class PagedResultViewModel<T> where T : class
     {
-        public List<ContestActivityLog> Logs { get; set; }
+        public List<T> Datas { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
 

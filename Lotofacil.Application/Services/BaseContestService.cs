@@ -2,6 +2,7 @@
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,47 @@ namespace Lotofacil.Application.Services
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
 
             await _repository.DeleteAsync(id);
+        }
+
+        public IQueryable<BaseContest> GetQueryableBaseContests()
+        {
+            return _repository.GetAllQueryable();
+        }
+
+        public async Task<List<BaseContest>> GetFilteredBaseContestsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize)
+        {
+            var query = GetQueryableBaseContests();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(log => log.Name.Contains(name));
+
+            if (startDate.HasValue)
+                query = query.Where(log => log.Data >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(log => log.Data <= endDate.Value);
+
+            return await query
+                .OrderBy(log => log.Data)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalCountAsync(string? name, DateTime? startDate, DateTime? endDate)
+        {
+            var query = GetQueryableBaseContests();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(log => log.Name.Contains(name));
+
+            if (startDate.HasValue)
+                query = query.Where(log => log.Data >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(log => log.Data <= endDate.Value);
+
+            return await query.CountAsync();
         }
     }
 }

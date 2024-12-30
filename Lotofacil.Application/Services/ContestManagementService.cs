@@ -71,36 +71,36 @@ namespace Lotofacil.Application.Services
             return matches;
         }
 
-        public MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs)
+        public MemoryStream GenerateExcel<T>(IEnumerable<T> data)
         {
-            //Instalar pacote ClosedXML
+            // Instalar pacote ClosedXML
             using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("Logs");
+            var worksheet = workbook.Worksheets.Add("Data");
 
-            // Cabeçalhos
-            worksheet.Cell(1, 1).Value = "Nome do Concurso";
-            worksheet.Cell(1, 2).Value = "Data";
-            worksheet.Cell(1, 3).Value = "Números";
-            worksheet.Cell(1, 4).Value = "Nome do Concurso Base";
-            worksheet.Cell(1, 5).Value = "Números do Concurso Base";
-            worksheet.Cell(1, 6).Value = "Data de Criação";
+            // Obter propriedades da entidade
+            var properties = typeof(T).GetProperties();
+
+            // Criar cabeçalhos dinamicamente
+            for (int i = 0; i < properties.Length; i++)
+            {
+                worksheet.Cell(1, i + 1).Value = properties[i].Name;
+            }
 
             // Estilizar cabeçalhos
-            var headerRange = worksheet.Range("A1:F1");
+            var headerRange = worksheet.Range(1, 1, 1, properties.Length);
             headerRange.Style.Font.FontColor = XLColor.White; // Texto branco
             headerRange.Style.Fill.BackgroundColor = XLColor.Black; // Fundo preto
-            headerRange.Style.Font.Bold = true; // Negrito para dar destaque
+            headerRange.Style.Font.Bold = true; // Negrito
 
-            // Adicionar registros
-            var row = 2;
-            foreach (var log in logs)
+            // Adicionar registros dinamicamente
+            int row = 2;
+            foreach (var item in data)
             {
-                worksheet.Cell(row, 1).Value = log.Name;
-                worksheet.Cell(row, 2).Value = log.Data.ToString("yyyy-MM-dd");
-                worksheet.Cell(row, 3).Value = log.Numbers;
-                worksheet.Cell(row, 4).Value = log.BaseContestName;
-                worksheet.Cell(row, 5).Value = log.BaseContestNumbers;
-                worksheet.Cell(row, 6).Value = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                for (int col = 0; col < properties.Length; col++)
+                {
+                    var value = properties[col].GetValue(item); // Obter valor da propriedade
+                    worksheet.Cell(row, col + 1).Value = value?.ToString() ?? string.Empty;
+                }
                 row++;
             }
 
