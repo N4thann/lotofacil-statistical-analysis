@@ -4,36 +4,67 @@
     ViewData["Title"] = "Dashboard 2";
 }
 
-<h1>Lista de Concursos Base com análises</h1>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Dashboard de Concursos Base</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Página Inicial</a></li>
+                    <li class="breadcrumb-item active">Dashboard de Concursos Base</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Formulário de Filtro -->
-<form method="get" asp-action="Dash2">
-    <div>
-        <label for="name">Pesquisar Concurso Base:</label>
-        <input type="text" id="name" name="name" value="@Model.NameFilter" placeholder="Enter name" />
-
-        <label for="startDate">Data Inicial:</label>
-        <input type="date" id="startDate" name="startDate" value="@Model.StartDateFilter?.ToString("yyyy-MM-dd")" />
-
-        <label for="endDate">Data Final:</label>
-        <input type="date" id="endDate" name="endDate" value="@Model.EndDateFilter?.ToString("yyyy-MM-dd")" />
-
-        <button type="submit">Filtrar</button>
-        <a asp-action="ExportToExcel"
-           asp-route-name="@Model.NameFilter"
-           asp-route-startDate="@Model.StartDateFilter"
-           asp-route-endDate="@Model.EndDateFilter"
-           class="btn btn-primary">
-            Geral Excel
-        </a>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Filtros</h3>
     </div>
-</form>
+    <div class="card-body">
+        <form method="get" asp-action="Dash2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="name">Pesquisar Concurso:</label>
+                    <input type="text" id="name" name="name" value="@Model.NameFilter" class="form-control" placeholder="Digite o nome">
+                </div>
+                <div class="col-md-3">
+                    <label for="startDate">Data Inicial:</label>
+                    <input type="date" id="startDate" name="startDate" value="@Model.StartDateFilter?.ToString("yyyy-MM-dd")" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label for="endDate">Data Final:</label>
+                    <input type="date" id="endDate" name="endDate" value="@Model.EndDateFilter?.ToString("yyyy-MM-dd")" class="form-control">
+                </div>
+                <div class="col-md-2 align-self-end">
+                    <button type="submit" class="btn btn-primary btn-block">Filtrar</button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <a asp-action="ExportToExcel" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter" class="btn btn-success">
+                        Gerar Excel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-<!-- Tabela com Rolagem Horizontal -->
-<div style="overflow-x: auto;">
-    <table border="1" style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
+<!-- Tabela -->
+<div class="card card-orange mt-3">
+    <div class="card-header">
+        <h3 class="card-title">Resultados</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="thead-dark">
+               <tr>
                 <th>Concurso Base</th>
                 <th>Data</th>
                 <th>Números</th>
@@ -50,33 +81,45 @@
                     <td>@log.Numbers</td>
                     <td>@log.ContestsAbove11.Count()</td>
                     <td>@log.TopTenNumbers</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Paginação -->
-<div>
-    @if (Model.CurrentPage > 1)
-    {
-        <a asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Previous</a>
-    }
-
-    @for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        if (i == Model.CurrentPage)
-        {
-            <strong>@i</strong>
-        }
-        else
-        {
-            <a asp-action="Index" asp-route-page="@i" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">@i</a>
-        }
-    }
-
-    @if (Model.CurrentPage < Model.TotalPages)
-    {
-        <a asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Next</a>
-    }
+<div class="d-flex justify-content-center mt-3">
+    <nav>
+        <ul class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Anterior</a>
+                </li>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">@i</a>
+                    </li>
+                }
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-name="@Model.NameFilter" asp-route-startDate="@Model.StartDateFilter" asp-route-endDate="@Model.EndDateFilter">Próximo</a>
+                </li>
+            }
+        </ul>
+    </nav>
 </div>
