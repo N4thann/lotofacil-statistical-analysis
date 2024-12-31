@@ -71,36 +71,45 @@ namespace Lotofacil.Application.Services
             return matches;
         }
 
-        public MemoryStream GenerateExcelContestActivityLog(IEnumerable<ContestActivityLog> logs)
+        public MemoryStream GenerateExcelForContestActivityLog(IEnumerable<ContestActivityLog> data)
         {
-            //Instalar pacote ClosedXML
             using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("Logs");
+            var worksheet = workbook.Worksheets.Add("Log dos Concursos");
 
-            // Cabeçalhos
-            worksheet.Cell(1, 1).Value = "Nome do Concurso";
-            worksheet.Cell(1, 2).Value = "Data";
-            worksheet.Cell(1, 3).Value = "Números";
-            worksheet.Cell(1, 4).Value = "Nome do Concurso Base";
-            worksheet.Cell(1, 5).Value = "Números do Concurso Base";
-            worksheet.Cell(1, 6).Value = "Data de Criação";
+            // Definir headers personalizados e sua ordem
+            var headers = new List<(string Header, Func<ContestActivityLog, object?> ValueSelector)>
+                {
+                    ("Concurso", log => log.Name),
+                    ("Números", log => log.Numbers),
+                    ("Data de Realização", log => log.Data),
+                    ("Concurso Base", log => log.BaseContestName),
+                    ("Números do Concurso Base", log => log.BaseContestNumbers)
+                };
+
+            // Criar cabeçalhos na planilha
+            for (int i = 0; i < headers.Count; i++)
+            {
+                worksheet.Cell(1, i + 1).Value = headers[i].Header;
+            }
 
             // Estilizar cabeçalhos
-            var headerRange = worksheet.Range("A1:F1");
+            var headerRange = worksheet.Range(1, 1, 1, headers.Count);
             headerRange.Style.Font.FontColor = XLColor.White; // Texto branco
             headerRange.Style.Fill.BackgroundColor = XLColor.Black; // Fundo preto
-            headerRange.Style.Font.Bold = true; // Negrito para dar destaque
+            headerRange.Style.Font.Bold = true; // Negrito
+            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;//Centralizar os valores
 
-            // Adicionar registros
-            var row = 2;
-            foreach (var log in logs)
+            // Adicionar registros dinamicamente
+            int row = 2;
+            foreach (var i in data)
             {
-                worksheet.Cell(row, 1).Value = log.Name;
-                worksheet.Cell(row, 2).Value = log.Data.ToString("yyyy-MM-dd");
-                worksheet.Cell(row, 3).Value = log.Numbers;
-                worksheet.Cell(row, 4).Value = log.BaseContestName;
-                worksheet.Cell(row, 5).Value = log.BaseContestNumbers;
-                worksheet.Cell(row, 6).Value = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                for (int col = 0; col < headers.Count; col++)
+                {
+                    var value = headers[col].ValueSelector(i); // Obter valor usando o seletor
+                    var cell = worksheet.Cell(row, col + 1);
+                    cell.Value = value?.ToString() ?? string.Empty;
+                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;//Centralizar os valores
+                }
                 row++;
             }
 
@@ -114,6 +123,62 @@ namespace Lotofacil.Application.Services
 
             return memoryStream;
         }
+
+        public MemoryStream GenerateExcelForBaseContest(IEnumerable<BaseContest> data)
+        {
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Concursos Base");
+
+            var headers = new List<(string Header, Func<BaseContest, object?> ValueSelector)>
+                {
+                    ("Concurso Base", log => log.Name),
+                    ("Números", log => log.Numbers),
+                    ("Data de Realização", log => log.Data),
+                    ("Acertou 11", log => log.Hit11),
+                    ("Acertou 12", log => log.Hit12),
+                    ("Acertou 13", log => log.Hit13),
+                    ("Acertou 14", log => log.Hit14),
+                    ("Acertou 15", log => log.Hit15),
+                    ("Valor do Cálculo de eficiência", log => 
+                    (log.Hit11) + (log.Hit12 * 2) + (log.Hit13 * 3) + (log.Hit14 * 4) * (log.Hit15 * 5)),
+                    ("Top 10 números mais frequentes", log => log.TopTenNumbers),
+                };
+
+            for (int i = 0; i < headers.Count; i++)
+            {
+                worksheet.Cell(1, i + 1).Value = headers[i].Header;
+            }
+
+            var headerRange = worksheet.Range(1, 1, 1, headers.Count);
+            headerRange.Style.Font.FontColor = XLColor.White;
+            headerRange.Style.Fill.BackgroundColor = XLColor.Black; 
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            int row = 2;
+            foreach (var i in data)
+            {
+                for (int col = 0; col < headers.Count; col++)
+                {
+                    var value = headers[col].ValueSelector(i); // Obter valor usando o seletor
+                    var cell = worksheet.Cell(row, col + 1);
+                    cell.Value = value?.ToString() ?? string.Empty;
+                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                }
+                row++;
+            }
+
+            // Ajustar largura das colunas
+            worksheet.Columns().AdjustToContents();
+
+            // Gerar memória para retorno
+            var memoryStream = new MemoryStream();
+            workbook.SaveAs(memoryStream);
+            memoryStream.Position = 0;
+
+            return memoryStream;
+        }
+
 
     }
 }

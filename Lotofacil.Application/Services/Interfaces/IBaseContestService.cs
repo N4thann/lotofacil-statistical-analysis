@@ -22,5 +22,11 @@ namespace Lotofacil.Application.Services.Interfaces
 
         Task<IEnumerable<BaseContest>> GetAllWithContestsAbove11Async();
 
+        IQueryable<BaseContest> GetQueryableBaseContests();
+
+        Task<List<BaseContest>> GetFilteredBaseContestsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize);
+
+        Task<int> GetTotalCountAsync(string? name, DateTime? startDate, DateTime? endDate);
+
     }
 }

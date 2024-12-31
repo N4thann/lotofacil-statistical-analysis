@@ -25,9 +25,9 @@ namespace Lotofacil.Web.Controllers
             var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, page, pageSize);
             var totalCount = await _contestActivityLogService.GetTotalCountAsync(name, startDate, endDate); // Implementação no serviço para pegar o total de registros
 
-            var model = new PagedResultViewModel
+            var model = new PagedResultViewModel<ContestActivityLog>
             {
-                Logs = logs,
+                Datas = logs,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                 NameFilter = name,
@@ -40,11 +40,11 @@ namespace Lotofacil.Web.Controllers
 
         public async Task<IActionResult> ExportToExcel(string? name, DateTime? startDate, DateTime? endDate)
         {
-            var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, 1, int.MaxValue); // Pega todos os registros
+            var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, 1, int.MaxValue);
 
-            var stream = _contestMS.GenerateExcelContestActivityLog(logs); // Método utilitário para gerar o Excel
+            var stream = _contestMS.GenerateExcelForContestActivityLog(logs);
 
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ContestActivityLogs.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ContestActivityLog_{DateTime.Now:dd-MM-yyyy}.xlsx");
         }
     }
 }
