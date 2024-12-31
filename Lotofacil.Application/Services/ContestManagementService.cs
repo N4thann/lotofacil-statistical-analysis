@@ -1,13 +1,13 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Bibliography;
 using Lotofacil.Application.Services.Interfaces;
-using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace Lotofacil.Application.Services
 {
+    /// <summary>
+    /// Service for managing contests and providing common utility methods for contest-related entities.
+    /// </summary>
     public class ContestManagementService : IContestManagementService
     {
         public DateTime SetDataHour(DateTime data)
@@ -178,7 +178,5 @@ namespace Lotofacil.Application.Services
 
             return memoryStream;
         }
-
-
     }
 }

@@ -4,6 +4,12 @@ using Lotofacil.Domain.Interfaces;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
+    /// <summary>
+    /// Handles the job responsible for analyzing the top 10 most frequent numbers
+    /// in a base contest by iterating through its associated contests.
+    /// The results are stored in the <see cref="BaseContest.TopTenNumbers"/> property,
+    /// which can be used for real-time updates in dashboards.
+    /// </summary>
     public class TopTenJobHandler
     {
         private readonly IBaseContestService _baseContestService;
@@ -11,6 +17,13 @@ namespace Lotofacil.Application.BackgroundJobs
         private readonly IBaseContestRepository _repositoryBC;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TopTenJobHandler"/> class with the required services 
+        /// and repository for managing base contests and contest relationships.
+        /// </summary>
+        /// <param name="repositoryBC">Repository for managing base contests.</param>
+        /// <param name="contestMS">Service for handling contest-related operations.</param>
+        /// <param name="baseContestService">Service for retrieving base contests with associated contests.</param>
         public TopTenJobHandler(IBaseContestRepository repositoryBC,
             IContestManagementService contestMS,
             IBaseContestService baseContestService)
@@ -20,6 +33,13 @@ namespace Lotofacil.Application.BackgroundJobs
             _baseContestService = baseContestService;
         }
 
+        /// <summary>
+        /// Executes the job to calculate the top 10 most frequent numbers for each base contest.
+        /// The job navigates through the associated contests, counts occurrences of numbers,
+        /// and updates the <see cref="BaseContest.TopTenNumbers"/> property.
+        /// Uses a semaphore to ensure thread-safe execution.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ExecuteAsync()
         {
            await _semaphore.WaitAsync();
@@ -51,19 +71,19 @@ namespace Lotofacil.Application.BackgroundJobs
                         }
                     }
 
-                    // Obter os 7 números mais frequentes
-                    var top7Numbers = occurrences
+                    // Obter os 10 números mais frequentes
+                    var top10Numbers = occurrences
                         .OrderByDescending(x => x.Value)
                         .Take(10)
                         .Select(x => x.Key)
                         .ToList();
 
-                    var top7NumbersOrder = top7Numbers
+                    var top10NumbersOrder = top10Numbers
                         .OrderBy(x => x)
                         .Select(x => x.ToString("D2"));
 
                     // Atualizar o atributo na entidade BaseContest
-                    baseContest.TopTenNumbers = string.Join("-", top7NumbersOrder);
+                    baseContest.TopTenNumbers = string.Join("-", top10NumbersOrder);
 
                     // Salvar alterações no serviço
                     await _repositoryBC.UpdateBaseContestAsync(baseContest);
@@ -79,37 +99,5 @@ namespace Lotofacil.Application.BackgroundJobs
                 Console.WriteLine("Recurso liberado.");
             }
         }
-        /*
-        public class AtualizarIdadeService
-        {
-            private readonly IDiretorRepository _repository; // Repositório para acesso ao banco.
-
-            public AtualizarIdadeService(IDiretorRepository repository)
-            {
-                _repository = repository;
-            }
-
-            public async Task VerificarEAtualizarIdade()
-            {
-                var diretores = await _repository.ObterTodosAsync();
-
-                foreach (var diretor in diretores)
-                {
-                    // Verificar se a data de nascimento + idade atual corresponde ao próximo aniversário
-                    var proximoAniversario = diretor.DataNascimento.AddYears(diretor.Idade + 1);
-
-                    if (proximoAniversario <= DateTime.UtcNow &&
-                        proximoAniversario.Month == DateTime.UtcNow.Month &&
-                        proximoAniversario.Day == DateTime.UtcNow.Day)
-                    {
-                        diretor.Idade++;
-                        await _repository.AtualizarAsync(diretor);
-                    }
-                }
-            }
-        }
-        */
-
     }
-
 }

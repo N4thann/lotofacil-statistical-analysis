@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
+    /// <summary>
+    /// Handles the primary job in the system, which establishes relationships and performs comparisons 
+    /// between daily contests and base contests that have been saved over time.
+    /// The process calculates the intersection of contest numbers, which are sets of 15 numbers, 
+    /// and logs the results when intersections meet specific criteria.
+    /// </summary>
     public class MainJobHandler
     {
         private readonly IBaseContestRepository _repositoryBC;
@@ -14,6 +20,14 @@ namespace Lotofacil.Application.BackgroundJobs
         private readonly IContestManagementService _contestMS;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainJobHandler"/> class with the required repositories
+        /// and contest management service for handling contests and base contest relationships.
+        /// </summary>
+        /// <param name="repositoryBC">Repository for base contests.</param>
+        /// <param name="repositoryC">Repository for daily contests.</param>
+        /// <param name="repositoryLog">Repository for logging contest activities.</param>
+        /// <param name="contestMS">Service for managing contests, including operations like number intersection.</param>
         public MainJobHandler(
             IBaseContestRepository repositoryBC, 
             IContestRepository repositoryC,  
@@ -26,6 +40,12 @@ namespace Lotofacil.Application.BackgroundJobs
             _repositoryLog = repositoryLog;
         }
 
+        /// <summary>
+        /// Executes the primary job logic to compare daily contests with base contests,
+        /// establish relationships, and log contest activities.
+        /// Uses a semaphore to ensure thread-safe execution.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ExecuteAsync()
         {
             await _semaphore.WaitAsync();
@@ -46,6 +66,14 @@ namespace Lotofacil.Application.BackgroundJobs
                 Console.WriteLine("Recurso liberado.");
             }
         }
+
+        /// <summary>
+        /// Compares contests with base contests, calculates intersections of contest numbers, 
+        /// and updates relationships and activity logs.
+        /// Saves relationships where intersections exceed 10 and logs the activity 
+        /// with detailed information about the match.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task SaveRelationshipsAsync()
         {
             //Foi preciso criar repositórios específicos para recuperar as listas de ambas as entidades
