@@ -97,6 +97,7 @@ namespace Lotofacil.Application.Services
                 query = query.Where(log => log.Data <= endDate.Value);
 
             return await query
+                .Include(x => x.ContestsAbove11)//Aqui foi adicionado o include pois antes o método Count não conseguia acessar a lista quando ia mostrar
                 .OrderBy(log => log.Data)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)

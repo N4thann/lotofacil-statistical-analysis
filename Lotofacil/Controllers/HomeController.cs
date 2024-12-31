@@ -117,12 +117,12 @@ namespace Lotofacil.Presentation.Controllers
 
         public async Task<IActionResult> Dash2(string? name, DateTime? startDate, DateTime? endDate, int page = 1, int pageSize = 10)
         {
-            var datas = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, page, pageSize);
+            var baseContests = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, page, pageSize);
             var totalCount = await _baseContestService.GetTotalCountAsync(name, startDate, endDate); // Implementação no serviço para pegar o total de registros
 
             var model = new PagedResultViewModel<BaseContest>
             {
-                Datas = datas,
+                Datas = baseContests,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                 NameFilter = name,
@@ -135,11 +135,11 @@ namespace Lotofacil.Presentation.Controllers
 
         public async Task<IActionResult> ExportToExcel(string? name, DateTime? startDate, DateTime? endDate)
         {
-            var datas = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, 1, int.MaxValue); // Pega todos os registros
+            var baseContests = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, 1, int.MaxValue); // Pega todos os registros
 
-            var stream = _contestMS.GenerateExcel(datas); // Método utilitário para gerar o Excel
+            var stream = _contestMS.GenerateExcelForBaseContest(baseContests);
 
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ContestActivityLogs.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"BaseContest_{DateTime.Now:dd-MM-yyyy}.xlsx");
         }
 
         public IActionResult Privacy()

@@ -40,11 +40,11 @@ namespace Lotofacil.Web.Controllers
 
         public async Task<IActionResult> ExportToExcel(string? name, DateTime? startDate, DateTime? endDate)
         {
-            var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, 1, int.MaxValue); // Pega todos os registros
+            var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, 1, int.MaxValue);
 
-            var stream = _contestMS.GenerateExcel(logs); // Método utilitário para gerar o Excel
+            var stream = _contestMS.GenerateExcelForContestActivityLog(logs);
 
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ContestActivityLogs.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ContestActivityLog_{DateTime.Now:dd-MM-yyyy}.xlsx");
         }
     }
 }

@@ -8,9 +8,9 @@ namespace Lotofacil.Application.Services.Interfaces
         DateTime SetDataHour(DateTime data);
         List<int> ConvertFormattedStringToList(string input);
         string FormatNumbersToSave(string input);
-        MemoryStream GenerateExcel<T>(IEnumerable<T> data);
-
         int CalculateIntersection(List<int> list1, List<int> list2);
+        MemoryStream GenerateExcelForContestActivityLog(IEnumerable<ContestActivityLog> data);
+        MemoryStream GenerateExcelForBaseContest(IEnumerable<BaseContest> data);        
     }   
 }
 /*
