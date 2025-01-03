@@ -27,10 +27,10 @@
         <div class="card-body">
             <p class="card-text" style="font-size:1.2rem;">
                 <!-- Fonte maior -->
-                Este projeto foi desenvolvido em .NET 8, seguindo a Clean Architecture e diversos conceitos que ajudam a manter uma arquitetura bem estruturada. O frontend utiliza o template Admin LTE 3.2 com Bootstrap 4, que costumo usar em meus projetos. Embora o foco principal do projeto seja o backend, o frontend está visualmente agradável por conta da adaptação do templete que foi utilizado.
-
+                
                 O sistema permite o cadastro de concursos e a análise diária de novos concursos em comparação com concursos anteriores. Ele inclui uma visão de dashboard com análises, logs de registros, operações CRUD para gerenciamento de concursos, download de planilhas Excel e execução de serviços com Hangfire.
-
+                Temos análises em 3 telas de Dashboard e serviços que fazem a alimentação do banco com os relacionamentos automáticamente com Hangfire.
+                O coração do sistema é a comparação entre concursos base e os concursos diários.
                 É importante ressaltar que este projeto foi desenvolvido exclusivamente para fins de aprendizado, não sendo indicado para outros usos, uma vez que os concursos têm um caráter aleatório. Foram aplicados conceitos avançados e diversas tecnologias junto com a Clean Architecture. Embora possam ser desnecessários para um projeto dessa simplicidade, seu uso reforça o propósito educacional.
             </p>
             <a href="@Url.Action("Index", "Home")" class="nav-link">Página Inicial</a>
@@ -47,9 +47,43 @@
         <div class="card-body">
             <p class="card-text" style="font-size:1.2rem;">
                 <!-- Fonte maior -->
-                O principal objetivo do sistema é facilitar a análise de concursos da Lotofácil, oferecendo uma interface amigável e recursos que automatizam o processamento dos números sorteados. Através de uma arquitetura bem planejada e tecnologias modernas, o sistema garante eficiência e uma experiência satisfatória para fins educativos.
+                Este projeto foi desenvolvido em .NET 8, ASP.Net (MVC), seguindo a Clean Architecture e diversos conceitos que ajudam a manter uma arquitetura bem estruturada. O frontend utiliza o template Admin LTE 3.2 com Bootstrap 4, que costumo usar em meus projetos. Embora o foco principal do projeto seja o backend, o frontend está visualmente agradável por conta da adaptação do templete que foi utilizado.
+                Temos validações com Fluent Validations, Jobs recorrentes com Hangfire, Entity Framework 8 e Fluent API.
+                As camadas do sistemas respeitam a arquitetura do Clean Architecture, utilizando para isso repositórios genéricos e específicos; interfaces; serviços; IoC e etc.
             </p>
             <a href="@Url.Action("Create", "Contest")" class="nav-link">Cadastrar Concurso</a>
         </div>
     </div>
+</div>
+<div class="container-fluid d-flex justify-content-center align-items-center">
+        <div class="card bg-light d-flex flex-fill">
+            <div class="card-header text-muted border-bottom-0">
+                Desenvolvedor
+            </div>
+            <div class="card-body pt-0">
+                <div class="row">
+                    <div class="col-7">
+                        <h2 class="lead"><b>Nathan Farias</b></h2>
+                        <p class="text-muted text-sm"><b>Sobre: </b> Desenvolvedor FullStack / Cientista da Computação </p>
+                        <ul class="ml-4 mb-0 fa-ul text-muted">
+                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Endereço: ...</li>
+                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Telefone: +55 (88) 99487-0757</li>
+                        </ul>
+                    </div>
+                    <div class="col-5 text-center">
+                        <img src="~/adminlte/dist/img/profile/nathan.png" alt="user-avatar" class="img-circle img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="text-right">
+                <a href="https://github.com/N4thann?tab=repositories" target="_blank"  class="btn btn-sm bg-teal">
+                        <ion-icon name="file-tray-full-outline"></ion-icon> GitHub
+                    </a>
+                <a href="https://www.linkedin.com/in/nathan-farias-5bb97a243/" target="_blank"  class="btn btn-sm btn-primary">
+                        <ion-icon name="person-outline"></ion-icon> Ver Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
 </div>
