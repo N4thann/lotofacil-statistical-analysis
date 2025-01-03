@@ -62,30 +62,29 @@ namespace Lotofacil.Presentation.Controllers
             TempData["notice"] = "Concurso Base Criado com Sucesso!";
             return RedirectToAction("List", "BaseContest");
         }
-        /*
-        public async Task<IActionResult> Details(string contestName)
+
+        public async Task<IActionResult> Details(int id)
         {
-            if (string.IsNullOrEmpty(contestName))
+            if (id == null)
             {
-                return View();
+                return View("Error", new ErrorViewModel(
+                    "Id inválido ou não recebido.", null, 4) // Código que representa ErrorType.NotFound
+                    );
             }
 
-            var baseContest = await _context.BaseContests
-            .Include(cb => cb.ContestsAbove11)
-            .OrderBy(cb => cb.Name)
-            .ThenBy(cb => cb.Id)
-            .AsSplitQuery()
-            .FirstOrDefaultAsync(cb => cb.Name.ToLower() == contestName.ToLower());
+            var baseContest = await _baseContestService.GetAllWithContestsAbove11Async();
 
-            if (baseContest == null)
+            var bcontest = baseContest.FirstOrDefault(x => x.Id == id);
+
+            if (bcontest == null)
             {
-                ViewBag.ErrorMessage = $"Concurso Base contendo '{contestName}' não foi encontrado.";
-                return View("Error");
+                return View("Error", new ErrorViewModel(
+                    $"Concurso Base com '{id}'não encontrado.", null, 4) // Código que representa ErrorType.NotFound
+                    );
             }
 
-            return View(baseContest);
+            return View(bcontest);
         }
-        */
 
         [HttpGet()]
         public async Task<IActionResult> Edit(int id)

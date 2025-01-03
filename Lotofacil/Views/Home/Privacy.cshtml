@@ -2,13 +2,31 @@
     ViewData["Title"] = "Sobre";
 }
 
+<section class="content-header" style="margin:8px;">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Sobre</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Página Inicial</a></li>
+                    <li class="breadcrumb-item active">Sobre</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div class="container-fluid d-flex justify-content-center align-items-center">
+    <!-- Primeiro Card -->
     <div class="card card-danger card-outline" style="margin:16px;">
         <div class="card-header">
             <h5 class="card-title m-0">Sobre o Sistema da Lotofácil</h5>
         </div>
         <div class="card-body">
-            <p class="card-text">
+            <p class="card-text" style="font-size:1.2rem;">
+                <!-- Fonte maior -->
                 Este projeto foi desenvolvido em .NET 8, seguindo a Clean Architecture e diversos conceitos que ajudam a manter uma arquitetura bem estruturada. O frontend utiliza o template Admin LTE 3.2 com Bootstrap 4, que costumo usar em meus projetos. Embora o foco principal do projeto seja o backend, o frontend está visualmente agradável por conta da adaptação do templete que foi utilizado.
 
                 O sistema permite o cadastro de concursos e a análise diária de novos concursos em comparação com concursos anteriores. Ele inclui uma visão de dashboard com análises, logs de registros, operações CRUD para gerenciamento de concursos, download de planilhas Excel e execução de serviços com Hangfire.
@@ -16,6 +34,22 @@
                 É importante ressaltar que este projeto foi desenvolvido exclusivamente para fins de aprendizado, não sendo indicado para outros usos, uma vez que os concursos têm um caráter aleatório. Foram aplicados conceitos avançados e diversas tecnologias junto com a Clean Architecture. Embora possam ser desnecessários para um projeto dessa simplicidade, seu uso reforça o propósito educacional.
             </p>
             <a href="@Url.Action("Index", "Home")" class="nav-link">Página Inicial</a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid d-flex justify-content-center align-items-center">
+    <!-- Segundo Card -->
+    <div class="card card-primary card-outline" style="margin:16px;">
+        <div class="card-header">
+            <h5 class="card-title m-0">Desenvoldimento do sistema</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text" style="font-size:1.2rem;">
+                <!-- Fonte maior -->
+                O principal objetivo do sistema é facilitar a análise de concursos da Lotofácil, oferecendo uma interface amigável e recursos que automatizam o processamento dos números sorteados. Através de uma arquitetura bem planejada e tecnologias modernas, o sistema garante eficiência e uma experiência satisfatória para fins educativos.
+            </p>
+            <a href="@Url.Action("Create", "Contest")" class="nav-link">Cadastrar Concurso</a>
         </div>
     </div>
 </div>

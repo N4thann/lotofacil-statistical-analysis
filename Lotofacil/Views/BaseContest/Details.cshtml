@@ -3,3 +3,68 @@
 @{
     ViewData["Title"] = "Detalhes do Concurso Base";
 }
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Concursos</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Página Inicial</a></li>
+                    <li class="breadcrumb-item"><a href="/BaseContest/List">Concursos Base</a></li>
+                    <li class="breadcrumb-item active">Detalhes</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (Model.ContestsAbove11.Any())
+{
+    <div class="card card-orange" style="margin:16px;">
+        <div class="card-header">
+            <h3 class="card-title">Concursos do Concurso Base "@Model.Name"</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped projects text-center" id="tabela">
+                <thead>
+                    <tr class="text-lg">
+                        <th style="width: 20%">
+                            Nome
+                        </th>
+                        <th style="width: 15%">
+                            Data
+                        </th>
+                        <th style="width: 40%">
+                            Números
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ContestsAbove11)
+                    {
+                        <tr>
+                            <td>
+                                <a>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </a>
+                            </td>
+                            <td>
+                                <a>
+                                    @item.Data.ToShortDateString()
+                                </a>
+                            </td>
+                            <td>
+                                <a>
+                                    @Html.DisplayFor(modelItem => item.Numbers)
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
