@@ -15,7 +15,8 @@ namespace Lotofacil.Domain.Entities
             Numbers = numbers;
             ContestsAbove11 = new List<Contest>();
             CreatedAt = DateTime.Now;
-        }
+            TopTenNumbers = "";
+    }
 
         /// <summary>
         /// Gets the count of contests where 11 matches were achieved.
