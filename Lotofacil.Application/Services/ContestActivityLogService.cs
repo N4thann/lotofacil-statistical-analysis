@@ -2,6 +2,7 @@
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Lotofacil.Application.Services
 {
@@ -31,7 +32,7 @@ namespace Lotofacil.Application.Services
                 query = query.Where(log => log.Data <= endDate.Value);
 
             return await query
-                .OrderBy(log => log.Data)
+                .OrderByDescending(log => log.CreateTime)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
