@@ -27,17 +27,25 @@ namespace Lotofacil.Presentation.Controllers
         {
             try
             {
+                // Obtém a lista de Concursos Base
                 var baseContestList = await _baseContestService.GetAllBaseContestAsync();
 
-                return baseContestList.Any()
-                     ? View(baseContestList)
-                     : View("Error", new ErrorViewModel(
-                     "Nenhum registro encontrado na tabela Contests.", null, 2) // Código que representa ErrorType.NoRecords
-                     );
+                if (!baseContestList.Any())
+                {
+                    return View("Error", new ErrorViewModel(
+                        "Nenhum registro encontrado na tabela Contests.", null, 2)); // Código para ErrorType.NoRecords
+                }
+
+                var orderedBaseContestList = baseContestList
+                    .OrderByDescending(x => (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5))//Cálculo para medir a eficiência de um concurso base
+                    .ToList();
+
+                return View(orderedBaseContestList);
             }
             catch (Exception ex)
             {
-                return View("Error", new ErrorViewModel("Erro ao acessar os dados do banco de dados da tabela Contests.",
+                return View("Error", new ErrorViewModel(
+                    "Erro ao acessar os dados do banco de dados da tabela Contests.",
                     ex.Message, 1));
             }
         }

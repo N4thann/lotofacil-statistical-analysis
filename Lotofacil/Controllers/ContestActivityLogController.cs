@@ -19,7 +19,6 @@ namespace Lotofacil.Web.Controllers
             _contestMS = contestMS;
         }
 
-        // Exibe a View com os filtros e os dados
         public async Task<IActionResult> Index(string? name, DateTime? startDate, DateTime? endDate, int page = 1, int pageSize = 10)
         {
             var logs = await _contestActivityLogService.GetFilteredContestActivityLogsAsync(name, startDate, endDate, page, pageSize);

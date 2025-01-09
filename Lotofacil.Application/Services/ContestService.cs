@@ -24,7 +24,7 @@ namespace Lotofacil.Application.Services
             {
                 "DateAsc" => contests.OrderBy(c => c.Data),
                 "DateDesc" => contests.OrderByDescending(c => c.Data),
-                _ => contests
+                _ => contests.OrderByDescending(_ => _.Data),
             };
         }
 
