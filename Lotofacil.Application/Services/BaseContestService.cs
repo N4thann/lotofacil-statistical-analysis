@@ -16,13 +16,16 @@ namespace Lotofacil.Application.Services
         private readonly IRepository<BaseContest> _repository;
         private readonly IContestManagementService _contestMS;
         private readonly IBaseContestRepository _repositoryBC;
+        private readonly IContestActivityLogService _activityLS;
         public BaseContestService(IRepository<BaseContest> repository, 
             IContestManagementService contestMS,
-            IBaseContestRepository repositoryBC)
+            IBaseContestRepository repositoryBC,
+            IContestActivityLogService activityLS)
         {
             _repository = repository;
             _contestMS = contestMS;
             _repositoryBC = repositoryBC;
+            _activityLS = activityLS;
         }
 
         public async Task<IEnumerable<BaseContest>> GetAllBaseContestAsync()
@@ -75,6 +78,7 @@ namespace Lotofacil.Application.Services
             if (baseContest == null)
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
 
+            await _activityLS.DeleteAllReferencesOfLogByBaseContest(baseContest.Name);
             await _repository.DeleteAsync(id);
         }
 

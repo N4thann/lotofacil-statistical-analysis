@@ -12,6 +12,6 @@ namespace Lotofacil.Application.Services.Interfaces
         IQueryable<ContestActivityLog> GetQueryableContestActivityLogs();
         Task<List<ContestActivityLog>> GetFilteredContestActivityLogsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize);
         Task<int> GetTotalCountAsync(string? name, DateTime? startDate, DateTime? endDate);
-
+        Task DeleteAllReferencesOfLogByBaseContest(string baseContestName);
     }
 }
