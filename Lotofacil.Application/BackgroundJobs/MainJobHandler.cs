@@ -118,7 +118,8 @@ namespace Lotofacil.Application.BackgroundJobs
                                     y.Numbers,
                                     y.Data,
                                     x.Name,
-                                    x.Numbers);
+                                    x.Numbers,
+                                    allHits);
 
                                 await _repositoryLog.AddAsync(log);
 

@@ -105,6 +105,8 @@ namespace Lotofacil.Presentation.Controllers
                         Name = x.Name,
                         Data = x.Data,
                         Number = x.Numbers,
+                        CountContests = x.ContestsAbove11.Count(),
+                        TopTenNumbers = x.TopTenNumbers,
                         NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
                         {
                             Number = o.Key,

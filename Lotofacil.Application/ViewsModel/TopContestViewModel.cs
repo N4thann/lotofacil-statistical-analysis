@@ -11,8 +11,12 @@ namespace Lotofacil.Application.ViewsModel
         public string Name { get; set; }
 
         public DateTime Data { get; set; }
-
+         
         public string Number { get; set; }
+
+        public int CountContests { get; set; }
+
+        public string TopTenNumbers { get; set; }
 
         public List<NumberOccurencesViewModel> NumberOccurences { get; set; }
     }

@@ -29,9 +29,11 @@
                     <h5 class="card-title m-0">@("Top " + (i + 1) + " Concurso ")</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Nome:</strong> @contests[i].Name</p>
-                    <p><strong>Data:</strong> @contests[i].Data.ToShortDateString()</p>
-                    <p><strong>Números:</strong> @contests[i].Number</p>
+                    <p><strong>Nome:    </strong> @contests[i].Name</p>
+                    <p><strong>Data:    </strong> @contests[i].Data.ToShortDateString()</p>
+                    <p><strong>Números: </strong> @contests[i].Number</p>
+                    <p><strong>Total de Concursos com +11 acertos:  </strong> @contests[i].CountContests</p>
+                    <p><strong>Top 10 números mais frequentes:</strong> @contests[i].TopTenNumbers</p>
                     <hr>
                     <ul>
                         @foreach (var occurrence in contests[i].NumberOccurences)

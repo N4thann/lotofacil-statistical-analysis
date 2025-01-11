@@ -24,6 +24,9 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             builder.Property(c => c.CreateTime)
                 .HasColumnName("CreateTime")
                 .IsRequired();
+
+            builder.Property(b => b.CountHits)
+                   .HasColumnName("CountHits");
         }
     }
 }

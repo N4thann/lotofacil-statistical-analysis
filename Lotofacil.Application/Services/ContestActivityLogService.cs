@@ -45,7 +45,7 @@ namespace Lotofacil.Application.Services
                 query = query.Where(log => log.Data <= endDate.Value);
 
             return await query
-                .OrderByDescending(log => log.CreateTime)
+                .OrderByDescending(log => log.Data)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

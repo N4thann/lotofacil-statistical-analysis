@@ -19,13 +19,19 @@ namespace Lotofacil.Domain.Entities
         /// <param name="data">The date of the Contest.</param>
         /// <param name="bcName">The name of the BaseContest.</param>
         /// <param name="bcNumbers">The numbers associated with the BaseContest.</param>
-        public ContestActivityLog(string name, string numbers, DateTime data, string bcName, string bcNumbers) 
+        public ContestActivityLog(string name, 
+            string numbers, 
+            DateTime data, 
+            string bcName, 
+            string bcNumbers,
+            int countHits) 
         {
             Name = name;
             Numbers = numbers;
             Data = data;
             BaseContestName = bcName;
             BaseContestNumbers = bcNumbers;
+            CountHits = countHits;
             CreateTime = DateTime.Now;
         }
 
@@ -38,6 +44,11 @@ namespace Lotofacil.Domain.Entities
         /// Gets The numbers associated with the BaseContest.
         /// </summary>
         public string BaseContestNumbers { get; private set; }
+
+        /// <summary>
+        /// Gets The numbers associated with the BaseContest.
+        /// </summary>
+        public int CountHits { get; private set; }
 
         /// <summary>
         /// Gets The timestamp when the log entry was created.
