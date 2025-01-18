@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.Services;
 using Lotofacil.Domain.Entities;
+using Lotofacil.Domain.Interfaces;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -13,14 +14,17 @@ namespace Lotofacil.Presentation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
+        private readonly IRepository<Contest> _repository;
 
         public HomeController(ApplicationDbContext context, IBaseContestService baseContestService,
-            ILogger<HomeController> logger, IContestManagementService contestMS)
+            ILogger<HomeController> logger, IContestManagementService contestMS,
+            IRepository<Contest> repository)
         {
             _context = context;
             _logger = logger;
             _baseContestService = baseContestService;
             _contestMS = contestMS;
+            _repository = repository;
         }
 
         public async Task<IActionResult> Index()
@@ -155,6 +159,38 @@ namespace Lotofacil.Presentation.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Dash3()
+        {
+            var dash3 = new Dash3ViewModel();
+
+            var baseContests = await _baseContestService.GetAllBaseContestAsync();
+
+            var contests = await _repository.GetAllAsync();
+
+            var lastContest = contests.LastOrDefault();
+            if (lastContest != null)
+            {
+                dash3.LastContest = lastContest.Name;
+            }
+
+            var firstContest = contests.FirstOrDefault();
+            if (firstContest != null)
+            {
+                dash3.FirstContest = firstContest.Name; 
+            }
+
+            dash3.Years = contests
+                .GroupBy(c => c.Data.Year)
+                .OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key.ToString(), g => g.Count());
+
+            dash3.TotalBaseContests = baseContests.Count();
+
+            dash3.TotalContests = contests.Count();
+
+            return View(dash3);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Lotofacil.Presentation.Controllers
         {
             try
             {
-               var baseContestList = await _baseContestService.GetAllBaseContestAsync();
+               var baseContestList = await _baseContestService.GetAllWithContestsAbove11Async();
 
                return baseContestList.Any()
                     ? View(baseContestList)

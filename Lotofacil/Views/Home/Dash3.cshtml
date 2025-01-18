@@ -1,4 +1,5 @@
-﻿
+﻿@model Lotofacil.Application.ViewsModel.Dash3ViewModel
+
 @{
     ViewData["Title"] = "Dashboard 3";
 }
@@ -19,4 +20,83 @@
     </div>
 </section>
 
+<!-- Cards principais -->
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <!-- Total de concursos cadastrados -->
+        <div class="small-box bg-fuchsia">
+            <div class="inner">
+                <h2>@Model.TotalContests</h2>
+                <p>Total de Concursos Cadastrados</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+            </div>
+        </div>
+    </div>
 
+    <div class="col-lg-3 col-6">
+        <!-- Total de concursos base -->
+        <div class="small-box bg-teal">
+            <div class="inner">
+                <h2>@Model.TotalBaseContests</h2>
+                <p>Total de Concursos Base Cadastrados</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <!-- Último concurso adicionado -->
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h2>@Model.LastContest</h2>
+                <p>Último Concurso Adicionado</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <!-- Último concurso adicionado -->
+        <div class="small-box bg-navy">
+            <div class="inner">
+                <h2>@Model.FirstContest</h2>
+                <p>Primeiro Concurso Adicionado</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cards dinâmicos para concursos por ano -->
+<div class="row">
+    @if (Model.Years != null && Model.Years.Any())
+    {
+        @foreach (var year in Model.Years)
+        {
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-lightblue">
+                    <div class="inner">
+                        <h2>Ano @year.Key</h2>
+                        <p>@year.Value concursos cadastrados</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-calendar"></i>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p class="text-center">Nenhum dado disponível para exibir os anos.</p>
+        </div>
+    }
+</div>
