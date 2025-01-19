@@ -140,8 +140,9 @@ namespace Lotofacil.Application.BackgroundJobs
                 {
                     y.LastProcessed = DateTime.Now;
                     await _repositoryC.UpdateContestAsync(y);
-                }               
-            }
+                }
+
+                }
             else
             {
                 Console.WriteLine("A lista Contests ou BaseContest está vazia.");

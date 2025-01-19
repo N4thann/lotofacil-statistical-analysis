@@ -13,17 +13,29 @@ namespace Lotofacil.Application.Validators
     public class ContestValidator : AbstractValidator<ContestViewModel>
     {
         private readonly IContestRepository _repository;
-        public ContestValidator(IContestRepository repository) 
+        private readonly IBaseContestRepository _baseContestRepository;
+        public ContestValidator(IContestRepository repository,
+            IBaseContestRepository baseContestRepository) 
         {
             _repository = repository;
+            _baseContestRepository = baseContestRepository;
 
             RuleFor(x => x.Name)
             .NotNull().WithMessage("O nome é obrigatório.")
             .Length(1, 5).WithMessage("O nome do concurso deve ter entre 1 e 5 caracteres.")
-            .MustAsync(async (name, cancellation) =>
+            .MustAsync(async (contestVM, name, cancellation) =>
             {
                 var formattedName = $"Concurso {name}";
-                return !await _repository.ExistsAsync(formattedName);
+
+                // Verifica na tabela correta com base no tipo
+                if (contestVM.IsBaseContest)
+                {
+                    return !await _baseContestRepository.ExistsAsync(formattedName);
+                }
+                else
+                {
+                    return !await _repository.ExistsAsync(formattedName);
+                }
             })
             .WithMessage("Esse concurso já foi cadastrado.");
 

@@ -7,6 +7,7 @@ using Lotofacil.Application.Services.Interfaces;
 using FluentValidation.Results;
 using FluentValidation;
 using Lotofacil.Presentation.Extensions;
+using ClosedXML.Excel;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -58,6 +59,7 @@ namespace Lotofacil.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ContestViewModel contestVM)
         {
+            contestVM.IsBaseContest = false;
             ValidationResult result = await _validator.ValidateAsync(contestVM);
 
             if (!result.IsValid)
@@ -71,6 +73,93 @@ namespace Lotofacil.Presentation.Controllers
             TempData["notice"] = "Concurso Criado com Sucesso!";
             return RedirectToAction("List", "Contest");
         }
+
+        public IActionResult ReadExcel()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportFromExcel(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["error"] = "Nenhum arquivo foi enviado.";
+                return RedirectToAction("List", "Contest");
+            }
+
+            var contests = new List<ContestViewModel>();
+            int savedContestsCount = 0;
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+                using var workbook = new XLWorkbook(stream);
+                var worksheet = workbook.Worksheets.First();
+
+                // Ler as linhas do Excel
+                foreach (var row in worksheet.RowsUsed().Skip(1)) // Pula a linha de cabeçalhos
+                {
+                    try
+                    {
+                        // Recuperar o valor da célula de data como texto
+                        var dateCell = row.Cell(2).GetValue<string>();
+                        DateTime date;
+
+                        // Tentar converter o texto para DateTime
+                        if (!DateTime.TryParse(dateCell, out date))
+                        {
+                            TempData["error"] = $"Erro ao processar a data no concurso {row.Cell(1).GetValue<string>()}. Valor inválido: {dateCell}.";
+                            continue; // Pula esta linha
+                        }
+
+                        var contestVM = new ContestViewModel
+                        {
+                            Name = row.Cell(1).GetValue<string>(), // Nome do Concurso
+                            Data = date, // Data do Concurso convertida
+                            Numbers = string.Join("", Enumerable.Range(3, 15) // Colunas de bolas 1 a 15
+                                .Select(col => row.Cell(col).GetValue<int>().ToString("D2"))) // Formata como "01", "02", etc.
+                        };
+                        contestVM.IsBaseContest = false;
+
+                        // Valida o objeto ContestViewModel
+                        ValidationResult result = await _validator.ValidateAsync(contestVM);
+
+                        if (!result.IsValid)
+                        {
+                            TempData["error"] = $"Erro na validação do concurso {contestVM.Name}.";
+                            continue; // Pula este concurso
+                        }
+
+                        contests.Add(contestVM);
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["error"] = $"Erro ao processar uma linha: {ex.Message}";
+                        continue;
+                    }
+                }
+
+                // Chama o serviço para salvar no banco
+                foreach (var contest in contests)
+                {
+                    await _contestService.CreateAsync(contest);
+                    savedContestsCount++;
+                }
+
+                TempData["notice"] = "Importação concluída com sucesso!";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"Erro ao importar o arquivo: {ex.Message}";
+            }
+
+            // Exibe o total de concursos gravados no console
+            Console.WriteLine($"Total de concursos salvos: {savedContestsCount}");
+
+            return RedirectToAction("List", "Contest");
+        }
+
 
     }
 }

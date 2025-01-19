@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Importar Concurso via Excel";
+}
+
+<h2>Importar Concurso via Excel</h2>
+
+<div class="container">
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    }
+    @if (TempData["notice"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["notice"]
+        </div>
+    }
+
+    <form asp-controller="Contest" asp-action="ImportFromExcel" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">Selecione o arquivo Excel:</label>
+            <input type="file" class="form-control" id="file" name="file" accept=".xlsx, .xls" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Importar</button>
+    </form>
+</div>

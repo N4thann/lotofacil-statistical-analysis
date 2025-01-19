@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public DateTime Data { get; set; }
         public string Numbers { get; set; }
+        public bool IsBaseContest { get; set; }
     }
 }
 /*Inclua o Id quando ele for necessário para a operação: 

@@ -5,6 +5,7 @@ using Lotofacil.Application.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Lotofacil.Presentation.Extensions;
+using Lotofacil.Domain.Entities;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -49,6 +50,7 @@ namespace Lotofacil.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ContestViewModel baseContestVM)
         {
+            baseContestVM.IsBaseContest = true;
             ValidationResult result = await _validator.ValidateAsync(baseContestVM);
 
             if(!result.IsValid)
