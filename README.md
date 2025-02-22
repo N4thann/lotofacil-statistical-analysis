@@ -7,9 +7,13 @@ O sistema permite o cadastro de concursos e a análise diária de novos concurso
 
 ![Concursosbase](https://github.com/user-attachments/assets/104cfcb8-1001-497a-a156-c6d8c9d7af81)
 
-![base](https://github.com/user-attachments/assets/2bef8ced-07af-4fff-a982-41c3d62cabe0)
+![image](https://github.com/user-attachments/assets/735b3d61-278f-4304-bb91-8ba770a50248)
+
 
 ![Dash3](https://github.com/user-attachments/assets/49f7e28c-13d2-47b4-b5af-7e0ef4a12d8f)
+
+![image](https://github.com/user-attachments/assets/f1c5aed2-a536-488d-b622-9617582c944e)
+
 
 
 
