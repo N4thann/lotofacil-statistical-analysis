@@ -1,7 +1,20 @@
 ﻿@model IEnumerable<Lotofacil.Domain.Entities.Contest>
 @{
     ViewData["Title"] = "Listar Concursos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<!-- jQuery (necessário para DataTables) -->
+<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
+
+<!-- DataTables e Bootstrap 4 -->
+<script src="~/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- DataTables Responsive -->
+<script src="~/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
 
 <section class="content-header">
     <div class="container-fluid">
@@ -25,8 +38,13 @@
         <div class="card-header">
             <h3 class="card-title">Concursos</h3>
         </div>
+        <div class="col-md-2 align-self-end">
+            <button style="margin: 12px 0 12px 12px" class="btn btn-success" onclick="abrirModalAnalisar()">
+                <i class="fas fa-layer-group"></i> Analisar selecionados
+            </button>
+        </div>
         <div class="card-body">
-            <table class="table table-striped projects text-center" id="tabela">
+            <table class="table table-striped projects text-center" id="tabela1">
                 <thead>
                     <tr class="text-lg">
                         <th style="width: 20%">
@@ -44,6 +62,9 @@
                                     <i class="fas fa-arrow-down"></i>
                                 }
                             </a>
+                        </th>
+                        <th>
+                            Analisar
                         </th>
                         <th style="width: 60%">
                             Concursos
@@ -64,6 +85,9 @@
                                     @item.Data.ToShortDateString()
                                 </a>
                             </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <input type="checkbox" class="checkbox-analisar" id="chk-@item.Id" value="@item.Id" style="transform: scale(1.5)"/>
+                            </td>
                             <td>
                                 <a>
                                     @Html.DisplayFor(modelItem => item.Numbers)
@@ -76,6 +100,57 @@
         </div>
     </div>
 }
-@section Scripts {
-   <partial name="_ValidationScriptsPartial" />
-}
+<script>
+    let selecionadosGlobalmente = new Set();
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('checkbox-analisar').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                let concurso = (this.value);
+
+                if (this.checked) {
+                    selecionadosGlobalmente.add(chamado);
+                } else {
+                    selecionadosGlobalmente.delete(chamado);
+                }
+            });
+        });
+    });
+
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#tabela1").DataTable({
+            "paging": true, // Ativa a paginação
+            "pageLength": 10, // Define quantos registros por página (opcional)
+            "lengthMenu": [10, 25, 50, 100], // Permite alterar quantidade por página
+            "language": {
+                "decimal": "",
+                "emptyTable": "Nenhum registro encontrado",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "infoFiltered": "(Filtrados de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ resultados por página",
+                "loadingRecords": "Carregando...",
+                "processing": "Processando...",
+                "search": "Pesquisar:",
+                "zeroRecords": "Nenhum registro encontrado",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                }
+            },
+            "responsive": true,
+            "ordering": false,
+            "lengthChange": true,
+            "autoWidth": false
+        });
+    });
+</script>
+
+

@@ -3,6 +3,11 @@
 @{
     ViewData["Title"] = "Página Inicial";
 }
+<script>
+    setTimeout(() => {
+        document.location.reload();
+    }, 180000);
+</script>
 
 @if (Model.Any())
 {
