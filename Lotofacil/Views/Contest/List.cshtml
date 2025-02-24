@@ -15,6 +15,70 @@
 <script src="~/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="~/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 
+<style>
+.modal-painel {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog-painel {
+    position: relative;
+    width: 60%;
+    margin: 10% auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header-painel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-title-painel {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.close-painel {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.modal-footer-painel {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.btn-painel {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-painel:hover {
+    background-color: #0056b3;
+}
+</style>
+
 
 <section class="content-header">
     <div class="container-fluid">
@@ -100,33 +164,77 @@
         </div>
     </div>
 }
+
+<div id="modalAnalisar" class="modal-painel" style="display: none;">
+    <div class="modal-dialog-painel">
+        <div class="modal-content-painel">
+            <div class="modal-header-painel">
+                <h4 class="modal-title-painel">Análises</h4>
+                <button type="button" class="close-painel" onclick="fecharModal('modalAnalisar')">&times;</button>
+            </div>
+            <div class="=modal-body-painel">
+
+            </div>
+            <div class="modal-footer-painel">
+                <button type="button" class="btn-painel" onclick="fecharModal('modalAnalisar')">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     let selecionadosGlobalmente = new Set();
     
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('checkbox-analisar').forEach(checkbox => {
+        document.querySelectorAll('.checkbox-analisar').forEach(checkbox => {
             checkbox.addEventListener('change', function () {
-                let concurso = (this.value);
+                let concurso = parseInt(this.value);
 
                 if (this.checked) {
-                    selecionadosGlobalmente.add(chamado);
+                    selecionadosGlobalmente.add(concurso);
                 } else {
-                    selecionadosGlobalmente.delete(chamado);
+                    selecionadosGlobalmente.delete(concurso);
                 }
             });
         });
     });
 
+    function abrirModalAnalisar() {
+        if (selecionadosGlobalmente.size < 1) {
+            alert("Selecione pelo menos dois concursos para analisar");
+            return;
+        }
+
+        fetch('/List/AnalisarConcursos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Solicitacoes: Array.from(selecionadosGlobalmente) })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sucesso) {
+                    document.getElementById("modalAnalisar").style.display = "block";
+                } else {
+                    alert("Erro ao processar a análise.");
+                }
+            })
+            .catch(error => console.error('Erro na requisição:', error));
+    }
 
 
+    function fecharModal(id) {
+        document.getElementById(id).style.display = "none";
+        location.reload(); // Recarrega a página ao fechar o modal
+    }
 </script>
 
 <script>
     $(document).ready(function () {
-        $("#tabela1").DataTable({
-            "paging": true, // Ativa a paginação
-            "pageLength": 10, // Define quantos registros por página (opcional)
-            "lengthMenu": [10, 25, 50, 100], // Permite alterar quantidade por página
+        let tabela = $("#tabela1").DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthMenu": [10, 25, 50, 100],
             "language": {
                 "decimal": "",
                 "emptyTable": "Nenhum registro encontrado",
@@ -150,7 +258,27 @@
             "lengthChange": true,
             "autoWidth": false
         });
+
+        // Restaurar checkboxes ao mudar de página
+        $('#tabela1 tbody').on('change', '.checkbox-analisar', function () {
+            let id = parseInt(this.value);
+
+            if (this.checked) {
+                selecionadosGlobalmente.add(id);
+            } else {
+                selecionadosGlobalmente.delete(id);
+            }
+        });
+
+        tabela.on('draw', function () {
+            $('.checkbox-analisar').each(function () {
+                if (selecionadosGlobalmente.has(parseInt(this.value))) {
+                    $(this).prop('checked', true);
+                }
+            });
+        });
     });
+
 </script>
 
 
