@@ -209,7 +209,7 @@
         fetch('/List/AnalisarConcursos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Solicitacoes: Array.from(selecionadosGlobalmente) })
+            body: JSON.stringify({ Contests: Array.from(selecionadosGlobalmente) })
         })
             .then(response => response.json())
             .then(data => {

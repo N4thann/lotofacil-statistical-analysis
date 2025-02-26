@@ -43,7 +43,7 @@ namespace Lotofacil.Application.Services
                 throw new ArgumentException("A string de entrada deve ter um número par de caracteres e não pode estar vazia.");
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();//Mais perfomático na situação em que precisamos iterar concatenando strings
 
             for (int i = 0; i < input.Length; i += 2)
             {

@@ -1,7 +1,10 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Lotofacil.Application.Services
 {
@@ -36,6 +39,15 @@ namespace Lotofacil.Application.Services
             var contest = new Contest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
 
             await _repository.AddAsync(contest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
+        }
+
+        [Route("List/AnalisarConcursos")]
+        public async Task<JsonResult> AnalisarConcursos([FromBody] ContestModalRequestDTO request)
+        {
+            if(request.Contests.Any())
+                return Json(new { sucesso = false, mensagem = "É necessário bla bla" });
+            else
+                return Json(new { sucesso = true, mensagem = "errados" });
         }
     }
 }

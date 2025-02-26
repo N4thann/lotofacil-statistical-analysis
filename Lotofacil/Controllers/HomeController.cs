@@ -103,7 +103,6 @@ namespace Lotofacil.Presentation.Controllers
                         }
                     }
 
-                    // Cria o ViewModel para o concurso
                     viewModel.Add(new TopContestViewModel
                     {
                         Name = x.Name,
