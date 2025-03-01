@@ -6,6 +6,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using Lotofacil.Presentation.Extensions;
 using Lotofacil.Domain.Entities;
+using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.Services;
 
 namespace Lotofacil.Presentation.Controllers
 {

@@ -32,6 +32,5 @@ namespace Lotofacil.Infra.Data.Repositories
         {
             return await _context.Contests.AnyAsync(c => c.Name == contestName);
         }
-
     }
 }

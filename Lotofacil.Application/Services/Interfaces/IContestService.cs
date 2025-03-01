@@ -1,5 +1,8 @@
-﻿using Lotofacil.Application.ViewsModel;
+﻿using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.DTO.Response;
+using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +15,6 @@ namespace Lotofacil.Application.Services.Interfaces
     {
         Task CreateAsync(ContestViewModel contestVM);
         Task<IEnumerable<Contest>> GetContestsOrderedAsync(string sortOrder);
+        //Task<ContestModalResponseDTO> AnalisarConsursos(ContestModalRequestDTO request);
     }
 }

@@ -1,7 +1,10 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.DTO.Response;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -123,5 +126,6 @@ namespace Lotofacil.Application.Services
 
             return await query.CountAsync();
         }
+
     }
 }

@@ -50,40 +50,30 @@ namespace Lotofacil.Application.BackgroundJobs
 
                 foreach (var baseContest in baseContests)
                 {
-                    // Dicionário para contar as ocorrências dos números (1 a 25)
-                    var occurrences = new Dictionary<int, int>();
-                    for (int i = 1; i <= 25; i++)
-                    {
-                        occurrences[i] = 0;
-                    }
+                    var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um for tradicional para preencher o valor do dictionary
 
-                    // Processar concursos associados
+                    // Contabilizar ocorrências dos números nos concursos
                     foreach (var subContest in baseContest.ContestsAbove11)
                     {
                         var numbers = _contestMS.ConvertFormattedStringToList(subContest.Numbers);
-
                         foreach (var number in numbers)
                         {
-                            if (occurrences.ContainsKey(number))
-                            {
-                                occurrences[number]++;
-                            }
+                            occurrences[number]++;
                         }
                     }
 
-                    // Obter os 10 números mais frequentes
+                    // Obter os 10 números mais frequentes, mantendo apenas as chaves (números)
                     var top10Numbers = occurrences
-                        .OrderByDescending(x => x.Value)
+                        .OrderByDescending(x => x.Value) // Ordena pela frequência (maior primeiro)
+                        .ThenBy(x => x.Key) // Em caso de empate, ordena pelo menor número
                         .Take(10)
-                        .Select(x => x.Key)
+                        .Select(x => x.Key) // Pega apenas os números
+                        .OrderBy(x => x) // Ordena em ordem crescente
+                        .Select(x => x.ToString("D2")) // Formata para "01", "02", etc.
                         .ToList();
 
-                    var top10NumbersOrder = top10Numbers
-                        .OrderBy(x => x)
-                        .Select(x => x.ToString("D2"));
-
-                    // Atualizar o atributo na entidade BaseContest
-                    baseContest.TopTenNumbers = string.Join("-", top10NumbersOrder);
+                    // Atualizar a entidade BaseContest
+                    baseContest.TopTenNumbers = string.Join("-", top10Numbers);
 
                     // Salvar alterações no serviço
                     await _repositoryBC.UpdateBaseContestAsync(baseContest);

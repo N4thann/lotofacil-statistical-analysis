@@ -1,4 +1,6 @@
-﻿using Lotofacil.Application.ViewsModel;
+﻿using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.DTO.Response;
+using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using System;
 using System.Collections.Generic;
