@@ -79,7 +79,6 @@ namespace Lotofacil.Presentation.Controllers
                 // Lista para armazenar os ViewModels
                 var viewModel = new List<TopContestViewModel>();
 
-                // Processa os dois maiores concursos
                 foreach (var x in topTwoContests)
                 {
                     // Dicionário para contar as ocorrências dos números (1 a 25)

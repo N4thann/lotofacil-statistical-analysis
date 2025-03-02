@@ -162,19 +162,19 @@ namespace Lotofacil.Presentation.Controllers
             return RedirectToAction("List", "Contest");
         }
 
-        //[HttpPost]
-        //[Route("/List/AnalisarConcursos")]
-        //public async Task<IActionResult> AnalisarConcursos([FromBody] ContestModalRequestDTO request)
-        //{
-        //    if (request == null)
-        //        return BadRequest(new { sucesso = false, mensagem = "É necessário selecionar pelo menos 1 concurso" });
+        [HttpPost]
+        [Route("/List/AnalisarConcursos")]
+        public async Task<IActionResult> AnalisarConcursos([FromBody] ContestModalRequestDTO request)
+        {
+            if (request == null)
+                return BadRequest(new { sucess = false, message = "É necessário selecionar pelo menos 1 concurso" });
 
-        //    var response = await _contestService.AnalisarConcursos(request);
+            var response = await _contestService.AnalisarConcursos(request);
 
-        //    if (!response.Sucesso)
-        //        return BadRequest("Erro ao analisar os concursos!");
-
-        //    return Ok(response);
-        //}
+            if (response is null)
+                return BadRequest(new { sucess = false, message = "Erro ao analisar os concursos!" });
+            else
+                return Ok(new{ sucesso = true , response});
+        }
     }
 }

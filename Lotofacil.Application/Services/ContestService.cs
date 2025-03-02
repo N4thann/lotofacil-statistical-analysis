@@ -43,48 +43,73 @@ namespace Lotofacil.Application.Services
             await _repository.AddAsync(contest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
         }
 
-        //public async Task<ContestModalResponseDTO> AnalisarConsursos(ContestModalRequestDTO request)
-        //{
-        //    var tasks = request.Contests.Select(id => _repository.GetByIdAsync(id)); // Retorna IEnumerable<Task<BaseContest>>
-        //    var contests = await Task.WhenAll(tasks); // Aguarda todas as Tasks
+        public async Task<ContestModalResponseDTO> AnalisarConcursos(ContestModalRequestDTO request)
+        {
+            // 1. Buscar concursos no banco de dados
+            var contests = new List<Contest>();
+            foreach (var id in request.Contests)
+            {
+                var contest = await _repository.GetByIdAsync(id);
+                if (contest != null)
+                {
+                    contests.Add(contest);
+                }
+            }
+            // 2. Inicializar contadores e dicionário de ocorrências
+            var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);
 
-        //    // Dicionário para contar as ocorrências dos números (1 a 25)
-        //    var occurrences = new Dictionary<int, int>();
-        //    for (int i = 1; i <= 25; i++)
-        //    {
-        //        occurrences[i] = 0;
-        //    }
+            int totalNumbers = 0;
+            int evenCount = 0;
+            int oddCount = 0;
+            int multiplesOfThreeCount = 0;
 
-        //    foreach (var item in contests)
-        //    {
-        //        var listNumbers = _contestMS.ConvertFormattedStringToList(item.Numbers);
+            // 3. Processar cada concurso e extrair estatísticas
+            foreach (var contest in contests)
+            {
+                var listNumbers = _contestMS.ConvertFormattedStringToList(contest.Numbers);
+                totalNumbers += listNumbers.Count; // Adiciona a quantidade de números analisados
 
-        //        foreach (var number in listNumbers)
-        //        {
-        //            if (occurrences.ContainsKey(number))
-        //            {
-        //                occurrences[number]++;
-        //            }
-        //        }
+                foreach (var number in listNumbers)
+                {
+                    if (occurrences.ContainsKey(number))
+                        occurrences[number]++; // Conta a frequência do número
 
-        //        // Pegando os 5 números mais frequentes com suas contagens
-        //        var top5MostFrequentNumbers = occurrences
-        //            .OrderByDescending(x => x.Value) // Maior frequência primeiro
-        //            .ThenBy(x => x.Key) // Desempata pelo menor número
-        //            .Take(5)
-        //            .ToDictionary(x => x.Key, x => x.Value); // Mantém o formato Dictionary<int, int>
+                    if (number % 2 == 0) evenCount++; // Conta números pares
+                    else oddCount++; // Conta números ímpares
 
-        //        // Pegando os 5 números menos frequentes com suas contagens
-        //        var top5LeastFrequentNumbers = occurrences
-        //            .OrderBy(x => x.Value) // Menor frequência primeiro
-        //            .ThenBy(x => x.Key) // Desempata pelo menor número
-        //            .Take(5)
-        //            .ToDictionary(x => x.Key, x => x.Value); // Mantém o formato Dictionary<int, int>
+                    if (number % 3 == 0) multiplesOfThreeCount++; // Conta múltiplos de 3
+                }
+            }
 
-        //        var top5MostFrequentNumbersList = top5MostFrequentNumbers.Keys.ToList();
-        //        var top5LeastFrequentNumbersList = top5LeastFrequentNumbers.Keys.ToList();
+            // 4. Obter os 5 números mais e menos frequentes
+            var top5MostFrequentNumbers = occurrences
+                .OrderByDescending(x => x.Value) // Maior frequência primeiro
+                .ThenBy(x => x.Key) // Desempate pelo menor número
+                .Take(5)
+                .Select(x => x.Key)
+                .ToList();
 
-        //    }
-        //}
+            var top5LeastFrequentNumbers = occurrences
+                .OrderBy(x => x.Value) // Menor frequência primeiro
+                .ThenBy(x => x.Key) // Desempate pelo menor número
+                .Take(5)
+                .Select(x => x.Key)
+                .ToList();
+
+            // 5. Calcular as porcentagens médias
+            double evenNumbersAveragePercentage = (totalNumbers > 0) ? (evenCount / (double)totalNumbers) * 100 : 0;
+            double oddNumbersAveragePercentage = (totalNumbers > 0) ? (oddCount / (double)totalNumbers) * 100 : 0;
+            double multiplesOfThreeAveragePercentage = (totalNumbers > 0) ? (multiplesOfThreeCount / (double)totalNumbers) * 100 : 0;
+
+            // 6. Retornar os resultados
+            return new ContestModalResponseDTO(
+                evenNumbersAveragePercentage,
+                oddNumbersAveragePercentage,
+                top5MostFrequentNumbers,
+                top5LeastFrequentNumbers,
+                multiplesOfThreeAveragePercentage
+            );
+        }
+
     }
 }

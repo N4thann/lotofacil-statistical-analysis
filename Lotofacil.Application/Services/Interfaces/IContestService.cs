@@ -15,6 +15,6 @@ namespace Lotofacil.Application.Services.Interfaces
     {
         Task CreateAsync(ContestViewModel contestVM);
         Task<IEnumerable<Contest>> GetContestsOrderedAsync(string sortOrder);
-        //Task<ContestModalResponseDTO> AnalisarConsursos(ContestModalRequestDTO request);
+        Task<ContestModalResponseDTO> AnalisarConcursos(ContestModalRequestDTO request);
     }
 }

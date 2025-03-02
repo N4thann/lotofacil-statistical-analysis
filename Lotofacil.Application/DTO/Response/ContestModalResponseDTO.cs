@@ -11,8 +11,8 @@ namespace Lotofacil.Application.DTO.Response
     /// </summary>
     /// <param name="EvenNumbersAveragePercentage"></param>
     /// <param name="OddNumbersAveragePercentage"></param>
-    /// <param name="Top5MostFrequentNumbers"></param>
-    /// <param name="Top5LeastFrequentNumbers"></param>
+    /// <param name="Top5MostFrequentNumbers">Corresponde aos 5 números mais frequentes</param>
+    /// <param name="Top5LeastFrequentNumbers">Corresponde aos 5 números menos frequentes</param>
     /// <param name="MultiplesOfThreeAveragePercentage"></param>
     public record ContestModalResponseDTO(
         double EvenNumbersAveragePercentage,
