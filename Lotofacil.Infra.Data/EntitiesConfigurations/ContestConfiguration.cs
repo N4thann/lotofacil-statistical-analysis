@@ -13,7 +13,6 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
     {
         protected override void AppendConfig(EntityTypeBuilder<Contest> builder)
         {
-            // Nome da tabela
             builder.ToTable("Contest");
 
             //Propriedade LastProcessed 

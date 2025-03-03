@@ -8,7 +8,6 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
     {
         protected override void AppendConfig(EntityTypeBuilder<BaseContest> builder)
         {
-            // Nome da tabela
             builder.ToTable("BaseContest");
 
             // Configuração dos atributos Hit11 a Hit15

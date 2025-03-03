@@ -72,8 +72,8 @@ namespace Lotofacil.Application.BackgroundJobs
                         .Select(x => x.ToString("D2")) // Formata para "01", "02", etc.
                         .ToList();
 
-                    // Atualizar a entidade BaseContest
-                    baseContest.TopTenNumbers = string.Join("-", top10Numbers);
+                    //Chama um método da entidade para atribuir valor a variável TopTenNumbers
+                    baseContest.AddTopTenNumbers(string.Join("-", top10Numbers));
 
                     // Salvar alterações no serviço
                     await _repositoryBC.UpdateBaseContestAsync(baseContest);
