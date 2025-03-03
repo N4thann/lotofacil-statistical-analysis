@@ -45,7 +45,7 @@ namespace Lotofacil.Application.Services
 
         public async Task<ContestModalResponseDTO> AnalisarConcursos(ContestModalRequestDTO request)
         {
-            // 1. Buscar concursos no banco de dados
+            // Buscar concursos no banco de dados
             var contests = new List<Contest>();
             foreach (var id in request.Contests)
             {
@@ -55,7 +55,12 @@ namespace Lotofacil.Application.Services
                     contests.Add(contest);
                 }
             }
-            // 2. Inicializar contadores e dicionário de ocorrências
+            //Recuperando o atributo Name dos concursos para uma lista
+            List<string> contestsName = contests
+                   .Select(c => c.Name)
+                   .ToList();
+
+            // Inicializar contadores e dicionário de ocorrências
             var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);
 
             int totalNumbers = 0;
@@ -63,7 +68,7 @@ namespace Lotofacil.Application.Services
             int oddCount = 0;
             int multiplesOfThreeCount = 0;
 
-            // 3. Processar cada concurso e extrair estatísticas
+            // Processar cada concurso e extrair estatísticas
             foreach (var contest in contests)
             {
                 var listNumbers = _contestMS.ConvertFormattedStringToList(contest.Numbers);
@@ -81,7 +86,7 @@ namespace Lotofacil.Application.Services
                 }
             }
 
-            // 4. Obter os 5 números mais e menos frequentes
+            // Obter os 5 números mais e menos frequentes
             var top5MostFrequentNumbers = occurrences
                 .OrderByDescending(x => x.Value) // Maior frequência primeiro
                 .ThenBy(x => x.Key) // Desempate pelo menor número
@@ -96,13 +101,14 @@ namespace Lotofacil.Application.Services
                 .Select(x => x.Key)
                 .ToList();
 
-            // 5. Calcular as porcentagens médias
+            // Calcular as porcentagens médias
             double evenNumbersAveragePercentage = (totalNumbers > 0) ? (evenCount / (double)totalNumbers) * 100 : 0;
             double oddNumbersAveragePercentage = (totalNumbers > 0) ? (oddCount / (double)totalNumbers) * 100 : 0;
             double multiplesOfThreeAveragePercentage = (totalNumbers > 0) ? (multiplesOfThreeCount / (double)totalNumbers) * 100 : 0;
 
-            // 6. Retornar os resultados
+            // Retornar os resultados
             return new ContestModalResponseDTO(
+                contestsName,
                 evenNumbersAveragePercentage,
                 oddNumbersAveragePercentage,
                 top5MostFrequentNumbers,

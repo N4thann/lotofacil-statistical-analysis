@@ -172,9 +172,7 @@
                 <h4 class="modal-title-painel">Análises</h4>
                 <button type="button" class="close-painel" onclick="fecharModal('modalAnalisar')">&times;</button>
             </div>
-            <div class="=modal-body-painel">
-
-            </div>
+            <div class="modal-body-painel"></div>
             <div class="modal-footer-painel">
                 <button type="button" class="btn-painel" onclick="fecharModal('modalAnalisar')">Fechar</button>
             </div>
@@ -213,7 +211,24 @@
         })
             .then(response => response.json())
             .then(data => {
-                if (data.sucess) {
+                if (data.sucesso) {
+                    const response = data.response;
+
+                    // Construir o conteúdo do modal
+                    let modalContent = `
+                    <h3><p><strong>Concursos selecionados para análise:</strong></p></h3>
+                    <h2><p>${response.contestsName.join(' / ')}</p></h2>
+                    <h2><p><strong>Percentual de Números Pares:</strong>    ${response.evenNumbersAveragePercentage.toFixed(2)}%</p></h2>
+                    <h2><p><strong>Percentual de Números Ímpares:</strong>  ${response.oddNumbersAveragePercentage.toFixed(2)}%</p></h2>
+                    <h2><p><strong>Percentual de Múltiplos de 3:</strong>   ${response.multiplesOfThreeAveragePercentage.toFixed(2)}%</p></h2>
+                    <h2><p><strong>Top 5 Números Mais Frequentes:</strong>  ${response.top5MostFrequentNumbers.join(', ')}</p></h2>
+                    <h2><p><strong>Top 5 Números Menos Frequentes:</strong>     ${response.top5LeastFrequentNumbers.join(', ')}</p></h2>
+                `;
+
+                    // Inserir no modal
+                    document.querySelector(".modal-body-painel").innerHTML = modalContent;
+
+                    // Exibir modal
                     document.getElementById("modalAnalisar").style.display = "block";
                 } else {
                     alert(data.message);
@@ -221,6 +236,7 @@
             })
             .catch(error => console.error('Erro na requisição:', error));
     }
+
 
 
     function fecharModal(id) {
