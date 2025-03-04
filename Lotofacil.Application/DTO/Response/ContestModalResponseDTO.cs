@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 namespace Lotofacil.Application.DTO.Response
 {
     /// <summary>
-    /// Esse record é uma DTO de response para a tela List de Contests. Faz várias análises após ter sido selecionado múltiplos contests em um checkbox
+    /// DTO de response para a tela List de Concursos.
+    /// Fornece diversas análises estatísticas após a seleção de múltiplos concursos.
     /// </summary>
-    /// <param name="ContestsName">Corresponde a numeração dos concursos</param>
-    /// <param name="EvenNumbersAveragePercentage">Corresponde a porcentagem de numeros pares</param>
-    /// <param name="OddNumbersAveragePercentage">Corresponde a porcentagem de numeros ímpares</param>
-    /// <param name="Top5MostFrequentNumbers">Corresponde aos 5 números mais frequentes</param>
-    /// <param name="Top5LeastFrequentNumbers">Corresponde aos 5 números menos frequentes</param>
-    /// <param name="MultiplesOfThreeAveragePercentage">Corresponde a porcentagem de numeros múltiplos de 3</param>
+    /// <param name="ContestsName">Lista contendo os números dos concursos selecionados.</param>
+    /// <param name="EvenNumbersAveragePercentage">Porcentagem média de números pares nos concursos selecionados.</param>
+    /// <param name="OddNumbersAveragePercentage">Porcentagem média de números ímpares nos concursos selecionados.</param>
+    /// <param name="Top5MostFrequentNumbers">Os 5 números mais frequentes nos concursos selecionados.</param>
+    /// <param name="Top5LeastFrequentNumbers">Os 5 números menos frequentes nos concursos selecionados.</param>
+    /// <param name="MultiplesOfThreeAveragePercentage">Porcentagem média de números múltiplos de 3 nos concursos selecionados.</param>
     public record ContestModalResponseDTO(
         List<string> ContestsName,
         double EvenNumbersAveragePercentage,

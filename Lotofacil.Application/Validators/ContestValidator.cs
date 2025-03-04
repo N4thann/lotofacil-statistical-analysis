@@ -11,10 +11,19 @@ using System.Threading.Tasks;
 
 namespace Lotofacil.Application.Validators
 {
+    /// <summary>
+    /// Validador para a entidade ContestViewModel utilizando FluentValidation.
+    /// Garante que os dados do concurso sejam válidos antes de serem processados.
+    /// </summary>
     public class ContestValidator : AbstractValidator<ContestViewModel>
     {
         private readonly IContestRepository _repository;
         private readonly IBaseContestRepository _baseContestRepository;
+        /// <summary>
+        /// Construtor que inicializa os repositórios necessários para validação.
+        /// </summary>
+        /// <param name="repository">Repositório de concursos.</param>
+        /// <param name="baseContestRepository">Repositório de concursos base.</param>
         public ContestValidator(IContestRepository repository,
             IBaseContestRepository baseContestRepository) 
         {
@@ -28,7 +37,7 @@ namespace Lotofacil.Application.Validators
             {
                 var formattedName = $"Concurso {name}";
 
-                // Verifica na tabela correta com base no tipo
+                // Verifica na tabela correta com base no tipo do concurso
                 if (contestVM.IsBaseContest)
                 {
                     return !await _baseContestRepository.ExistsAsync(formattedName);
@@ -49,12 +58,15 @@ namespace Lotofacil.Application.Validators
                 .Must(data => data != default(DateTime)).WithMessage("A data deve ser válida.")
                 .LessThanOrEqualTo(DateTime.Now).WithMessage("A data não pode ser no futuro.");
 
-            //RuleFor(x => x.Password)
-            //    .NotNull().WithMessage("Password is required")
-            //    .Must(pass =>
-            //    Regex.IsMatch(pass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d) (?=.*[^\da-zA-Z]). {8,15}$")).WithMessage("'Password' does not correspond to a strong pattern");
+            // Validação de senha comentada. Pode ser reativada e ajustada conforme necessidade.
+            // RuleFor(x => x.Password)
+            //     .NotNull().WithMessage("A senha é obrigatória.")
+            //     .Must(pass =>
+            //     Regex.IsMatch(pass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$"))
+            //     .WithMessage("A senha não corresponde a um padrão seguro.");
         }
     }
 }
-/*.LessThanOrEqualTo(DateTime.Now) - 
- * Permite qualquer data anterior ou igual ao momento atual (precisão até a milissegundos).*/
+/// <summary>
+/// .LessThanOrEqualTo(DateTime.Now) - Permite qualquer data anterior ou igual ao momento atual (precisão até milissegundos).
+/// </summary>

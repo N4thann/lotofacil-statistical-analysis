@@ -1,17 +1,36 @@
 ﻿namespace Lotofacil.Application.ViewsModel
 {
-    public class ContestViewModel //Serve para as duas entidades: Contest e BaseContest
+    /// <summary>
+    /// ViewModel utilizada para representar um concurso (Contest ou BaseContest).
+    /// </summary>
+    public class ContestViewModel
     {
+        /// <summary>
+        /// Obtém ou define o identificador único do concurso.
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o nome do concurso.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a data do concurso.
+        /// </summary>
         public DateTime Data { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a sequência de números sorteados no concurso.
+        /// </summary>
         public string Numbers { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o concurso pertence à tabela BaseContest.
+        /// </summary>
         public bool IsBaseContest { get; set; }
     }
 }
-/*Inclua o Id quando ele for necessário para a operação: 
--Se a View exibir detalhes específicos da entidade, ou se o Id for necessário para operações como edição, exclusão ou identificação única no banco, ele deve estar na ViewModel.
-Oculte o Id se ele não for necessário: 
--Em operações onde o Id não é usado, como formulários de criação, ou em situações onde o identificador não precisa ser exposto ao usuário, você pode omiti-lo.
-*/
 
+/* O Id deve ser incluído quando necessário para operações como edição, exclusão ou identificação única no banco.
+   Se não for necessário na interface do usuário, pode ser omitido para evitar exposição desnecessária de dados. */

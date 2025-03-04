@@ -5,10 +5,9 @@ using Lotofacil.Domain.Interfaces;
 namespace Lotofacil.Application.BackgroundJobs
 {
     /// <summary>
-    /// Handles the job responsible for analyzing the top 10 most frequent numbers
-    /// in a base contest by iterating through its associated contests.
-    /// The results are stored in the <see cref="BaseContest.TopTenNumbers"/> property,
-    /// which can be used for real-time updates in dashboards.
+    /// Responsável por executar o job que analisa os 10 números mais frequentes em um concurso base, 
+    /// iterando pelos concursos associados. O resultado é armazenado na propriedade 
+    /// <see cref="BaseContest.TopTenNumbers"/>, podendo ser utilizado para atualizações em tempo real em dashboards.
     /// </summary>
     public class TopTenJobHandler
     {
@@ -18,12 +17,13 @@ namespace Lotofacil.Application.BackgroundJobs
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TopTenJobHandler"/> class with the required services 
-        /// and repository for managing base contests and contest relationships.
+        /// Inicializa uma nova instância da classe <see cref="TopTenJobHandler"/>, 
+        /// injetando os serviços e o repositório necessários para gerenciar os concursos base 
+        /// e suas relações com outros concursos.
         /// </summary>
-        /// <param name="repositoryBC">Repository for managing base contests.</param>
-        /// <param name="contestMS">Service for handling contest-related operations.</param>
-        /// <param name="baseContestService">Service for retrieving base contests with associated contests.</param>
+        /// <param name="repositoryBC">Repositório responsável pelo gerenciamento dos concursos base.</param>
+        /// <param name="contestMS">Serviço que manipula operações relacionadas a concursos.</param>
+        /// <param name="baseContestService">Serviço para obtenção de concursos base com concursos associados.</param>
         public TopTenJobHandler(IBaseContestRepository repositoryBC,
             IContestManagementService contestMS,
             IBaseContestService baseContestService)
@@ -34,12 +34,12 @@ namespace Lotofacil.Application.BackgroundJobs
         }
 
         /// <summary>
-        /// Executes the job to calculate the top 10 most frequent numbers for each base contest.
-        /// The job navigates through the associated contests, counts occurrences of numbers,
-        /// and updates the <see cref="BaseContest.TopTenNumbers"/> property.
-        /// Uses a semaphore to ensure thread-safe execution.
+        /// Executa o job que calcula os 10 números mais frequentes para cada concurso base.
+        /// O processo percorre os concursos associados, conta a ocorrência dos números e atualiza
+        /// a propriedade <see cref="BaseContest.TopTenNumbers"/>.
+        /// O uso de um semáforo garante que a execução seja thread-safe, impedindo concorrência indesejada.
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task ExecuteAsync()
         {
            await _semaphore.WaitAsync();

@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Authentication;
 namespace Lotofacil.Application.BackgroundJobs
 {
     /// <summary>
-    /// Handles the primary job in the system, which establishes relationships and performs comparisons 
-    /// between daily contests and base contests that have been saved over time.
-    /// The process calculates the intersection of contest numbers, which are sets of 15 numbers, 
-    /// and logs the results when intersections meet specific criteria.
+    /// Responsável pelo job principal do sistema, que estabelece relações e realiza comparações 
+    /// entre os concursos diários e os concursos base armazenados ao longo do tempo.
+    /// O processo calcula a interseção dos números dos concursos, que são conjuntos de 15 números,
+    /// e registra os resultados quando determinadas condições são atendidas.
     /// </summary>
     public class MainJobHandler
     {
@@ -21,13 +21,13 @@ namespace Lotofacil.Application.BackgroundJobs
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainJobHandler"/> class with the required repositories
-        /// and contest management service for handling contests and base contest relationships.
+        /// Inicializa uma nova instância da classe <see cref="MainJobHandler"/>, injetando os repositórios necessários
+        /// e o serviço de gerenciamento de concursos para manipular as relações entre concursos diários e concursos base.
         /// </summary>
-        /// <param name="repositoryBC">Repository for base contests.</param>
-        /// <param name="repositoryC">Repository for daily contests.</param>
-        /// <param name="repositoryLog">Repository for logging contest activities.</param>
-        /// <param name="contestMS">Service for managing contests, including operations like number intersection.</param>
+        /// <param name="repositoryBC">Repositório para gerenciamento dos concursos base.</param>
+        /// <param name="repositoryC">Repositório para gerenciamento dos concursos diários.</param>
+        /// <param name="repositoryLog">Repositório responsável pelo registro de atividades dos concursos.</param>
+        /// <param name="contestMS">Serviço para manipulação de concursos, incluindo operações como interseção de números.</param>
         public MainJobHandler(
             IBaseContestRepository repositoryBC, 
             IContestRepository repositoryC,  
@@ -41,11 +41,11 @@ namespace Lotofacil.Application.BackgroundJobs
         }
 
         /// <summary>
-        /// Executes the primary job logic to compare daily contests with base contests,
-        /// establish relationships, and log contest activities.
-        /// Uses a semaphore to ensure thread-safe execution.
+        /// Executa a lógica principal do job, comparando concursos diários com concursos base,
+        /// estabelecendo relações e registrando atividades dos concursos.
+        /// Utiliza um semáforo para garantir a execução thread-safe.
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task ExecuteAsync()
         {
             await _semaphore.WaitAsync();
@@ -68,18 +68,18 @@ namespace Lotofacil.Application.BackgroundJobs
         }
 
         /// <summary>
-        /// Compares contests with base contests, calculates intersections of contest numbers, 
-        /// and updates relationships and activity logs.
-        /// Saves relationships where intersections exceed 10 and logs the activity 
-        /// with detailed information about the match.
+        /// Compara os concursos diários com os concursos base, calcula a interseção dos números,
+        /// e atualiza as relações e os registros de atividades.
+        /// Salva relações quando a interseção excede 10 e registra a atividade com detalhes da correspondência.
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         private async Task SaveRelationshipsAsync()
         {
-            //Foi preciso criar repositórios específicos para recuperar as listas de ambas as entidades
-            //O método do repositório genérico não tinha o include das listas e tinha o asnotrackin
-            //Assim a abordagem do método do repositório genérico fica apenas listar as entidades
-            //Já os específicos temos o update e o GetAll adaptados
+            // Foi necessário criar repositórios específicos para recuperar as listas de ambas as entidades.
+            // O método do repositório genérico não possuía o include das listas e utilizava AsNoTracking,
+            // impossibilitando o update direto. 
+            // Assim, o método genérico é mantido apenas para listagens simples,
+            // enquanto os repositórios específicos permitem atualizações e consultas mais detalhadas.
             var baseContests = await _repositoryBC.GetAllWithContestsAbove11Async();
 
             var contests = await _repositoryC.GetAllWithBaseContestsAsync();

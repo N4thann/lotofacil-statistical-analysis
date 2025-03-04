@@ -2,21 +2,45 @@
 
 namespace Lotofacil.Application.ViewsModel
 {
+    /// <summary>
+    /// ViewModel responsável por classificar e exibir informações sobre erros na aplicação.
+    /// </summary>
     public class ErrorViewModel
     {
-        public ErrorViewModel(string ?message, string ?excepetiondetails, int errorTypeCode)
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="ErrorViewModel"/>.
+        /// </summary>
+        /// <param name="message">Obtém ou define a mensagem de erro exibida na view.</param>
+        /// <param name="excepetiondetails">Obtém ou define os detalhes técnicos da exceção.</param>
+        /// <param name="errorTypeCode">Código do tipo de erro para mapeamento.</param>
+        public ErrorViewModel(string? message, string? excepetiondetails, int errorTypeCode)
         {
             Message = message;
             ExceptionDetails = excepetiondetails;
             ErrorType = MapErrorType(errorTypeCode);
         }
 
-        public string ?Message { get; private set; }
-        public string ?ExceptionDetails { get; private set; }
+        /// <summary>
+        /// Obtém a mensagem de erro exibida na view.
+        /// </summary>
+        public string? Message { get; private set; }
 
+        /// <summary>
+        /// Obtém os detalhes técnicos da exceção.
+        /// </summary>
+        public string? ExceptionDetails { get; private set; }
+
+        /// <summary>
+        /// Obtém o tipo do erro classificado de acordo com o código fornecido.
+        /// </summary>
         public ErrorType ErrorType { get; private set; }
 
-        private ErrorType MapErrorType (int errorTypeCode)
+        /// <summary>
+        /// Mapeia o código do erro para um tipo específico de erro.
+        /// </summary>
+        /// <param name="errorTypeCode">Código do tipo de erro.</param>
+        /// <returns>O tipo de erro correspondente ao código informado.</returns>
+        private ErrorType MapErrorType(int errorTypeCode)
         {
             return errorTypeCode switch
             {
@@ -28,3 +52,4 @@ namespace Lotofacil.Application.ViewsModel
         }
     }
 }
+
