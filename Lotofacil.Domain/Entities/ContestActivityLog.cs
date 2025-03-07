@@ -1,30 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lotofacil.Domain.Entities
 {
+    /// <summary>
+    /// Representa um registro de atividade de um concurso, armazenando informações 
+    /// sobre a comparação entre um concurso diário e um concurso base somente se houver mais de 11 acertos.
+    /// </summary>
     public class ContestActivityLog : ContestBaseEntity
     {
         /// <summary>
-        /// Default constructor required by Entity Framework.
+        /// Construtor padrão exigido pelo Entity Framework.
         /// </summary>
         public ContestActivityLog() { }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="ContestActivityLog"/> with contest 
-        /// and base contest details.
+        /// Inicializa uma nova instância da classe <see cref="ContestActivityLog"/>, registrando a comparação 
+        /// entre um concurso diário e um concurso base.
         /// </summary>
-        /// <param name="name">The name of the Contest.</param>
-        /// <param name="numbers">The numbers associated with the Contest.</param>
-        /// <param name="data">The date of the Contest.</param>
-        /// <param name="bcName">The name of the BaseContest.</param>
-        /// <param name="bcNumbers">The numbers associated with the BaseContest.</param>
-        public ContestActivityLog(string name, 
-            string numbers, 
-            DateTime data, 
-            string bcName, 
+        /// <param name="name">O nome do concurso diário.</param>
+        /// <param name="numbers">Os números sorteados no concurso diário.</param>
+        /// <param name="data">A data de realização do concurso diário.</param>
+        /// <param name="bcName">O nome do concurso base utilizado para comparação.</param>
+        /// <param name="bcNumbers">Os números sorteados no concurso base.</param>
+        /// <param name="countHits">A quantidade de números acertados na comparação.</param>
+        public ContestActivityLog(
+            string name,
+            string numbers,
+            DateTime data,
+            string bcName,
             string bcNumbers,
-            int countHits) 
+            int countHits)
         {
             Name = name;
             Numbers = numbers;
@@ -36,22 +43,22 @@ namespace Lotofacil.Domain.Entities
         }
 
         /// <summary>
-        /// Gets The name of the BaseContest associated with the Contest.
+        /// Obtém o nome do concurso base associado ao concurso diário.
         /// </summary>
         public string BaseContestName { get; private set; }
 
         /// <summary>
-        /// Gets The numbers associated with the BaseContest.
+        /// Obtém os números sorteados no concurso base.
         /// </summary>
         public string BaseContestNumbers { get; private set; }
 
         /// <summary>
-        /// Gets The numbers associated with the BaseContest.
+        /// Obtém a quantidade de números acertados na comparação entre o concurso diário e o concurso base.
         /// </summary>
         public int CountHits { get; private set; }
 
         /// <summary>
-        /// Gets The timestamp when the log entry was created.
+        /// Obtém a data e hora em que o registro da atividade foi criado.
         /// </summary>
         public DateTime CreateTime { get; private set; }
     }

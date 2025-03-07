@@ -1,14 +1,30 @@
 ﻿namespace Lotofacil.Domain.Enums
 {
     /// <summary>
-    /// Representa um Enum que é utilizado para tratar exceções globais informando um tipo de erro e uma mensagem para uma view adaptada
-    /// de erro
+    /// Define os tipos de erro utilizados no tratamento global de exceções,  
+    /// permitindo a exibição de mensagens personalizadas em uma view de erro adaptada.
     /// </summary>
     public enum ErrorType
     {
-        Critical, // Erro crítico, geralmente falha de sistema
-        NoRecords, // Nenhum registro encontrado
-        NotFound, // Recurso não encontrado
+        /// <summary>
+        /// Erro crítico, geralmente causado por falhas no sistema.
+        /// </summary>
+        Critical,
+
+        /// <summary>
+        /// Nenhum registro foi encontrado na consulta.
+        /// </summary>
+        NoRecords,
+
+        /// <summary>
+        /// O recurso solicitado não foi localizado.
+        /// </summary>
+        NotFound,
+
+        /// <summary>
+        /// Tipo de erro não especificado.
+        /// </summary>
         Unspecified
     }
 }
+

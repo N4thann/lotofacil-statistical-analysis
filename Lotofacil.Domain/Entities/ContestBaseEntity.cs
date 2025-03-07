@@ -1,38 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lotofacil.Domain.Entities
+﻿namespace Lotofacil.Domain.Entities
 {
     /// <summary>
-    /// Serves as the base entity for a contest, providing common properties shared across all related entities.
+    /// Classe base para representar um concurso, fornecendo propriedades comuns compartilhadas por todas as entidades relacionadas.
     /// </summary>
     public abstract class ContestBaseEntity
     {
         /// <summary>
-        /// Gets or sets the contest's ID.
+        /// Obtém ou define o identificador único do concurso.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the contest's name.
+        /// Obtém ou define o nome do concurso.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the contest's data.
+        /// Obtém ou define a data de realização do concurso.
         /// </summary>
         public DateTime Data { get; set; }
 
         /// <summary>
-        /// Gets or sets the contest's numbers.
+        /// Obtém ou define os números sorteados no concurso.
         /// </summary>
         public string Numbers { get; set; }
     }
 }
-
-

@@ -2,6 +2,7 @@
 using Lotofacil.Domain.Interfaces;
 using Lotofacil.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Lotofacil.Infra.Data.Repositories
 {
@@ -13,10 +14,7 @@ namespace Lotofacil.Infra.Data.Repositories
         
 
         public async Task<T> GetByIdAsync(int id) => await _context.Set<T>().FindAsync(id);
-
-        //Mesmo que esse método seja para uma listagem em uma tabela em que cada registro tenha uma opção
-        //de edição, o AsNoTracking ainda irá otimizar apenas para o carregamento da tabela 
-        //e posteriormente posso fazer uma procura sem o AsNoTracking para procurar o registro com GetByIdAsync       
+      
         public async Task<IEnumerable<T>> GetAllAsync() => await _context.Set<T>()
                 .AsNoTracking().ToListAsync();
 
@@ -42,16 +40,15 @@ namespace Lotofacil.Infra.Data.Repositories
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
-        /*Por que GetAllQueryable não precisa ser assíncrono?
-        IQueryable representa apenas a definição da consulta e não a execução dela.
-        Ele não faz nenhuma operação no banco até que seja "materializado" (com ToList, First, etc.).
-        Tornar o método assíncrono criaria complexidade desnecessária sem ganho real.
-        O compilador não permite o uso de await para um retorno que já é materializado de forma síncrona.
-         * 
-         * */
+
         public IQueryable<T> GetAllQueryable()
         {
             return _context.Set<T>().AsQueryable();
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().AnyAsync(predicate);
         }
     }
 }
