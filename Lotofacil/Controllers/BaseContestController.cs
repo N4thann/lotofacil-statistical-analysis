@@ -1,13 +1,9 @@
-﻿ using Lotofacil.Application.ViewsModel;
+﻿using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Lotofacil.Application.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Lotofacil.Presentation.Extensions;
-using Lotofacil.Domain.Entities;
-using Lotofacil.Application.DTO.Request;
-using Lotofacil.Application.Services;
 
 namespace Lotofacil.Presentation.Controllers
 {

@@ -1,6 +1,9 @@
 ﻿using ClosedXML.Excel;
 using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
+using Microsoft.AspNetCore.Authentication;
+using NuGet.Common;
 using System.Text;
 
 namespace Lotofacil.Application.Services
@@ -177,6 +180,67 @@ namespace Lotofacil.Application.Services
             memoryStream.Position = 0;
 
             return memoryStream;
+        }
+
+        public List<TopContestViewModel> TopTwoContests(IEnumerable<BaseContest> baseContests)
+        {
+            // Calcula o somatório para cada concurso
+            var contestsWithSum = baseContests
+                .Select(x => new
+                {
+                    Contest = x,
+                    Sum = (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5)
+                })
+                .ToList();
+
+            // Ordena pelo maior somatório e pega os dois primeiros
+            var topTwoContests = contestsWithSum
+                .OrderByDescending(x => x.Sum)
+                .Take(2)
+                .Select(x => x.Contest)
+                .ToList();
+
+            // Lista para armazenar os ViewModels
+            var viewModel = new List<TopContestViewModel>();
+
+            foreach (var x in topTwoContests)
+            {
+                // Dicionário para contar as ocorrências dos números (1 a 25)
+                var occurrences = new Dictionary<int, int>();
+                for (int i = 1; i <= 25; i++)
+                {
+                    occurrences[i] = 0;
+                }
+
+                // Calcula as ocorrências
+                foreach (var y in x.ContestsAbove11)
+                {
+                    var numbers = ConvertFormattedStringToList(y.Numbers);
+
+                    foreach (var i in numbers)
+                    {
+                        if (occurrences.ContainsKey(i))
+                        {
+                            occurrences[i]++;
+                        }
+                    }
+                }
+
+                viewModel.Add(new TopContestViewModel
+                {
+                    Name = x.Name,
+                    Data = x.Data,
+                    Number = x.Numbers,
+                    CountContests = x.ContestsAbove11.Count(),
+                    TopTenNumbers = x.TopTenNumbers,
+                    NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
+                    {
+                        Number = o.Key,
+                        Occurences = o.Value
+                    }).ToList()
+                });               
+            }
+            return viewModel;
         }
     }
 }

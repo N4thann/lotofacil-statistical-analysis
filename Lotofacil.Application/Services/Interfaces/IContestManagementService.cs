@@ -1,4 +1,5 @@
-﻿using Lotofacil.Domain.Entities;
+﻿using Lotofacil.Application.ViewsModel;
+using Lotofacil.Domain.Entities;
 using System.Text;
 
 namespace Lotofacil.Application.Services.Interfaces
@@ -51,7 +52,14 @@ namespace Lotofacil.Application.Services.Interfaces
         /// </summary>
         /// <param name="data">The collection of base contests to include in the file.</param>
         /// <returns>A memory stream containing the generated Excel file.</returns>
-        MemoryStream GenerateExcelForBaseContest(IEnumerable<BaseContest> data);        
+        MemoryStream GenerateExcelForBaseContest(IEnumerable<BaseContest> data);
+        /// <summary>
+        /// Retorna os dois concursos base com melhor eficiência nas comparações.
+        /// A eficiência é calculada com base nos acertos de cada concurso.
+        /// </summary>
+        /// <param name="baseContests">Lista de concursos base contendo suas listas relacionadas.</param>
+        /// <returns>Uma lista contendo os dois concursos base mais eficientes.</returns>
+        List<TopContestViewModel> TopTwoContests(IEnumerable<BaseContest> baseContests);
     }   
 }
 /*

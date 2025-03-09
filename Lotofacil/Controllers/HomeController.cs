@@ -5,6 +5,7 @@ using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.Services;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -60,62 +61,13 @@ namespace Lotofacil.Presentation.Controllers
             { 
                 var baseContest = await _baseContestService.GetAllWithContestsAbove11Async();
 
-                // Calcula o somatório para cada concurso
-                var contestsWithSum = baseContest
-                    .Select(x => new
-                    {
-                        Contest = x,
-                        Sum = (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5)
-                    })
-                    .ToList();
-
-                // Ordena pelo maior somatório e pega os dois primeiros
-                var topTwoContests = contestsWithSum
-                    .OrderByDescending(x => x.Sum)
-                    .Take(2)
-                    .Select(x => x.Contest)
-                    .ToList();
-
-                // Lista para armazenar os ViewModels
-                var viewModel = new List<TopContestViewModel>();
-
-                foreach (var x in topTwoContests)
+                if (!baseContest.Any())
                 {
-                    // Dicionário para contar as ocorrências dos números (1 a 25)
-                    var occurrences = new Dictionary<int, int>();
-                    for (int i = 1; i <= 25; i++)
-                    {
-                        occurrences[i] = 0;
-                    }
-
-                    // Calcula as ocorrências
-                    foreach (var y in x.ContestsAbove11)
-                    {
-                        var numbers = _contestMS.ConvertFormattedStringToList(y.Numbers);
-
-                        foreach (var i in numbers)
-                        {
-                            if (occurrences.ContainsKey(i))
-                            {
-                                occurrences[i]++;
-                            }
-                        }
-                    }
-
-                    viewModel.Add(new TopContestViewModel
-                    {
-                        Name = x.Name,
-                        Data = x.Data,
-                        Number = x.Numbers,
-                        CountContests = x.ContestsAbove11.Count(),
-                        TopTenNumbers = x.TopTenNumbers,
-                        NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
-                        {
-                            Number = o.Key,
-                            Occurences = o.Value
-                        }).ToList()
-                    });
+                    return View("Error", new ErrorViewModel(
+                        "Nenhum registro encontrado na tabela Contests.", null, 2)); // Código para ErrorType.NoRecords
                 }
+
+                var viewModel =  _contestMS.TopTwoContests(baseContest);
 
                 return View(viewModel);
             }
