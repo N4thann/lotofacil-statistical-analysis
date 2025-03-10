@@ -60,6 +60,25 @@ namespace Lotofacil.Application.Services.Interfaces
         /// <param name="baseContests">Lista de concursos base contendo suas listas relacionadas.</param>
         /// <returns>Uma lista contendo os dois concursos base mais eficientes.</returns>
         List<TopContestViewModel> TopTwoContests(IEnumerable<BaseContest> baseContests);
+        /// <summary>
+        /// Realiza análises sobre os concursos base e retorna um ViewModel com as informações.
+        /// Inclui o primeiro e último concurso, total de concursos e agrupamento por ano.
+        /// </summary>
+        /// <param name="baseContests">Lista de concursos base contendo suas listas relacionadas.</param>
+        /// <returns>Um objeto <see cref="Dash3ViewModel"/> preenchido com os dados analisados.</returns>
+        Task<Dash3ViewModel> Dash3Analysis(IEnumerable<BaseContest> baseContests);
+        /// <summary>
+        /// Retorna um objeto paginado contendo os concursos base filtrados por nome e período.
+        /// </summary>
+        /// <param name="baseContests">Lista de concursos base filtrados.</param>
+        /// <param name="totalCount">Número total de registros que atendem aos critérios de filtragem.</param>
+        /// <param name="name">Nome do concurso para filtro (opcional).</param>
+        /// <param name="startDate">Data inicial para filtro (opcional).</param>
+        /// <param name="endDate">Data final para filtro (opcional).</param>
+        /// <param name="page">Número da página atual.</param>
+        /// <param name="pageSize">Quantidade de registros por página.</param>
+        /// <returns>Um objeto <see cref="PagedResultViewModel{BaseContest}"/> contendo os dados paginados.</returns>
+        PagedResultViewModel<BaseContest> PagedResultDash2(List<BaseContest> baseContests, int totalCount, string? name, DateTime? startDate, DateTime? endDate, int page, int pageSize);
     }   
 }
 /*

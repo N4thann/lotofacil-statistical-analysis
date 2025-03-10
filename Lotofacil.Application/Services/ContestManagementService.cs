@@ -2,8 +2,8 @@
 using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
-using Microsoft.AspNetCore.Authentication;
-using NuGet.Common;
+using Lotofacil.Domain.Interfaces;
+using Lotofacil.Domain.Models;
 using System.Text;
 
 namespace Lotofacil.Application.Services
@@ -13,6 +13,10 @@ namespace Lotofacil.Application.Services
     /// </summary>
     public class ContestManagementService : IContestManagementService
     {
+        private readonly IRepository<Contest> _repository;
+
+        public ContestManagementService(IRepository<Contest> repository) => _repository = repository;
+
         public DateTime SetDataHour(DateTime data)
         {
             return data.Date.AddHours(20);
@@ -233,7 +237,7 @@ namespace Lotofacil.Application.Services
                     Number = x.Numbers,
                     CountContests = x.ContestsAbove11.Count(),
                     TopTenNumbers = x.TopTenNumbers,
-                    NumberOccurences = occurrences.Select(o => new NumberOccurencesViewModel
+                    NumberOccurences = occurrences.Select(o => new NumberOccurencesModel
                     {
                         Number = o.Key,
                         Occurences = o.Value
@@ -241,6 +245,51 @@ namespace Lotofacil.Application.Services
                 });               
             }
             return viewModel;
+        }
+
+        public async Task<Dash3ViewModel> Dash3Analysis(IEnumerable<BaseContest> baseContests)
+        {
+            var dash3 = new Dash3ViewModel();
+
+            var contests = await _repository.GetAllAsync();
+
+            var lastContest = contests.LastOrDefault();
+            if (lastContest != null)
+            {
+                dash3.LastContest = lastContest.Name;
+            }
+
+            var firstContest = contests.FirstOrDefault();
+            if (firstContest != null)
+            {
+                dash3.FirstContest = firstContest.Name;
+            }
+
+            dash3.Years = contests
+                .GroupBy(c => c.Data.Year)
+                .OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key.ToString(), g => g.Count());
+
+            dash3.TotalBaseContests = baseContests.Count();
+
+            dash3.TotalContests = contests.Count();
+
+            return dash3;
+        }
+
+        public PagedResultViewModel<BaseContest> PagedResultDash2(List<BaseContest> baseContests, int totalCount, string? name, DateTime? startDate, DateTime? endDate, int page, int pageSize)
+        {
+            var model = new PagedResultViewModel<BaseContest>
+            {
+                Datas = baseContests,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                NameFilter = name,
+                StartDateFilter = startDate,
+                EndDateFilter = endDate
+            };
+
+            return model;
         }
     }
 }

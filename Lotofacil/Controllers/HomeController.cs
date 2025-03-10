@@ -1,48 +1,38 @@
-﻿using Lotofacil.Infra.Data.Context;
-using Lotofacil.Application.ViewsModel;
+﻿using Lotofacil.Application.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Lotofacil.Application.Services.Interfaces;
-using Lotofacil.Application.Services;
-using Lotofacil.Domain.Entities;
-using Lotofacil.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
 namespace Lotofacil.Presentation.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
-        private readonly IRepository<Contest> _repository;
 
-        public HomeController(ApplicationDbContext context, IBaseContestService baseContestService,
-            ILogger<HomeController> logger, IContestManagementService contestMS,
-            IRepository<Contest> repository)
+        public HomeController(IBaseContestService baseContestService,
+            ILogger<HomeController> logger, IContestManagementService contestMS
+            )
         {
-            _context = context;
             _logger = logger;
             _baseContestService = baseContestService;
             _contestMS = contestMS;
-            _repository = repository;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                // Obtém a lista de Concursos Base
                 var baseContestList = await _baseContestService.GetAllBaseContestAsync();
 
                 if (!baseContestList.Any())
                 {
                     return View("Error", new ErrorViewModel(
-                        "Nenhum registro encontrado na tabela Contests.", null, 2)); // Código para ErrorType.NoRecords
+                        "Nenhum registro encontrado na tabela Contests.", null, 2));
                 }
 
                 var orderedBaseContestList = baseContestList
-                    .OrderByDescending(x => (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5))//Cálculo para medir a eficiência de um concurso base
+                    .OrderByDescending(x => (x.Hit11 * 1) + (x.Hit12 * 2) + (x.Hit13 * 3) + (x.Hit14 * 4) + (x.Hit15 * 5))
                     .ToList();
 
                 return View(orderedBaseContestList);
@@ -84,15 +74,7 @@ namespace Lotofacil.Presentation.Controllers
             var baseContests = await _baseContestService.GetFilteredBaseContestsAsync(name, startDate, endDate, page, pageSize);
             var totalCount = await _baseContestService.GetTotalCountAsync(name, startDate, endDate); // Implementação no serviço para pegar o total de registros
 
-            var model = new PagedResultViewModel<BaseContest>
-            {
-                Datas = baseContests,
-                CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-                NameFilter = name,
-                StartDateFilter = startDate,
-                EndDateFilter = endDate
-            };
+            var model = _contestMS.PagedResultDash2(baseContests,totalCount,name,startDate,endDate,page,pageSize);
 
             return View(model);
         }
@@ -112,33 +94,16 @@ namespace Lotofacil.Presentation.Controllers
         }
 
         public async Task<IActionResult> Dash3()
-        {
-            var dash3 = new Dash3ViewModel();
-
+        {       
             var baseContests = await _baseContestService.GetAllBaseContestAsync();
 
-            var contests = await _repository.GetAllAsync();
-
-            var lastContest = contests.LastOrDefault();
-            if (lastContest != null)
+            if (!baseContests.Any())
             {
-                dash3.LastContest = lastContest.Name;
+                return View("Error", new ErrorViewModel(
+                    "Nenhum registro encontrado na tabela Contests.", null, 2));
             }
 
-            var firstContest = contests.FirstOrDefault();
-            if (firstContest != null)
-            {
-                dash3.FirstContest = firstContest.Name; 
-            }
-
-            dash3.Years = contests
-                .GroupBy(c => c.Data.Year)
-                .OrderBy(g => g.Key)
-                .ToDictionary(g => g.Key.ToString(), g => g.Count());
-
-            dash3.TotalBaseContests = baseContests.Count();
-
-            dash3.TotalContests = contests.Count();
+            var dash3 = await _contestMS.Dash3Analysis(baseContests);
 
             return View(dash3);
         }

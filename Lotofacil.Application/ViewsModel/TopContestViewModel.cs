@@ -1,4 +1,6 @@
-﻿namespace Lotofacil.Application.ViewsModel
+﻿using Lotofacil.Domain.Models;
+
+namespace Lotofacil.Application.ViewsModel
 {
     /// <summary>
     /// Representa os dois concursos base mais eficientes com base em um cálculo ponderado de acertos acima de 11 pontos.
@@ -33,7 +35,7 @@
         /// <summary>
         /// Obtém ou define a frequência de cada número (1 a 25) nos concursos associados.
         /// </summary>
-        public List<NumberOccurencesViewModel> NumberOccurences { get; set; }
+        public List<NumberOccurencesModel> NumberOccurences { get; set; }
     }
 }
 

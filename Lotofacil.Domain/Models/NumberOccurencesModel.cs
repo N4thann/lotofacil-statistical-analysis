@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lotofacil.Application.ViewsModel
+namespace Lotofacil.Domain.Models
 {
     /// <summary>
     /// Representa a contagem de ocorrências de um número específico dentro do intervalo de 1 a 25.
     /// </summary>
-    public class NumberOccurencesViewModel
+    public class NumberOccurencesModel
     {
         /// <summary>
         /// Obtém ou define o número analisado.
@@ -19,6 +19,6 @@ namespace Lotofacil.Application.ViewsModel
         /// Obtém ou define a quantidade de vezes que o número ocorreu.
         /// </summary>
         public int Occurences { get; set; }
+
     }
 }
- 
