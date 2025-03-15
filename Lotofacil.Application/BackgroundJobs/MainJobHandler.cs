@@ -3,6 +3,7 @@ using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using Serilog;
 
 namespace Lotofacil.Application.BackgroundJobs
 {
@@ -51,19 +52,21 @@ namespace Lotofacil.Application.BackgroundJobs
             await _semaphore.WaitAsync();
             try
             {
-                Console.WriteLine("Iniciando execução do MainJobHandler...");
+                Log.Information("Iniciando execução do MainJobHandler...");
 
                 await SaveRelationshipsAsync();
+
+                Log.Information("Finalizando execução do MainJobHandler...");
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro durante a execução do MainJobHandler: {ex.Message}");
+                Log.Error(ex, "Erro durante a execução do MainJobHandler");
             }
             finally
             {
                 _semaphore.Release();
-                Console.WriteLine("Recurso liberado.");
+                Log.Debug("Recurso liberado.");
             }
         }
 
@@ -126,11 +129,12 @@ namespace Lotofacil.Application.BackgroundJobs
                                 x.ContestsAbove11.Add(y);
                                 y.BaseContests.Add(x);
                                 await _repositoryC.UpdateContestAsync(y);
+                                Log.Debug("O concurso {Name} teve mais de 11 acertos", y.Name);
                             }
                         }
                         else
                         {
-                            Console.WriteLine($"Concurso {y.Name}: já está atualizado.");
+                            Log.Debug("Concurso {Name}: já está atualizado", y.Name);
                         }
                     }
                     await _repositoryBC.UpdateBaseContestAsync(x);
@@ -145,7 +149,7 @@ namespace Lotofacil.Application.BackgroundJobs
                 }
             else
             {
-                Console.WriteLine("A lista Contests ou BaseContest está vazia.");
+                Log.Warning("Não tem registro na tabela Concurso e/ou Concurso Base.");
             }
         }
     }

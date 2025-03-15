@@ -4,6 +4,7 @@ using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Lotofacil.Domain.Models;
+using Serilog;
 using System.Text;
 
 namespace Lotofacil.Application.Services
@@ -188,6 +189,8 @@ namespace Lotofacil.Application.Services
 
         public List<TopContestViewModel> TopTwoContests(IEnumerable<BaseContest> baseContests)
         {
+            Log.Debug("Iniciando cálculo dos dois melhores concursos base de {TotalContests} concursos", baseContests.Count());
+
             // Calcula o somatório para cada concurso
             var contestsWithSum = baseContests
                 .Select(x => new
@@ -197,6 +200,8 @@ namespace Lotofacil.Application.Services
                 })
                 .ToList();
 
+            Log.Debug("Somatório calculado para {Count} concursos", contestsWithSum.Count);
+
             // Ordena pelo maior somatório e pega os dois primeiros
             var topTwoContests = contestsWithSum
                 .OrderByDescending(x => x.Sum)
@@ -204,11 +209,22 @@ namespace Lotofacil.Application.Services
                 .Select(x => x.Contest)
                 .ToList();
 
+            if (topTwoContests.Count == 0)
+            {
+                Log.Warning("Nenhum concurso base encontrado para análise de top 2");
+                return new List<TopContestViewModel>();
+            }
+
+            Log.Debug("Top 2 concursos selecionados: {Contests}",
+                string.Join(", ", topTwoContests.Select(c => c.Name)));
+
             // Lista para armazenar os ViewModels
             var viewModel = new List<TopContestViewModel>();
-
             foreach (var x in topTwoContests)
             {
+                Log.Debug("Processando concurso {ContestName} com {ContestsCount} concursos relacionados",
+                    x.Name, x.ContestsAbove11.Count());
+
                 // Dicionário para contar as ocorrências dos números (1 a 25)
                 var occurrences = new Dictionary<int, int>();
                 for (int i = 1; i <= 25; i++)
@@ -220,7 +236,6 @@ namespace Lotofacil.Application.Services
                 foreach (var y in x.ContestsAbove11)
                 {
                     var numbers = ConvertFormattedStringToList(y.Numbers);
-
                     foreach (var i in numbers)
                     {
                         if (occurrences.ContainsKey(i))
@@ -229,6 +244,11 @@ namespace Lotofacil.Application.Services
                         }
                     }
                 }
+
+                var topNumbers = occurrences.OrderByDescending(o => o.Value).Take(10)
+                    .Select(o => o.Key).ToList();
+                Log.Debug("Top 10 números mais frequentes para {ContestName}: {TopNumbers}",
+                    x.Name, string.Join(", ", topNumbers));
 
                 viewModel.Add(new TopContestViewModel
                 {
@@ -242,27 +262,43 @@ namespace Lotofacil.Application.Services
                         Number = o.Key,
                         Occurences = o.Value
                     }).ToList()
-                });               
+                });
             }
+
+            Log.Information("Análise dos top 2 concursos concluída com sucesso: {ContestNames}",
+                string.Join(", ", viewModel.Select(vm => vm.Name)));
             return viewModel;
         }
 
         public async Task<Dash3ViewModel> Dash3Analysis(IEnumerable<BaseContest> baseContests)
         {
-            var dash3 = new Dash3ViewModel();
+            Log.Debug("Iniciando análise para dashboard 3");
 
+            var dash3 = new Dash3ViewModel();
             var contests = await _repository.GetAllAsync();
+
+            Log.Debug("Recuperados {ContestsCount} concursos do repositório", contests.Count());
 
             var lastContest = contests.LastOrDefault();
             if (lastContest != null)
             {
+                Log.Debug("Último concurso identificado: {ContestName}", lastContest.Name);
                 dash3.LastContest = lastContest.Name;
+            }
+            else
+            {
+                Log.Warning("Nenhum concurso encontrado para última posição");
             }
 
             var firstContest = contests.FirstOrDefault();
             if (firstContest != null)
             {
+                Log.Debug("Primeiro concurso identificado: {ContestName}", firstContest.Name);
                 dash3.FirstContest = firstContest.Name;
+            }
+            else
+            {
+                Log.Warning("Nenhum concurso encontrado para primeira posição");
             }
 
             dash3.Years = contests
@@ -270,25 +306,38 @@ namespace Lotofacil.Application.Services
                 .OrderBy(g => g.Key)
                 .ToDictionary(g => g.Key.ToString(), g => g.Count());
 
-            dash3.TotalBaseContests = baseContests.Count();
+            Log.Debug("Anos processados: {YearsCount} anos com dados", dash3.Years.Count);
 
+            dash3.TotalBaseContests = baseContests.Count();
             dash3.TotalContests = contests.Count();
 
+            Log.Information("Análise do Dashboard 3 concluída. Total de concursos: {ContestsCount}, Total de concursos base: {BaseContestsCount}",
+                dash3.TotalContests, dash3.TotalBaseContests);
             return dash3;
         }
 
         public PagedResultViewModel<BaseContest> PagedResultDash2(List<BaseContest> baseContests, int totalCount, string? name, DateTime? startDate, DateTime? endDate, int page, int pageSize)
         {
+            Log.Debug("Construindo modelo paginado para Dashboard 2. Filtros: Nome={Name}, DataInicial={StartDate}, DataFinal={EndDate}, Página={Page}, TamanhoPerPage={PageSize}",
+                name ?? "todos", startDate?.ToString() ?? "sem limite inicial", endDate?.ToString() ?? "sem limite final", page, pageSize);
+
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            Log.Debug("Total de registros: {TotalCount}, Total de páginas calculadas: {TotalPages}",
+                totalCount, totalPages);
+
             var model = new PagedResultViewModel<BaseContest>
             {
                 Datas = baseContests,
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                TotalPages = totalPages,
                 NameFilter = name,
                 StartDateFilter = startDate,
                 EndDateFilter = endDate
             };
 
+            Log.Information("Modelo paginado construído com sucesso. Exibindo página {CurrentPage} de {TotalPages} com {ItemCount} itens",
+                model.CurrentPage, model.TotalPages, model.Datas.Count);
             return model;
         }
     }
