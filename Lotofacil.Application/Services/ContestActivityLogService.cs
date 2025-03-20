@@ -23,7 +23,8 @@ namespace Lotofacil.Application.Services
 
         public async Task DeleteAllReferencesOfLogByBaseContest(string baseContestName)
         {
-            Log.Debug("Iniciando exclusão de logs relacionados ao concurso base: {BaseContestName}", baseContestName);
+            var contestLog = Log.ForContext("BaseContestName", baseContestName);
+            contestLog.Debug("Iniciando exclusão de logs relacionados ao concurso base");
 
             var logs = await _repository.GetAllAsync();
             int deletedCount = 0;
@@ -32,13 +33,13 @@ namespace Lotofacil.Application.Services
             {
                 if (log.BaseContestName.Contains(baseContestName))
                 {
-                    Log.Debug("Excluindo log com ID {LogId} relacionado ao concurso base {BaseContestName}", log.Id, baseContestName);
+                    contestLog.Debug("Excluindo log com ID {LogId} relacionado ao concurso base {BaseContestName}", log.Id, baseContestName);
                     await _repository.DeleteAsync(log.Id);
                     deletedCount++;
                 }
             }
 
-            Log.Information("Exclusão concluída: {DeletedCount} logs relacionados ao concurso base {BaseContestName} foram removidos", deletedCount, baseContestName);
+            contestLog.Information("Exclusão concluída: {DeletedCount} logs relacionados ao concurso base {BaseContestName} foram removidos", deletedCount, baseContestName);
         }
 
         public async Task<List<ContestActivityLog>> GetFilteredContestActivityLogsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize)

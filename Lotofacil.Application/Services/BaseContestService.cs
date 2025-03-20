@@ -1,17 +1,9 @@
-﻿using Lotofacil.Application.DTO.Request;
-using Lotofacil.Application.DTO.Response;
-using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lotofacil.Application.Services
 {
@@ -40,25 +32,28 @@ namespace Lotofacil.Application.Services
         public async Task CreateAsync(ContestViewModel contestVM)
         {
             var formattedName = $"Concurso {contestVM.Name}";
-            Log.Debug("String de nome do Concurso formatada: {FormattedName}", formattedName);
+            var contestLog = Log.ForContext("ContestName", contestVM.Name);
+            contestLog.Debug("String de nome do Concurso formatada: {FormattedName}", formattedName);
             //Deve ser atribuído assim, visto que o objeto só pode ser criado passando os parâmetros para o construtor
             var baseContest = new BaseContest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
 
             await _repository.AddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
-            Log.Information("Registro criado com sucesso");
+            contestLog.Information("Registro criado com sucesso");
         }
         public async Task EditBaseContestAsync(ContestViewModel contestVM)
         {
-            Log.Debug("Iniciando edição do Concurso Base com ID {Id}", contestVM.Id);
+            var contestLog = Log.ForContext("ConcursoBaseId", contestVM.Id);
+
+            contestLog.Debug("Iniciando edição do Concurso Base");
 
             var baseContest = await _repository.GetByIdAsync(contestVM.Id);
             if (baseContest == null)
             {
-                Log.Warning("Tentativa de editar concurso base inexistente. ID: {Id}", contestVM.Id);
+                contestLog.Warning("Tentativa de editar concurso base inexistente.");
                 throw new KeyNotFoundException($"Concurso base com ID {contestVM.Id} não encontrado.");
             }
 
-            Log.Debug("Atualizando propriedades do concurso base ID {Id}. Nome anterior: {OldName}, Novo nome: {NewName}",
+            contestLog.Debug("Atualizando propriedades do concurso base ID {Id}. Nome anterior: {OldName}, Novo nome: {NewName}",
                 contestVM.Id, baseContest.Name, contestVM.Name);
 
             baseContest.Name = contestVM.Name;
@@ -67,22 +62,26 @@ namespace Lotofacil.Application.Services
 
             await _repository.UpdateAsync(baseContest);
 
-            Log.Information("Concurso base ID {Id} atualizado com sucesso", contestVM.Id);
+            contestLog.Information("Concurso base atualizado com sucesso");
         }
         //Esse método serve para recuperar uma BaseContest para ser mostrado na tela, de forma que respeite as dependencias da camada Presentation
         public async Task<ContestViewModel> ShowOnScreen(int id)
         {
-            Log.Debug("Iniciando recuperação do Concurso com ID {Id}", id);
+            var contestLog = Log.ForContext("ConcursoBaseId", id);//Conceito de Correlation no Serilog
+
+            contestLog.Debug("Iniciando recuperação do Concurso");
 
             var baseContest = await _repository.GetByIdAsync(id);
 
+            
+
             if (baseContest == null)
             {
-                Log.Warning("Concurso com ID {Id} não foi encontrado", id);
+                contestLog.Warning("Concurso Base não foi encontrado");
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
             }
 
-            Log.Information("Concurso com ID {Id} recuperado com sucesso", id);
+            contestLog.Information("Concurso Base recuperado com sucesso");
 
             return new ContestViewModel
             {
@@ -106,20 +105,22 @@ namespace Lotofacil.Application.Services
 
         public async Task DeleteByIdAsync(int id)
         {
-            Log.Debug("Iniciando exclusão do concurso com ID {Id}.", id);
-
             var baseContest = await _repository.GetByIdAsync(id);
+
+            var contestLog = Log.ForContext("ConcursoBaseId", id);//Conceito de Correlation no Serilog
+            contestLog.Debug("Iniciando exclusão do Concurso Base.");
+
             if (baseContest == null)
             {
-                Log.Warning("Tentativa de exclusão falhou. Concurso com ID {Id} não encontrado.", id);
+                contestLog.Warning("Tentativa de exclusão falhou. Concurso com ID {Id} não encontrado.", id);
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
             }
 
-            Log.Debug("Deletando todas as referências de log associadas ao concurso {Name}.", baseContest.Name);
+            contestLog.Debug("Deletando todas as referências de log associadas ao concurso {Name}.", baseContest.Name);
             await _activityLS.DeleteAllReferencesOfLogByBaseContest(baseContest.Name);
 
             await _repository.DeleteAsync(id);
-            Log.Information("Concurso com ID {Id} excluído com sucesso.", id);
+            contestLog.Information("Concurso Base excluído com sucesso.");
         }
 
         public IQueryable<BaseContest> GetQueryableBaseContests()

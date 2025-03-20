@@ -47,7 +47,9 @@ namespace Lotofacil.Application.Services
 
         public async Task CreateAsync(ContestViewModel contestVM)
         {
-            Log.Debug("Iniciando criação de concurso com nome: {ContestName}", contestVM.Name);
+            var contestLog = Log.ForContext("ConcursoBaseId", contestVM.Name);
+
+            contestLog.Debug("Iniciando criação de concurso");
 
             var formattedName = $"Concurso {contestVM.Name}";
 
@@ -59,7 +61,7 @@ namespace Lotofacil.Application.Services
 
             await _repository.AddAsync(contest);
 
-            Log.Information("Concurso {ContestName} criado com sucesso.", formattedName);
+            contestLog.Information("Concurso {ContestName} criado com sucesso.", formattedName);
         }
 
         public async Task<ContestModalResponseDTO> AnalisarConcursos(ContestModalRequestDTO request)
