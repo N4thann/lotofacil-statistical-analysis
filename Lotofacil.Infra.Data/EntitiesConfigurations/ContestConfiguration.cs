@@ -11,10 +11,15 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
 {
     public class ContestConfiguration : ContestBaseEntityConfiguration<Contest>
     {
+        /// <summary>
+        /// Aproveitarmos a regra DRY (Don't Repeat Yourself).
+        /// Lembrando que utilizar a herança nas entidades já torna mais simples e possui o conceito do DRY.
+        /// A expanção foi para o FluentAPI que aplicamos também esse conceito criando um método que aproveita 
+        /// automáticamente essas configurações comuns entre as entidades.
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void AppendConfig(EntityTypeBuilder<Contest> builder)
         {
-            builder.ToTable("Contest");
-
             //Propriedade LastProcessed 
             builder.Property(b => b.LastProcessed)
                 .HasColumnName("LastProcessed")
