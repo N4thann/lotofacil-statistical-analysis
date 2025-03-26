@@ -66,17 +66,7 @@ namespace Lotofacil.Application.Services
 
         public int CalculateIntersection(List<int> list1, List<int> list2)
         {
-            int matches = 0;
-
-            foreach (var number in list1)
-            {
-                if (list2.Contains(number))
-                {
-                    matches++;
-                }
-            }
-
-            return matches;
+            return list1.Intersect(list2).Count();
         }
 
         public MemoryStream GenerateExcelForContestActivityLog(IEnumerable<ContestActivityLog> data)

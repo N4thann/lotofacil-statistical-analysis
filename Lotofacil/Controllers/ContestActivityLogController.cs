@@ -1,8 +1,6 @@
-﻿using Lotofacil.Application.Services;
-using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lotofacil.Web.Controllers

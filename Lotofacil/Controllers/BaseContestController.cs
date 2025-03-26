@@ -63,7 +63,7 @@ namespace Lotofacil.Presentation.Controllers
             return RedirectToAction("List", "BaseContest");
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -73,7 +73,6 @@ namespace Lotofacil.Presentation.Controllers
             }
 
             var baseContest = await _baseContestService.GetAllWithContestsAbove11Async();
-
             var bcontest = baseContest.FirstOrDefault(x => x.Id == id);
 
             if (bcontest == null)
@@ -82,7 +81,6 @@ namespace Lotofacil.Presentation.Controllers
                     $"Concurso Base com '{id}'não encontrado.", null, 4) // Código que representa ErrorType.NotFound
                     );
             }
-
             return View(bcontest);
         }
 
@@ -101,7 +99,6 @@ namespace Lotofacil.Presentation.Controllers
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
-
                 return View("Edit", baseContestVM);
             }
 
