@@ -16,8 +16,8 @@ namespace Lotofacil.Application.BackgroundJobs
     public class MainJobHandler
     {
         private readonly IBaseContestRepository _repositoryBC;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IContestRepository _repositoryC;
-        private readonly IRepository<ContestActivityLog> _repositoryLog;
         private readonly IContestManagementService _contestMS;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -30,15 +30,15 @@ namespace Lotofacil.Application.BackgroundJobs
         /// <param name="repositoryLog">Repositório responsável pelo registro de atividades dos concursos.</param>
         /// <param name="contestMS">Serviço para manipulação de concursos, incluindo operações como interseção de números.</param>
         public MainJobHandler(
+            IUnitOfWork unitOfWork,
             IBaseContestRepository repositoryBC, 
             IContestRepository repositoryC,  
-            IContestManagementService contestMS,
-            IRepository<ContestActivityLog> repositoryLog)
+            IContestManagementService contestMS)
         {
+            _unitOfWork = unitOfWork;
             _repositoryBC = repositoryBC;
             _repositoryC = repositoryC;
             _contestMS = contestMS;
-            _repositoryLog = repositoryLog;
         }
 
         /// <summary>
@@ -78,16 +78,17 @@ namespace Lotofacil.Application.BackgroundJobs
         /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         private async Task SaveRelationshipsAsync()
         {
+            var baseContestRepository = _unitOfWork.Repository<BaseContest>();
+            var contestRepository = _unitOfWork.Repository<Contest>();
+            var logRepository = _unitOfWork.Repository<ContestActivityLog>();
+
             // Foi necessário criar repositórios específicos para recuperar as listas de ambas as entidades.
             // O método do repositório genérico não possuía o include das listas e utilizava AsNoTracking,
             // impossibilitando o update direto. 
             // Assim, o método genérico é mantido apenas para listagens simples,
             // enquanto os repositórios específicos permitem atualizações e consultas mais detalhadas.
             var baseContests = await _repositoryBC.GetAllWithContestsAbove11Async();
-
             var contests = await _repositoryC.GetAllWithBaseContestsAsync();
-
-            int allHits = 0;
 
             if (baseContests.Any() && contests.Any())
             {
@@ -99,11 +100,9 @@ namespace Lotofacil.Application.BackgroundJobs
                     {
                         var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
 
-                        allHits = 0;
-
                         if (y.LastProcessed == null || y.LastProcessed < x.CreatedAt)
                         {
-                            allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
+                            int allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
 
                             switch (allHits)
                             {
@@ -122,13 +121,14 @@ namespace Lotofacil.Application.BackgroundJobs
                                     y.Data,
                                     x.Name,
                                     x.Numbers,
-                                    allHits);
+                                    allHits
+                                );
 
-                                await _repositoryLog.AddAsync(log);
+                                await logRepository.AddAsync(log);
 
                                 x.ContestsAbove11.Add(y);
                                 y.BaseContests.Add(x);
-                                await _repositoryC.UpdateContestAsync(y);
+
                                 Log.Debug("O concurso {Name} teve mais de 11 acertos", y.Name);
                             }
                         }
@@ -137,19 +137,23 @@ namespace Lotofacil.Application.BackgroundJobs
                             Log.Debug("Concurso {Name}: já está atualizado", y.Name);
                         }
                     }
-                    await _repositoryBC.UpdateBaseContestAsync(x);
+
+                    await baseContestRepository.UpdateAsync(x);
                 }
 
+                // Atualização em batch dos registros de 'LastProcessed'
                 foreach (var y in contests)
                 {
                     y.LastProcessed = DateTime.Now;
-                    await _repositoryC.UpdateContestAsync(y);
+                    await contestRepository.UpdateAsync(y);
                 }
 
-                }
+                await _unitOfWork.CompleteAsync();//Ele reduz o número de SaveChangesAsync, já que o método CompleteAsync pode ser chamado
+                //uma única vez ao final das operações. Isso melhora a performance e evita múltiplas transações desnecessárias.
+            }
             else
             {
-                Log.Warning("Não tem registro na tabela Concurso e/ou Concurso Base.");
+                Log.Warning("Não há registros em Concurso e/ou Concurso Base.");
             }
         }
     }
