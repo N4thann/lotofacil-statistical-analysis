@@ -10,6 +10,7 @@ using Lotofacil.Presentation.Extensions;
 using ClosedXML.Excel;
 using Lotofacil.Application.DTO.Request;
 using Lotofacil.Application.Services;
+using Serilog;
 
 namespace Lotofacil.Presentation.Controllers
 {
@@ -104,6 +105,7 @@ namespace Lotofacil.Presentation.Controllers
                 {
                     try
                     {
+                        Log.Information("Iniciando serviço de Input de concursos através de um arquivo excel");
                         // Recuperar o valor da célula de data como texto
                         var dateCell = row.Cell(2).GetValue<string>();
                         DateTime date;
@@ -142,7 +144,6 @@ namespace Lotofacil.Presentation.Controllers
                     }
                 }
 
-                // Chama o serviço para salvar no banco
                 foreach (var contest in contests)
                 {
                     await _contestService.CreateAsync(contest);
@@ -156,8 +157,7 @@ namespace Lotofacil.Presentation.Controllers
                 TempData["error"] = $"Erro ao importar o arquivo: {ex.Message}";
             }
 
-            // Exibe o total de concursos gravados no console
-            Console.WriteLine($"Total de concursos salvos: {savedContestsCount}");
+            Log.Information("Total de concursos salvos: {SavedContestsCount}", savedContestsCount);
 
             return RedirectToAction("List", "Contest");
         }
