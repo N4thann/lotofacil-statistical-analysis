@@ -27,7 +27,7 @@ namespace Lotofacil.Application.BackgroundJobs
         /// </summary>
         /// <param name="repositoryBC">Repositório para gerenciamento dos concursos base.</param>
         /// <param name="repositoryC">Repositório para gerenciamento dos concursos diários.</param>
-        /// <param name="repositoryLog">Repositório responsável pelo registro de atividades dos concursos.</param>
+        /// <param name="unitOfWork">Implementa o padrão UnitOfWork gerencia um conjunto de operações em uma única transação.</param>
         /// <param name="contestMS">Serviço para manipulação de concursos, incluindo operações como interseção de números.</param>
         public MainJobHandler(
             IUnitOfWork unitOfWork,
@@ -90,6 +90,9 @@ namespace Lotofacil.Application.BackgroundJobs
             var baseContests = await _repositoryBC.GetAllWithContestsAbove11Async();
             var contests = await _repositoryC.GetAllWithBaseContestsAsync();
 
+            var logs = new List<ContestActivityLog>();//Para não fazer diversas chamadas assincronas dentro do loop iremos salvar na lista e ao final 
+            //gravar tudo de uma vez no banco com UnitOfWork
+
             if (baseContests.Any() && contests.Any())
             {
                 foreach (var x in baseContests)
@@ -115,16 +118,14 @@ namespace Lotofacil.Application.BackgroundJobs
 
                             if (allHits > 10 && !x.ContestsAbove11.Contains(y))
                             {
-                                var log = new ContestActivityLog(
+                                logs.Add(new ContestActivityLog(
                                     y.Name,
                                     y.Numbers,
                                     y.Data,
                                     x.Name,
                                     x.Numbers,
                                     allHits
-                                );
-
-                                await logRepository.AddAsync(log);
+                                ));
 
                                 x.ContestsAbove11.Add(y);
                                 y.BaseContests.Add(x);
@@ -138,14 +139,19 @@ namespace Lotofacil.Application.BackgroundJobs
                         }
                     }
 
-                    await baseContestRepository.UpdateAsync(x);
+                    baseContestRepository.Update(x);
                 }
 
                 // Atualização em batch dos registros de 'LastProcessed'
                 foreach (var y in contests)
                 {
                     y.LastProcessed = DateTime.Now;
-                    await contestRepository.UpdateAsync(y);
+                    contestRepository.Update(y);
+                }
+
+                if (logs.Any())
+                {
+                    await logRepository.AddRangeAsync(logs); // Inserindo logs de uma vez só
                 }
 
                 await _unitOfWork.CompleteAsync();//Ele reduz o número de SaveChangesAsync, já que o método CompleteAsync pode ser chamado

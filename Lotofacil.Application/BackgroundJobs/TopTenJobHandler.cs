@@ -1,5 +1,5 @@
-﻿using Lotofacil.Application.Services;
-using Lotofacil.Application.Services.Interfaces;
+﻿using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Serilog;
 
@@ -14,7 +14,7 @@ namespace Lotofacil.Application.BackgroundJobs
     {
         private readonly IBaseContestService _baseContestService;
         private readonly IContestManagementService _contestMS;
-        private readonly IBaseContestRepository _repositoryBC;
+        private readonly IUnitOfWork _unitOfWork;
         private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         /// <summary>
@@ -22,14 +22,14 @@ namespace Lotofacil.Application.BackgroundJobs
         /// injetando os serviços e o repositório necessários para gerenciar os concursos base 
         /// e suas relações com outros concursos.
         /// </summary>
-        /// <param name="repositoryBC">Repositório responsável pelo gerenciamento dos concursos base.</param>
+        /// <param name="unitOfWork">Implementa o padrão UnitOfWork gerencia um conjunto de operações em uma única transação.</param>
         /// <param name="contestMS">Serviço que manipula operações relacionadas a concursos.</param>
         /// <param name="baseContestService">Serviço para obtenção de concursos base com concursos associados.</param>
-        public TopTenJobHandler(IBaseContestRepository repositoryBC,
+        public TopTenJobHandler(IUnitOfWork unitOfWork,
             IContestManagementService contestMS,
             IBaseContestService baseContestService)
         {
-            _repositoryBC = repositoryBC;
+            _unitOfWork = unitOfWork;
             _contestMS = contestMS;
             _baseContestService = baseContestService;
         }
@@ -49,6 +49,8 @@ namespace Lotofacil.Application.BackgroundJobs
                 Log.Information("Inciando execução do TopTenJobHandler...");
                 // Obter todos os concursos base
                 var baseContests = await _baseContestService.GetAllWithContestsAbove11Async();
+
+                var baseContestRepository = _unitOfWork.Repository<BaseContest>();
 
                 if (baseContests != null) 
                 {
@@ -83,17 +85,15 @@ namespace Lotofacil.Application.BackgroundJobs
                         baseContest.AddTopTenNumbers(string.Join("-", top10Numbers));
 
                         Log.Debug("Valor dos 10 números mais frequentes do Concurso base {Name}: {Top10Numbers}", baseContest.Name, top10Numbers);
-
-                        // Salvar alterações no serviço
-                        await _repositoryBC.UpdateBaseContestAsync(baseContest);
-                    }
-
+                        baseContestRepository.UpdateAsync(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
+                    }                   
                 }
                 else
                 {
                     Log.Warning("A tabela de Concurso Base não possui registros");
                 }
 
+                await _unitOfWork.CompleteAsync();
                 Log.Information("Finalizando execução do TopTenJobHandler...");
             }
             catch (Exception ex)

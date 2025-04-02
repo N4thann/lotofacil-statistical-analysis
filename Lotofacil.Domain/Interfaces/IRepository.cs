@@ -14,43 +14,63 @@ namespace Lotofacil.Domain.Interfaces
         /// <param name="id">Identificador da entidade.</param>
         /// <returns>Entidade correspondente ao ID informado.</returns>
         Task<T> GetByIdAsync(int id);
-
         /// <summary>
         /// Obtém todas as entidades do repositório.
         /// </summary>
         /// <returns>Lista de entidades.</returns>
         Task<IEnumerable<T>> GetAllAsync();
-
-        /// <summary>
-        /// Adiciona uma nova entidade ao repositório.
-        /// </summary>
-        /// <param name="entity">Entidade a ser adicionada.</param>
-        Task AddAsync(T entity);
-
-        /// <summary>
-        /// Atualiza uma entidade existente no repositório.
-        /// </summary>
-        /// <param name="entity">Entidade a ser atualizada.</param>
-        Task UpdateAsync(T entity);
-
-        /// <summary>
-        /// Remove uma entidade do repositório com base no ID informado.
-        /// </summary>
-        /// <param name="id">Identificador da entidade a ser removida.</param>
-        Task DeleteAsync(int id);
-
         /// <summary>
         /// Obtém um IQueryable para realizar consultas avançadas sobre as entidades.
         /// </summary>
         /// <returns>Consulta IQueryable.</returns>
         IQueryable<T> GetAllQueryable();
-
         /// <summary>
         /// Verifica se existe alguma entidade que atende ao critério informado.
         /// </summary>
         /// <param name="predicate">Expressão para filtrar a existência da entidade.</param>
         /// <returns>Verdadeiro se a entidade existir, falso caso contrário.</returns>
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+        /// <summary>
+        /// Adiciona uma nova entidade ao repositório. Método para o UnitOfWork
+        /// </summary>
+        /// <param name="entity">Entidade a ser adicionada.</param>
+        Task AddAsync(T entity);
+        /// <summary>
+        /// Adiciona uma coleção de entidades ao banco de dados de forma assíncrona. Método para o UnitOfWork
+        /// </summary>
+        /// <param name="entities">Lista de entidades a serem adicionadas.</param>
+        /// <returns>Uma tarefa assíncrona que representa a operação.</returns>
+        /// <remarks>
+        /// Este método melhora a performance ao inserir múltiplas entidades em uma única transação,
+        /// reduzindo o número de chamadas ao banco de dados.
+        /// </remarks>
+        Task AddRangeAsync(IEnumerable<T> entities);
+        /// <summary>
+        /// Atualiza uma entidade existente no repositório. Método para o UnitOfWork
+        /// </summary>
+        /// <param name="entity">Entidade a ser atualizada.</param>
+        void Update(T entity);
+        /// <summary>
+        /// Remove uma entidade do repositório com base no ID informado. Método para o UnitOfWork
+        /// </summary>
+        /// <param name="entity">Identificador da entidade a ser removida.</param>
+        public void Delete(T entity);
+        /// <summary>
+        /// Atualiza uma entidade existente no repositório. 
+        /// </summary>
+        /// <param name="entity">Entidade a ser atualizada.</param>
+        Task SaveUpdateAsync(T entity);
+        /// <summary>
+        /// Remove uma entidade do repositório com base no ID informado.
+        /// </summary>
+        /// <param name="id">Identificador da entidade a ser removida.</param>
+        Task SaveDeleteAsync(int id);
+        /// <summary>
+        /// Adiciona uma nova entidade ao repositório.
+        /// </summary>
+        /// <param name="entity">Entidade a ser adicionada.</param>
+        /// <returns></returns>
+        Task SaveAddAsync(T entity);
     }
 }
 // Mesmo que esse método GetAllAsync() seja para uma listagem em uma tabela em que cada registro tenha uma opção
