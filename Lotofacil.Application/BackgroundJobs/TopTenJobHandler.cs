@@ -85,7 +85,7 @@ namespace Lotofacil.Application.BackgroundJobs
                         baseContest.AddTopTenNumbers(string.Join("-", top10Numbers));
 
                         Log.Debug("Valor dos 10 números mais frequentes do Concurso base {Name}: {Top10Numbers}", baseContest.Name, top10Numbers);
-                        baseContestRepository.UpdateAsync(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
+                        baseContestRepository.Update(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
                     }                   
                 }
                 else

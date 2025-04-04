@@ -37,7 +37,7 @@ namespace Lotofacil.Application.Services
             //Deve ser atribuído assim, visto que o objeto só pode ser criado passando os parâmetros para o construtor
             var baseContest = new BaseContest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
 
-            await _repository.AddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
+            await _repository.SaveAddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
             contestLog.Information("Registro criado com sucesso");
         }
         public async Task EditBaseContestAsync(ContestViewModel contestVM)
@@ -60,7 +60,7 @@ namespace Lotofacil.Application.Services
             baseContest.Data = _contestMS.SetDataHour(contestVM.Data);
             baseContest.Numbers = _contestMS.FormatNumbersToSave(contestVM.Numbers);
 
-            await _repository.UpdateAsync(baseContest);
+            await _repository.SaveUpdateAsync(baseContest);
 
             contestLog.Information("Concurso base atualizado com sucesso");
         }
@@ -119,7 +119,7 @@ namespace Lotofacil.Application.Services
             contestLog.Debug("Deletando todas as referências de log associadas ao concurso {Name}.", baseContest.Name);
             await _activityLS.DeleteAllReferencesOfLogByBaseContest(baseContest.Name);
 
-            await _repository.DeleteAsync(id);
+            await _repository.SaveDeleteAsync(id);
             contestLog.Information("Concurso Base excluído com sucesso.");
         }
 

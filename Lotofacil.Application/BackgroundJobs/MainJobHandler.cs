@@ -151,7 +151,7 @@ namespace Lotofacil.Application.BackgroundJobs
 
                 if (logs.Any())
                 {
-                    await logRepository.AddRangeAsync(logs); // Inserindo logs de uma vez só
+                    await logRepository.AddRangeAsync(logs); //Inserindo logs de uma vez só
                 }
 
                 await _unitOfWork.CompleteAsync();//Ele reduz o número de SaveChangesAsync, já que o método CompleteAsync pode ser chamado

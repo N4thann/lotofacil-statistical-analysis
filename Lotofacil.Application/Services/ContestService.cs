@@ -59,7 +59,7 @@ namespace Lotofacil.Application.Services
                 _contestMS.FormatNumbersToSave(contestVM.Numbers)
             );
 
-            await _repository.AddAsync(contest);
+            await _repository.SaveAddAsync(contest);
 
             contestLog.Information("Concurso {ContestName} criado com sucesso.", formattedName);
         }

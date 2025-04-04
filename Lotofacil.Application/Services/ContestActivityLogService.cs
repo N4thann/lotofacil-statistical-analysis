@@ -11,9 +11,11 @@ namespace Lotofacil.Application.Services
     public class ContestActivityLogService : IContestActivityLogService
     {
         private readonly IRepository<ContestActivityLog> _repository;
-        public ContestActivityLogService(IRepository<ContestActivityLog> repository)
+        private readonly IUnitOfWork _unitOfWork;
+        public ContestActivityLogService(IRepository<ContestActivityLog> repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
         public IQueryable<ContestActivityLog> GetQueryableContestActivityLogs()
         {
@@ -25,6 +27,7 @@ namespace Lotofacil.Application.Services
         {
             var contestLog = Log.ForContext("BaseContestName", baseContestName);
             contestLog.Debug("Iniciando exclusão de logs relacionados ao concurso base");
+            var logRepository = _unitOfWork.Repository<ContestActivityLog>();
 
             var logs = await _repository.GetAllAsync();
             int deletedCount = 0;
@@ -34,11 +37,11 @@ namespace Lotofacil.Application.Services
                 if (log.BaseContestName.Contains(baseContestName))
                 {
                     contestLog.Debug("Excluindo log com ID {LogId} relacionado ao concurso base {BaseContestName}", log.Id, baseContestName);
-                    await _repository.DeleteAsync(log.Id);
+                    logRepository.Delete(log);
                     deletedCount++;
                 }
             }
-
+            await _unitOfWork.CompleteAsync();
             contestLog.Information("Exclusão concluída: {DeletedCount} logs relacionados ao concurso base {BaseContestName} foram removidos", deletedCount, baseContestName);
         }
 
