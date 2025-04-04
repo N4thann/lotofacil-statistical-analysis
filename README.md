@@ -34,7 +34,7 @@ O BaseContest #44 adiciona o Contest #3234 à sua lista de acertos 14
 
 O atributo Matched14 é incrementado
 
-Um registro é criado na tabela ContestActivityLog com os detalhes da ação
+Um registro é criado na tabela ContestActivityLog com os detalhes desse relacionamento
 
 ⚙️ Serviços com Hangfire
 MainJobHandler
