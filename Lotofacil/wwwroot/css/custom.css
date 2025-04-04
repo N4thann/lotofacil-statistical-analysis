@@ -23,6 +23,38 @@ body {
     font-family: monospace;
 }
 
+@media (min-width: 992px) {
+    /* Quando a sidebar estiver expandida */
+    .sidebar-collapse .sidebar-footer {
+        display: none !important;
+    }
+
+    /* Ajustes para o botão */
+    .sidebar-button .btn {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+        white-space: normal;
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    /* Ajuste para a imagem */
+    .sidebar-logo img {
+        transition: all 0.3s ease;
+    }
+}
+
+/* Para telas pequenas (modo móvel) */
+@media (max-width: 991.98px) {
+    .sidebar-open .sidebar-footer {
+        display: block !important;
+    }
+
+    .sidebar-closed .sidebar-footer {
+        display: none !important;
+    }
+}
+
 
 
 

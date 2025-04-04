@@ -2,12 +2,9 @@
 <aside class="main-sidebar sidebar-light-navy elevation-4">
     <a href="/Home/Index" class="brand-link">
         @*<img src="" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .4">*@
-        <span class="brand-text font-weight-light">Lotofácil</span>
+        <span class="brand-text font-weight-light">Análises da Lotofácil</span>
     </a>
-    <!-- Sidebar -->
     <div class="sidebar">
-
-        <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item menu-open">
@@ -99,25 +96,33 @@
                         *@
                     </ul>
                 </li>
-                <div class="mt-4">
+                <div class="mt-4 sidebar-footer">
                     <div class="d-flex flex-column align-items-center">
-                        <!-- Centraliza a imagem e o botão -->
-                        <div class="unlimited-access-img text-center">
-                            <!-- Centraliza a imagem -->
-                            <img src="~/adminlte/dist/img/logos/lotofacil.png" alt="logo loteria" class="img-fluid">
+                        <div class="unlimited-access-img text-center sidebar-logo">
+                            <img src="~/adminlte/dist/img/logos/lotofacil.png" alt="logo loteria" class="img-fluid" style="max-width: 85%; height: auto;">
                         </div>
 
-                        <div class="mt-3">
-                            <a href="https://loterias.caixa.gov.br/Paginas/Lotofacil.aspx" target="_blank" class="btn btn-warning">
-                                Ir para os resultados da Lotofácil
+                        <div class="mt-2 sidebar-button">
+                            <a href="https://loterias.caixa.gov.br/Paginas/Lotofacil.aspx" target="_blank" class="btn btn-warning btn-sm">
+                                Ir para os resultados
                             </a>
                         </div>
                     </div>
                 </div>
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>
+
+<script>
+    $(document).ready(function() {
+    $('[data-widget="pushmenu"]').on('click', function() {
+        if ($('body').hasClass('sidebar-collapse')) {
+            $('.sidebar-footer').hide();
+        } else {
+            $('.sidebar-footer').show();
+        }
+    });
+});
+</script>
 

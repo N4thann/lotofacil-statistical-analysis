@@ -79,7 +79,6 @@
 }
 </style>
 
-
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -180,7 +179,6 @@
     </div>
 </div>
 
-
 <script>
     let selecionadosGlobalmente = new Set();
     
@@ -224,10 +222,8 @@
                     <h2><p><strong>Top 5 Números Mais Frequentes:</strong>  ${response.top5MostFrequentNumbers.join(', ')}</p></h2>
                     <h2><p><strong>Top 5 Números Menos Frequentes:</strong>     ${response.top5LeastFrequentNumbers.join(', ')}</p></h2>
                 `;
-
                     // Inserir no modal
                     document.querySelector(".modal-body-painel").innerHTML = modalContent;
-
                     // Exibir modal
                     document.getElementById("modalAnalisar").style.display = "block";
                 } else {
@@ -237,11 +233,9 @@
             .catch(error => console.error('Erro na requisição:', error));
     }
 
-
-
     function fecharModal(id) {
         document.getElementById(id).style.display = "none";
-        location.reload(); // Recarrega a página ao fechar o modal
+        location.reload();
     }
 </script>
 
