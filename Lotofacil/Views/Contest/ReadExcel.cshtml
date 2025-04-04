@@ -2,9 +2,7 @@
     ViewData["Title"] = "Importar Concurso via Excel";
 }
 
-<h2>Importar Concurso via Excel</h2>
-
-<div class="container">
+<div class="container mt-4">
     @if (TempData["error"] != null)
     {
         <div class="alert alert-danger">
@@ -18,12 +16,75 @@
         </div>
     }
 
-    <form asp-controller="Contest" asp-action="ImportFromExcel" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="file" class="form-label">Selecione o arquivo Excel:</label>
-            <input type="file" class="form-control" id="file" name="file" accept=".xlsx, .xls" required>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Importação de Arquivo Excel</h3>
         </div>
 
-        <button type="submit" class="btn btn-primary">Importar</button>
-    </form>
+        <form asp-controller="Contest" asp-action="ImportFromExcel" method="post" enctype="multipart/form-data">
+            <div class="card-body">
+
+                <!-- Texto explicativo -->
+                <div class="form-group">
+                    <label for="descricaoRegras">Regras para o envio do arquivo</label>
+                    <textarea id="descricaoRegras" class="form-control" rows="6" readonly>
+                    - O arquivo deve estar no formato .xlsx ou .xls.
+                    - Os campos de DATA devem todos estar formatados como TEXTO(string) na planilha.
+                    - Os números de cada concurso devem estar em ordem crescente.
+                    - A descrição do concurso deve estar em um dos seguintes modelos: "Concurso 12" ou "12"
+                    - Clicando no botão abaixo será redirecionado para um site que tem um modelo quase completo, com todos os concursos atualizados do momento, sendo necessário apenas fazer algumas alterações. 
+                    - Escolher a segunda opção de download que está em ordem crescente os números dos concursos.
+                    </textarea>
+                </div>
+
+                <!-- Botão para redirecionar -->
+                <div class="form-group text-center">
+                    <a href="https://asloterias.com.br/download-todos-resultados-lotofacil" target="_blank" class="btn btn-info">
+                        Ir para site
+                    </a>
+                </div>
+
+                <!-- Imagem do modelo do Excel -->
+                <div class="form-group text-center">
+                    <label>Exemplo do modelo do arquivo:</label>
+                    <img src="~/adminlte/dist/img/blog/modelo_excel.png" class="img-fluid rounded shadow" alt="Modelo do Arquivo Excel" style="max-width: 100%; height: auto;" />
+                </div>
+
+                <!-- Campo de upload de arquivo -->
+                <div class="form-group">
+                    <label for="file">Selecionar arquivo Excel:</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file" name="file" accept=".xlsx, .xls" required>
+                            <label class="custom-file-label" for="file">Escolher arquivo</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Importar</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Aguarda o carregamento do DOM
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.querySelector('.custom-file-input');
+            const fileLabel = document.querySelector('.custom-file-label');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function (e) {
+                    const fileName = e.target.files.length > 0 ? e.target.files[0].name : "Escolher arquivo";
+                    if (fileLabel) {
+                        fileLabel.textContent = fileName;
+                    }
+                });
+            }
+        });
+    </script>
+}
