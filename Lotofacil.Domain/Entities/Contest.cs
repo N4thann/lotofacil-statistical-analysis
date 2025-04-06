@@ -6,6 +6,7 @@
     /// </summary>
     public class Contest : ContestBaseEntity
     {
+        public Contest() { }
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="Contest"/> com o nome, data e números sorteados especificados.
         /// </summary>

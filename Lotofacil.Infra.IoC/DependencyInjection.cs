@@ -13,6 +13,8 @@ using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
 using Hangfire.SqlServer;
 using Microsoft.Extensions.Logging;
+using Lotofacil.Infra.Data.Interfaces;
+using Lotofacil.Infra.Data.Initialization;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -27,6 +29,8 @@ namespace Lotofacil.Infra.IoC
             // Registrando o DbContext com a string de conexão correta
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddScoped<IDataInitializer, ApplicationDbInitializer>();
 
             // Configuração do Hangfire no DependencyInjection
             //Faz uma limpeza nas tabelas que o Hangfire criou no banco de dados

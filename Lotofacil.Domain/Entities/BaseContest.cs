@@ -9,6 +9,7 @@ namespace Lotofacil.Domain.Entities
     /// </summary>
     public class BaseContest : ContestBaseEntity
     {
+        public BaseContest() { }    
         public BaseContest(string name, DateTime data, string numbers)
         {
             Name = name;
@@ -16,7 +17,7 @@ namespace Lotofacil.Domain.Entities
             Numbers = numbers;
             ContestsAbove11 = new List<Contest>();
             CreatedAt = DateTime.Now;
-            TopTenNumbers = "";
+            TopTenNumbers = string.Empty;
         }
 
         /// <summary>
