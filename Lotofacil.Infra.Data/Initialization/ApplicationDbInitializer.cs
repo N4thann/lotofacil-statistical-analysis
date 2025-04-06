@@ -1,17 +1,21 @@
 ﻿using Lotofacil.Domain.Entities;
 using Lotofacil.Infra.Data.Context;
-using Lotofacil.Infra.Data.Interfaces;
+using Lotofacil.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lotofacil.Infra.Data.Initialization
 {
     public class ApplicationDbInitializer : IDataInitializer
     {
-        public void Seed(ApplicationDbContext context)
-        {
-            context.Database.Migrate();
+        private readonly ApplicationDbContext _context;
 
-            if (!context.BaseContests.Any() && !context.Contests.Any())
+        public ApplicationDbInitializer(ApplicationDbContext context) => _context = context;
+
+        public void Seed()
+        {
+            _context.Database.Migrate();
+
+            if (!_context.BaseContests.Any() && !_context.Contests.Any())
             {
                 var baseContests = new List<BaseContest>
                 {
@@ -45,10 +49,10 @@ namespace Lotofacil.Infra.Data.Initialization
                     }
                 };
 
-                context.BaseContests.AddRange(baseContests);
-                context.Contests.AddRange(contests);
+                _context.BaseContests.AddRange(baseContests);
+                _context.Contests.AddRange(contests);
 
-                context.SaveChanges();
+                _context.SaveChanges();
             }
         }
     }

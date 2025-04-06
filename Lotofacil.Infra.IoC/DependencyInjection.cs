@@ -10,10 +10,7 @@ using FluentValidation;
 using Lotofacil.Application.Validators;
 using Lotofacil.Application.ViewsModel;
 using Hangfire;
-using Lotofacil.Application.BackgroundJobs;
 using Hangfire.SqlServer;
-using Microsoft.Extensions.Logging;
-using Lotofacil.Infra.Data.Interfaces;
 using Lotofacil.Infra.Data.Initialization;
 
 namespace Lotofacil.Infra.IoC
@@ -30,7 +27,9 @@ namespace Lotofacil.Infra.IoC
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            //Configurações feitas para caso o banco de dados precise ser criado do zero
             services.AddScoped<IDataInitializer, ApplicationDbInitializer>();
+            services.AddScoped<IInitializationDbService, InitializationDbService>();
 
             // Configuração do Hangfire no DependencyInjection
             //Faz uma limpeza nas tabelas que o Hangfire criou no banco de dados

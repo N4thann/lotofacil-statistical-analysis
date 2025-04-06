@@ -1,9 +1,7 @@
 using Lotofacil.Infra.IoC;
 using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
-using Lotofacil.Infra.Data.Context;
-using Lotofacil.Infra.Data.Initialization;
-using Lotofacil.Infra.Data.Interfaces;
+using Lotofacil.Application.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,14 +12,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// ✅ SEED EXECUTADO AQUI (ANTES DE app.Run)
-using (var scope = app.Services.CreateScope()) // Cria um escopo de serviço (escopo = ciclo de vida da request)
+// Inicialização do banco de dados
+using (var scope = app.Services.CreateScope())
 {
-    // Pega o serviço registrado de IDataInitializer (a implementação concreta é ApplicationDbInitializer)
-    var initializer = scope.ServiceProvider.GetRequiredService<IDataInitializer>();
-
-    // Executa o método Seed, que vai aplicar migrações e popular o banco se necessário
-    initializer.Seed();
+    var initService = scope.ServiceProvider.GetRequiredService<IInitializationDbService>();
+    initService.Initialize();
 }
 
 // Configure the HTTP request pipeline.
