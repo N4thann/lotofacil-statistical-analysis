@@ -5,9 +5,7 @@ using Lotofacil.Application.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-//Método configurado na camada Infra.IoC
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -49,6 +47,5 @@ RecurringJob.AddOrUpdate<TopTenJobHandler>(
     "Top-ten-job",
     service => service.ExecuteAsync(),
     "*/9 * * * *"); 
-
 
 app.Run();

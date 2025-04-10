@@ -51,6 +51,7 @@ namespace Lotofacil.Application.BackgroundJobs
                 var baseContests = await _baseContestService.GetAllWithContestsAbove11Async();
 
                 var baseContestRepository = _unitOfWork.Repository<BaseContest>();
+                var contestRepository = _unitOfWork.Repository<Contest>();
 
                 if (baseContests != null) 
                 {
@@ -59,12 +60,12 @@ namespace Lotofacil.Application.BackgroundJobs
 
                     foreach (var baseContest in baseContests)
                     {
-                        var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um for tradicional para preencher o valor do dictionary
+                        var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um "for" tradicional para preencher o valor do dictionary
 
                         // Contabilizar ocorrências dos números nos concursos
-                        foreach (var subContest in baseContest.ContestsAbove11)
+                        foreach (var contest in baseContest.ContestsAbove11)
                         {
-                            var numbers = _contestMS.ConvertFormattedStringToList(subContest.Numbers);
+                            var numbers = _contestMS.ConvertFormattedStringToList(contest.Numbers);
                             foreach (var number in numbers)
                             {
                                 occurrences[number]++;
@@ -86,7 +87,7 @@ namespace Lotofacil.Application.BackgroundJobs
 
                         Log.Debug("Valor dos 10 números mais frequentes do Concurso base {Name}: {Top10Numbers}", baseContest.Name, top10Numbers);
                         baseContestRepository.Update(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
-                    }                   
+                    }
                 }
                 else
                 {

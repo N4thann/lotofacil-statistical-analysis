@@ -103,7 +103,7 @@ namespace Lotofacil.Application.BackgroundJobs
                     {
                         var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
 
-                        if (y.LastProcessed == null || y.LastProcessed < x.CreatedAt)
+                        if (y.LastProcessedMainJob == null || y.LastProcessedMainJob < x.CreatedAt)
                         {
                             int allHits = _contestMS.CalculateIntersection(numbersBC, numbersC);
 
@@ -145,7 +145,7 @@ namespace Lotofacil.Application.BackgroundJobs
                 // Atualização em batch dos registros de 'LastProcessed'
                 foreach (var y in contests)
                 {
-                    y.LastProcessed = DateTime.Now;
+                    y.LastProcessedMainJob = DateTime.Now;
                     contestRepository.Update(y);
                 }
 

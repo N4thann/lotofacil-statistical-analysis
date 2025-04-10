@@ -22,9 +22,14 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
         {
             builder.ToTable("Contest");
 
-            //Propriedade LastProcessed 
-            builder.Property(b => b.LastProcessed)
-                .HasColumnName("LastProcessed")
+            //Propriedade LastProcessedMainJob
+            builder.Property(b => b.LastProcessedMainJob)
+                .HasColumnName("LastProcessedMainJob")
+                .IsRequired(false);
+
+            //Propriedade LastProcessedTopTenJob
+            builder.Property(b => b.LastProcessedTopTenJob)
+                .HasColumnName("LastProcessedTopTenJob")
                 .IsRequired(false);
         }
     }
