@@ -51,6 +51,11 @@ namespace Lotofacil.Domain.Entities
         public DateTime CreatedAt { get; private set; }
 
         /// <summary>
+        /// Obtém ou define o total de concursos na lista ContestsAbove11 para controle no job do Hangfire "TopTenJobHandler"
+        /// </summary>
+        public int? TotalProcessed { get; set; }
+
+        /// <summary>
         /// Obtém ou define os dez números mais frequentes nos concursos.
         /// </summary>
         public string TopTenNumbers { get; private set; }

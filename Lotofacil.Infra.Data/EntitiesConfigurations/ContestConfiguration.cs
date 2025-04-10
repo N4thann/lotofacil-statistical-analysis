@@ -26,11 +26,6 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             builder.Property(b => b.LastProcessedMainJob)
                 .HasColumnName("LastProcessedMainJob")
                 .IsRequired(false);
-
-            //Propriedade LastProcessedTopTenJob
-            builder.Property(b => b.LastProcessedTopTenJob)
-                .HasColumnName("LastProcessedTopTenJob")
-                .IsRequired(false);
         }
     }
 }

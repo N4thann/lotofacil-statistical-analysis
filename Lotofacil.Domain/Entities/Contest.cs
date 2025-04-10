@@ -22,14 +22,9 @@
         }
 
         /// <summary>
-        /// Obtém ou define a data da última vez que o concurso foi processado pelo o job do Hangfire "MainJobHandler".
+        /// Obtém ou define a data da última vez que o concurso foi processado pelo o job do Hangfire "MainJobHandler"
         /// </summary>
         public DateTime? LastProcessedMainJob { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a data da última vez que o concurso foi processado pelo o job do Hangfire "TopTenJobHandler".
-        /// </summary>
-        public DateTime? LastProcessedTopTenJob { get; set; }
 
         /// <summary>
         /// Obtém ou define a coleção de concursos base nos quais este concurso teve 11 ou mais acertos.

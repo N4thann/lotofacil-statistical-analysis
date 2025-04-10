@@ -31,6 +31,10 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
                    .HasColumnName("CreatedAt")
                    .IsRequired();
 
+            builder.Property(b => b.TotalProcessed)
+                   .HasColumnName("TotalProcessed")
+                   .IsRequired(false);
+
             // Propriedade Numbers
             builder.Property(b => b.TopTenNumbers)
                    .HasColumnName("TopTenNumbers")
