@@ -51,7 +51,8 @@ namespace Lotofacil.Application.BackgroundJobs
                 var baseContests = await _baseContestService.GetAllWithContestsAbove11Async();
 
                 var baseContestRepository = _unitOfWork.Repository<BaseContest>();
-                var contestRepository = _unitOfWork.Repository<Contest>();
+               
+                int numberOfUpdates = 0;
 
                 if (baseContests != null) 
                 {
@@ -60,33 +61,43 @@ namespace Lotofacil.Application.BackgroundJobs
 
                     foreach (var baseContest in baseContests)
                     {
-                        var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um "for" tradicional para preencher o valor do dictionary
+                        var totalCountContest = baseContest.ContestsAbove11.Count();
 
-                        // Contabilizar ocorrências dos números nos concursos
-                        foreach (var contest in baseContest.ContestsAbove11)
+                        if (baseContest.TotalProcessed < totalCountContest || baseContest.TotalProcessed is null)
                         {
-                            var numbers = _contestMS.ConvertFormattedStringToList(contest.Numbers);
-                            foreach (var number in numbers)
+                            var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um "for" tradicional para preencher o valor do dictionary
+
+                            // Contabilizar ocorrências dos números nos concursos
+                            foreach (var contest in baseContest.ContestsAbove11)
                             {
-                                occurrences[number]++;
+                                var numbers = _contestMS.ConvertFormattedStringToList(contest.Numbers);
+                                foreach (var number in numbers)
+                                {
+                                    occurrences[number]++;
+                                }
                             }
+
+                            // Obter os 10 números mais frequentes, mantendo apenas as chaves (números)
+                            var top10Numbers = occurrences
+                                .OrderByDescending(x => x.Value) // Ordena pela frequência (maior primeiro)
+                                .ThenBy(x => x.Key) // Em caso de empate, ordena pelo menor número
+                                .Take(10)
+                                .Select(x => x.Key) // Pega apenas os números
+                                .OrderBy(x => x) // Ordena em ordem crescente
+                                .Select(x => x.ToString("D2")) // Formata para "01", "02", etc.
+                                .ToList();
+
+                            //Chama um método da entidade para atribuir valor a variável TopTenNumbers
+                            baseContest.AddTopTenNumbers(string.Join("-", top10Numbers));
+                            baseContest.TotalProcessed = totalCountContest;
+
+                            Log.Debug("Valor dos 10 números mais frequentes do Concurso base {Name}: {Top10Numbers}", baseContest.Name, top10Numbers);
+                            baseContestRepository.Update(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
+                            numberOfUpdates++;
                         }
-
-                        // Obter os 10 números mais frequentes, mantendo apenas as chaves (números)
-                        var top10Numbers = occurrences
-                            .OrderByDescending(x => x.Value) // Ordena pela frequência (maior primeiro)
-                            .ThenBy(x => x.Key) // Em caso de empate, ordena pelo menor número
-                            .Take(10)
-                            .Select(x => x.Key) // Pega apenas os números
-                            .OrderBy(x => x) // Ordena em ordem crescente
-                            .Select(x => x.ToString("D2")) // Formata para "01", "02", etc.
-                            .ToList();
-
-                        //Chama um método da entidade para atribuir valor a variável TopTenNumbers
-                        baseContest.AddTopTenNumbers(string.Join("-", top10Numbers));
-
-                        Log.Debug("Valor dos 10 números mais frequentes do Concurso base {Name}: {Top10Numbers}", baseContest.Name, top10Numbers);
-                        baseContestRepository.Update(baseContest);//chamada sem o await, isso evita várias chamadas assíncronas dentro do loop e melhora a performance.
+                        else{
+                            Log.Debug("Concurso {Name} já está atualizado", baseContest.Name);
+                        }                     
                     }
                 }
                 else
@@ -94,7 +105,12 @@ namespace Lotofacil.Application.BackgroundJobs
                     Log.Warning("A tabela de Concurso Base não possui registros");
                 }
 
-                await _unitOfWork.CompleteAsync();
+                if (numberOfUpdates > 0)
+                {
+                    await _unitOfWork.CompleteAsync();
+                    Log.Information("Número de concursos base atualizados: {NumberOfUpdates}", numberOfUpdates);
+                }
+
                 Log.Information("Finalizando execução do TopTenJobHandler...");
             }
             catch (Exception ex)
