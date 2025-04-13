@@ -101,6 +101,14 @@ namespace Lotofacil.Application.BackgroundJobs
 
                     foreach (var y in contests)
                     {
+
+                        if (x.Name == y.Name || x.Data.Date == y.Data.Date)
+                        {
+                            Log.Debug("Concurso base {BaseName} ignorado na comparação com concurso {ContestName} (mesmo concurso)",
+                                x.Name, y.Name);
+                            continue;
+                        }
+
                         var numbersC = _contestMS.ConvertFormattedStringToList(y.Numbers);
 
                         if (y.LastProcessedMainJob == null || y.LastProcessedMainJob < x.CreatedAt)

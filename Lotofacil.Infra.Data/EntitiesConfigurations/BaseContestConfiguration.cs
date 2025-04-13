@@ -38,7 +38,8 @@ namespace Lotofacil.Infra.Data.EntityConfiguration
             // Propriedade Numbers
             builder.Property(b => b.TopTenNumbers)
                    .HasColumnName("TopTenNumbers")
-                   .HasMaxLength(29);
+                   .HasMaxLength(29)
+                   .IsRequired(false);
 
             // Configuração do relacionamento muitos-para-muitos
             builder.HasMany(b => b.ContestsAbove11)

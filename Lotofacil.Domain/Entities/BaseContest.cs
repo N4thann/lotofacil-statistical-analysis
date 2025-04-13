@@ -58,7 +58,7 @@ namespace Lotofacil.Domain.Entities
         /// <summary>
         /// Obtém ou define os dez números mais frequentes nos concursos.
         /// </summary>
-        public string TopTenNumbers { get; private set; }
+        public string? TopTenNumbers { get; private set; }
 
         /// <summary>
         /// Obtém ou define a coleção de concursos em que foram acertados 11 ou mais números.

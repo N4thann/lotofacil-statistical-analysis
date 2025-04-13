@@ -65,6 +65,12 @@ namespace Lotofacil.Application.BackgroundJobs
 
                         if (baseContest.TotalProcessed < totalCountContest || baseContest.TotalProcessed is null)
                         {
+                            if (baseContest.ContestsAbove11 != null)
+                            {
+                                Log.Debug("Concurso Base {Name} não tem concursos adicionados", baseContest.Name);
+                                continue;
+                            }
+                                
                             var occurrences = Enumerable.Range(1, 25).ToDictionary(i => i, _ => 0);//Substitui um "for" tradicional para preencher o valor do dictionary
 
                             // Contabilizar ocorrências dos números nos concursos
