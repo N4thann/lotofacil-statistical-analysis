@@ -1,14 +1,25 @@
-using Lotofacil.Infra.IoC;
 using Hangfire;
 using Lotofacil.Application.BackgroundJobs;
 using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Infra.IoC;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuração do Serilog usando o método de extensão
+builder.Host.ConfigureSerilog();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("🚀 APLICAÇÃO INICIADA - Serilog está funcionando!");
+logger.LogWarning("⚠️ Este é um log de WARNING para teste");
+
+// Middleware do Serilog para logging de requisições
+app.UseSerilogRequestLogging();
 
 // Inicialização do banco de dados
 using (var scope = app.Services.CreateScope())

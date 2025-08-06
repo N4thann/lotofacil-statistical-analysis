@@ -3,6 +3,7 @@ using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Lotofacil.Application.Services
@@ -13,15 +14,18 @@ namespace Lotofacil.Application.Services
         private readonly IContestManagementService _contestMS;
         private readonly IBaseContestRepository _repositoryBC;
         private readonly IContestActivityLogService _activityLS;
+        private readonly ILogger<BaseContestService> _logger;
         public BaseContestService(IRepository<BaseContest> repository, 
             IContestManagementService contestMS,
             IBaseContestRepository repositoryBC,
-            IContestActivityLogService activityLS)
+            IContestActivityLogService activityLS,
+            ILogger<BaseContestService> logger)
         {
             _repository = repository;
             _contestMS = contestMS;
             _repositoryBC = repositoryBC;
             _activityLS = activityLS;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<BaseContest>> GetAllBaseContestAsync()
@@ -32,28 +36,26 @@ namespace Lotofacil.Application.Services
         public async Task CreateAsync(ContestViewModel contestVM)
         {
             var formattedName = $"Concurso {contestVM.Name}";
-            var contestLog = Log.ForContext("ContestName", contestVM.Name);
-            contestLog.Debug("String de nome do Concurso formatada: {FormattedName}", formattedName);
-            //Deve ser atribuído assim, visto que o objeto só pode ser criado passando os parâmetros para o construtor
+            _logger.LogDebug("ContestName: {Name} , String de nome do Concurso formatada: {FormattedName}", contestVM.Name, formattedName);
+
             var baseContest = new BaseContest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
 
             await _repository.SaveAddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
-            contestLog.Information("Registro criado com sucesso");
+
+            _logger.LogInformation("Registro criado com sucesso");
         }
         public async Task EditBaseContestAsync(ContestViewModel contestVM)
         {
-            var contestLog = Log.ForContext("ConcursoBaseId", contestVM.Id);
-
-            contestLog.Debug("Iniciando edição do Concurso Base");
+            _logger.LogDebug("Iniciando edição do Concurso Base {ConcursoBaseId}", contestVM.Id);
 
             var baseContest = await _repository.GetByIdAsync(contestVM.Id);
             if (baseContest == null)
             {
-                contestLog.Warning("Tentativa de editar concurso base inexistente.");
+                _logger.LogWarning("Tentativa de editar concurso base inexistente {ConcursoBaseId}", contestVM.Id);
                 throw new KeyNotFoundException($"Concurso base com ID {contestVM.Id} não encontrado.");
             }
 
-            contestLog.Debug("Atualizando propriedades do concurso base ID {Id}. Nome anterior: {OldName}, Novo nome: {NewName}",
+            _logger.LogDebug("Atualizando propriedades do concurso base ID {ConcursoBaseId}. Nome anterior: {OldName}, Novo nome: {NewName}",
                 contestVM.Id, baseContest.Name, contestVM.Name);
 
             baseContest.Name = contestVM.Name;
@@ -62,8 +64,9 @@ namespace Lotofacil.Application.Services
 
             await _repository.SaveUpdateAsync(baseContest);
 
-            contestLog.Information("Concurso base atualizado com sucesso");
+            _logger.LogInformation("Concurso base {ConcursoBaseId} atualizado com sucesso", contestVM.Id);
         }
+
         //Esse método serve para recuperar uma BaseContest para ser mostrado na tela, de forma que respeite as dependencias da camada Presentation
         public async Task<ContestViewModel> ShowOnScreen(int id)
         {

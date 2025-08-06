@@ -1,17 +1,19 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using FluentValidation;
+using Hangfire;
+using Hangfire.SqlServer;
 using Lotofacil.Application.Services;
+using Lotofacil.Application.Services.Interfaces;
+using Lotofacil.Application.Validators;
+using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Interfaces;
 using Lotofacil.Infra.Data.Context;
+using Lotofacil.Infra.Data.Initialization;
 using Lotofacil.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using Lotofacil.Application.Validators;
-using Lotofacil.Application.ViewsModel;
-using Hangfire;
-using Hangfire.SqlServer;
-using Lotofacil.Infra.Data.Initialization;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Lotofacil.Infra.IoC
 {
@@ -69,6 +71,12 @@ namespace Lotofacil.Infra.IoC
             services.AddHangfireServer();
 
             return services;
+        }
+
+        public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder)
+        {
+            return hostBuilder.UseSerilog((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration));
         }
     }
 }
