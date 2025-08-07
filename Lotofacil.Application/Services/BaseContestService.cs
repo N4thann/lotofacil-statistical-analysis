@@ -1,7 +1,10 @@
-﻿using Lotofacil.Application.Services.Interfaces;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -35,14 +38,20 @@ namespace Lotofacil.Application.Services
 
         public async Task CreateAsync(ContestViewModel contestVM)
         {
-            var formattedName = $"Concurso {contestVM.Name}";
+            var formattedName = $"Concurso {contestVM.Name}";   
+            
             _logger.LogDebug("ContestName: {Name} , String de nome do Concurso formatada: {FormattedName}", contestVM.Name, formattedName);
 
             var baseContest = new BaseContest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
-
-            await _repository.SaveAddAsync(baseContest);//O método AddAsync do repositório já é assíncrono, então precisamos await essa chamada.
-
-            _logger.LogInformation("Registro criado com sucesso");
+            try
+            {
+                await _repository.SaveAddAsync(baseContest);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Erro ao criar o Concurso Base {Name}, Mensagem de erro: {message}, StackTrace: {StackTrace}", contestVM.Name, ex.Message, ex.StackTrace);
+                throw;
+            }
         }
         public async Task EditBaseContestAsync(ContestViewModel contestVM)
         {
@@ -61,30 +70,30 @@ namespace Lotofacil.Application.Services
             baseContest.Name = contestVM.Name;
             baseContest.Data = _contestMS.SetDataHour(contestVM.Data);
             baseContest.Numbers = _contestMS.FormatNumbersToSave(contestVM.Numbers);
-
-            await _repository.SaveUpdateAsync(baseContest);
-
-            _logger.LogInformation("Concurso base {ConcursoBaseId} atualizado com sucesso", contestVM.Id);
+            try
+            {
+                await _repository.SaveUpdateAsync(baseContest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Erro ao atualizar o Concurso Base de Id: {Id}, Mensagem de erro: {message}, StackTrace: {StackTrace}", contestVM.Id, ex.Message, ex.StackTrace);
+                throw;
+            }
         }
 
         //Esse método serve para recuperar uma BaseContest para ser mostrado na tela, de forma que respeite as dependencias da camada Presentation
         public async Task<ContestViewModel> ShowOnScreen(int id)
         {
-            var contestLog = Log.ForContext("ConcursoBaseId", id);//Conceito de Correlation no Serilog
 
-            contestLog.Debug("Iniciando recuperação do Concurso");
+            _logger.LogDebug("Iniciando recuperação do Concurso");
 
-            var baseContest = await _repository.GetByIdAsync(id);
-
-            
+            var baseContest = await _repository.GetByIdAsync(id);      
 
             if (baseContest == null)
             {
-                contestLog.Warning("Concurso Base não foi encontrado");
+                _logger.LogWarning("Concurso Base com ID {id} não foi encontrado", id);
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
             }
-
-            contestLog.Information("Concurso Base recuperado com sucesso");
 
             return new ContestViewModel
             {
@@ -97,89 +106,112 @@ namespace Lotofacil.Application.Services
 
         public async Task<IEnumerable<BaseContest>> GetAllWithContestsAbove11Async()
         {
-            Log.Debug("Recuperando todos os BaseContests com concursos acima de 11.");
-
-            var result = await _repositoryBC.GetAllWithContestsAbove11Async();
-
-            Log.Information("Recuperação concluída: {Count} concursos encontrados.", result.Count());
-
-            return result;
+            _logger.LogDebug("Recuperando todos os BaseContests com concursos acima de 11.");
+            try
+            {
+                var result = await _repositoryBC.GetAllWithContestsAbove11Async();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Erro ao tentar recuperar todos os BaseContests com concursos acima de 11, Mensagem de erro: {message}, StackTrace: {StackTrace}", ex.Message, ex.StackTrace);
+                throw;
+            }        
         }
 
         public async Task DeleteByIdAsync(int id)
         {
+            _logger.LogDebug("Iniciando exclusão do Concurso Base {Id}.", id);
             var baseContest = await _repository.GetByIdAsync(id);
-
-            var contestLog = Log.ForContext("ConcursoBaseId", id);//Conceito de Correlation no Serilog
-            contestLog.Debug("Iniciando exclusão do Concurso Base.");
 
             if (baseContest == null)
             {
-                contestLog.Warning("Tentativa de exclusão falhou. Concurso com ID {Id} não encontrado.", id);
+                _logger.LogWarning("Tentativa de exclusão falhou. Concurso com ID {Id} não encontrado.", id);
                 throw new KeyNotFoundException($"Concurso com ID {id} não encontrado.");
             }
 
-            contestLog.Debug("Deletando todas as referências de log associadas ao concurso {Name}.", baseContest.Name);
-            await _activityLS.DeleteAllReferencesOfLogByBaseContest(baseContest.Name);
-
-            await _repository.SaveDeleteAsync(id);
-            contestLog.Information("Concurso Base excluído com sucesso.");
+            _logger.LogDebug("Deletando todas as referências de log associadas ao concurso {Name}.", baseContest.Name);
+            try
+            {
+                await _activityLS.DeleteAllReferencesOfLogByBaseContest(baseContest.Name);
+                await _repository.SaveDeleteAsync(id);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Erro ao tentar deletar todas as referencias de {Name} ou deletar o Concurso Base de ID: {Id}, " +
+                    "Mensagem de erro: {message}, StackTrace: {StackTrace}", baseContest.Name, id, ex.Message, ex.StackTrace);
+                throw;
+            }
         }
 
         public IQueryable<BaseContest> GetQueryableBaseContests()
         {
-            Log.Debug("Retornando consulta IQueryable para BaseContests.");
+            _logger.LogDebug("Retornando consulta IQueryable para BaseContests.");
             return _repository.GetAllQueryable();
         }
 
         public async Task<List<BaseContest>> GetFilteredBaseContestsAsync(string? name, DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize)
         {
-            Log.Debug("Filtrando BaseContests com os seguintes parâmetros - Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate}, Página: {Page}, Tamanho da Página: {PageSize}",
+            _logger.LogDebug("Filtrando BaseContests com os seguintes parâmetros - Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate}, Página: {Page}, Tamanho da Página: {PageSize}",
                 name, startDate, endDate, pageNumber, pageSize);
+            try
+            {
+                var query = GetQueryableBaseContests();
 
-            var query = GetQueryableBaseContests();
+                if (!string.IsNullOrEmpty(name))
+                    query = query.Where(log => log.Name.Contains(name));
 
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(log => log.Name.Contains(name));
+                if (startDate.HasValue)
+                    query = query.Where(log => log.Data >= startDate.Value);
 
-            if (startDate.HasValue)
-                query = query.Where(log => log.Data >= startDate.Value);
+                if (endDate.HasValue)
+                    query = query.Where(log => log.Data <= endDate.Value);
 
-            if (endDate.HasValue)
-                query = query.Where(log => log.Data <= endDate.Value);
+                var result = await query
+                    .Include(x => x.ContestsAbove11)
+                    .OrderBy(log => log.Data)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
 
-            var result = await query
-                .Include(x => x.ContestsAbove11)
-                .OrderBy(log => log.Data)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+                _logger.LogDebug("Consulta de BaseContests filtrada retornou {Count} resultados.", result.Count);
 
-            Log.Information("Consulta de BaseContests filtrada retornou {Count} resultados.", result.Count);
-
-            return result;
+                return result;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Erro ao tentar filtrar um Concurso Base com os parametros  Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate}, Página: {Page}, Tamanho da Página: {PageSize} " +
+                    "Mensagem de erro: {message}, StackTrace: {StackTrace}", name, startDate, endDate, pageNumber, pageSize, ex.Message, ex.StackTrace);
+                throw;
+            }           
         }
 
         public async Task<int> GetTotalCountAsync(string? name, DateTime? startDate, DateTime? endDate)
         {
-            Log.Debug("Contando o total de BaseContests com os filtros - Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate}", name, startDate, endDate);
+            _logger.LogDebug("Contando o total de BaseContests com os filtros - Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate}", name, startDate, endDate);
+            try
+            {
+                var query = GetQueryableBaseContests();
 
-            var query = GetQueryableBaseContests();
+                if (!string.IsNullOrEmpty(name))
+                    query = query.Where(log => log.Name.Contains(name));
 
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(log => log.Name.Contains(name));
+                if (startDate.HasValue)
+                    query = query.Where(log => log.Data >= startDate.Value);
 
-            if (startDate.HasValue)
-                query = query.Where(log => log.Data >= startDate.Value);
+                if (endDate.HasValue)
+                    query = query.Where(log => log.Data <= endDate.Value);
 
-            if (endDate.HasValue)
-                query = query.Where(log => log.Data <= endDate.Value);
+                var count = await query.CountAsync();
 
-            var count = await query.CountAsync();
-
-            Log.Information("Total de BaseContests encontrados: {Count}", count);
-            return count;
+                return count;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Erro ao tentar contar todos os Concurso Base com os parametros  Nome: {Name}, Data Inicial: {StartDate}, Data Final: {EndDate} " +
+                    "Mensagem de erro: {message}, StackTrace: {StackTrace}", name, startDate, endDate, ex.Message, ex.StackTrace);
+                throw;
+            }         
         }
-
     }
 }

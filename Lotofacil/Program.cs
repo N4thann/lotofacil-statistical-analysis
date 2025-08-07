@@ -14,10 +14,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-logger.LogInformation("🚀 APLICAÇÃO INICIADA - Serilog está funcionando!");
-logger.LogWarning("⚠️ Este é um log de WARNING para teste");
-
 // Middleware do Serilog para logging de requisições
 app.UseSerilogRequestLogging();
 
