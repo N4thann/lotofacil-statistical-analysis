@@ -16,3 +16,15 @@ packages/
 # Ignorar arquivos de configuração sensíveis (removido appsettings.json)
 .env
 launchSettings.json
+
+# Pasta de logs
+**/logs/
+
+# Pasta de configurações de publicação (PublishProfiles)
+**/Properties/PublishProfiles/
+
+# Arquivo de configurações locais
+**/appsettings.json
+
+# Arquivo de configuração de publicação do IIS
+**/web.config
