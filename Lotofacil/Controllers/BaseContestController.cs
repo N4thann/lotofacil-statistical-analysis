@@ -58,7 +58,7 @@ namespace Lotofacil.Presentation.Controllers
                 return View("Create", baseContestVM);
             }
 
-            await _baseContestService.CreateAsync(baseContestVM);
+            _baseContestService.Create(baseContestVM);
             TempData["notice"] = "Concurso Base Criado com Sucesso!";
             return RedirectToAction("List", "BaseContest");
         }

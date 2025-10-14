@@ -53,10 +53,10 @@ namespace Lotofacil.Infra.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task SaveAddAsync(T entity)
+        public void SaveAdd(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().AddAsync(entity);
+            _context.SaveChangesAsync();
         }
     }
 }

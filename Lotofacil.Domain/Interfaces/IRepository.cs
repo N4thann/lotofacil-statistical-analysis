@@ -70,7 +70,7 @@ namespace Lotofacil.Domain.Interfaces
         /// </summary>
         /// <param name="entity">Entidade a ser adicionada.</param>
         /// <returns></returns>
-        Task SaveAddAsync(T entity);
+        void SaveAdd(T entity);
     }
 }
 // Mesmo que esse método GetAllAsync() seja para uma listagem em uma tabela em que cada registro tenha uma opção

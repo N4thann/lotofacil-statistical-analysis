@@ -12,7 +12,7 @@ namespace Lotofacil.Application.Services.Interfaces
 {
     public interface IBaseContestService
     {
-        Task CreateAsync(ContestViewModel contestVM);
+        void Create(ContestViewModel contestVM);
 
         Task EditBaseContestAsync(ContestViewModel contestVM);
 

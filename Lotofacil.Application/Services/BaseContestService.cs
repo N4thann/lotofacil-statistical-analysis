@@ -36,7 +36,7 @@ namespace Lotofacil.Application.Services
             return await _repository.GetAllAsync();
         }
 
-        public async Task CreateAsync(ContestViewModel contestVM)
+        public void Create(ContestViewModel contestVM)
         {
             var formattedName = $"Concurso {contestVM.Name}";   
             
@@ -45,7 +45,7 @@ namespace Lotofacil.Application.Services
             var baseContest = new BaseContest(formattedName, _contestMS.SetDataHour(contestVM.Data), _contestMS.FormatNumbersToSave(contestVM.Numbers));
             try
             {
-                await _repository.SaveAddAsync(baseContest);
+                _repository.SaveAdd(baseContest);
             }
             catch (Exception ex) 
             {

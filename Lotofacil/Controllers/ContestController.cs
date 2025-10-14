@@ -9,7 +9,6 @@ using FluentValidation;
 using Lotofacil.Presentation.Extensions;
 using ClosedXML.Excel;
 using Lotofacil.Application.DTO.Request;
-using Lotofacil.Application.Services;
 using Serilog;
 
 namespace Lotofacil.Presentation.Controllers
@@ -72,7 +71,7 @@ namespace Lotofacil.Presentation.Controllers
                 return View("Create", contestVM);
             }
             //Dentro desse serviço é transformado em um objeto do tipo Contest para salvar no banco
-            await _contestService.CreateAsync(contestVM);
+            _contestService.Create(contestVM);
             TempData["notice"] = "Concurso Criado com Sucesso!";
             return RedirectToAction("List", "Contest");
         }
@@ -146,7 +145,7 @@ namespace Lotofacil.Presentation.Controllers
 
                 foreach (var contest in contests)
                 {
-                    await _contestService.CreateAsync(contest);
+                     _contestService.Create(contest);
                     savedContestsCount++;
                 }
 

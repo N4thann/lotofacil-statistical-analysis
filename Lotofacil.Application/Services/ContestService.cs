@@ -5,8 +5,8 @@ using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
 using Lotofacil.Domain.Entities;
 using Lotofacil.Domain.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 
 namespace Lotofacil.Application.Services
@@ -15,37 +15,54 @@ namespace Lotofacil.Application.Services
     {
         private readonly IRepository<Contest> _repository;
         private readonly IContestManagementService _contestMS;
-        public ContestService(IRepository<Contest> repository, IContestManagementService contestMS)
+        private readonly IMemoryCache _cache;
+
+        private const string CacheContestKey = "CacheContests";
+
+        public ContestService(IRepository<Contest> repository, IContestManagementService contestMS,
+            IMemoryCache cache)
         {
             _repository = repository;
             _contestMS = contestMS;
+            _cache = cache;
         }
 
         public async Task<IEnumerable<Contest>> GetContestsOrderedAsync(string sortOrder)
         {
             Log.Debug("Obtendo lista de concursos com ordenação: {SortOrder}", sortOrder);
 
-            var contests = await _repository.GetAllAsync();
+            if (!_cache.TryGetValue(CacheContestKey, out IEnumerable<Contest>? orderedContests)) { 
 
-            if (contests == null || !contests.Any())
-            {
-                Log.Warning("Nenhum concurso encontrado no banco de dados.");
-                return Enumerable.Empty<Contest>();//Retorna Enumerable.Empty<Contest>() se não houver dados, em vez de null(Evita exceções).
+                var contests = await _repository.GetAllAsync();
+
+                orderedContests = sortOrder switch
+                {
+                    "DateAsc" => contests.OrderBy(c => c.Data),
+                    "DateDesc" => contests.OrderByDescending(c => c.Data),
+                    _ => contests.OrderByDescending(c => c.Data),
+                };
+
+                if (contests is null || contests.Any())
+                {
+                    var cacheOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(2),
+                        SlidingExpiration = TimeSpan.FromDays(1),
+                        Priority = CacheItemPriority.High
+                    };
+                    _cache.Set(CacheContestKey, orderedContests,cacheOptions);
+                }
+                else 
+                {
+                    Log.Warning("Nenhum concurso encontrado no banco de dados.");
+                    return Enumerable.Empty<Contest>();//Retorna Enumerable.Empty<Contest>() se não houver dados, em vez de null(Evita exceções).
+                }
+                Log.Information("Retornando {TotalContests} concursos ordenados por {SortOrder}.", contests.Count(), sortOrder);           
             }
-
-            var orderedContests = sortOrder switch
-            {
-                "DateAsc" => contests.OrderBy(c => c.Data),
-                "DateDesc" => contests.OrderByDescending(c => c.Data),
-                _ => contests.OrderByDescending(c => c.Data),
-            };
-
-            Log.Information("Retornando {TotalContests} concursos ordenados por {SortOrder}.", contests.Count(), sortOrder);
-
             return orderedContests;
         }
 
-        public async Task CreateAsync(ContestViewModel contestVM)
+        public void Create(ContestViewModel contestVM)
         {
             var contestLog = Log.ForContext("ConcursoBaseId", contestVM.Name);
 
@@ -59,7 +76,7 @@ namespace Lotofacil.Application.Services
                 _contestMS.FormatNumbersToSave(contestVM.Numbers)
             );
 
-            await _repository.SaveAddAsync(contest);
+            _repository.SaveAdd(contest);
 
             contestLog.Information("Concurso {ContestName} criado com sucesso.", formattedName);
         }
