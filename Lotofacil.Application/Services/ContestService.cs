@@ -78,6 +78,8 @@ namespace Lotofacil.Application.Services
 
             _repository.SaveAdd(contest);
 
+            _cache.Remove(CacheContestKey);
+
             contestLog.Information("Concurso {ContestName} criado com sucesso.", formattedName);
         }
 

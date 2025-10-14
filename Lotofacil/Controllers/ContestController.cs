@@ -1,14 +1,15 @@
-﻿using Lotofacil.Infra.Data.Context;
+﻿using ClosedXML.Excel;
+using FluentValidation;
+using FluentValidation.Results;
+using Lotofacil.Application.DTO.Request;
+using Lotofacil.Application.Services.Interfaces;
 using Lotofacil.Application.ViewsModel;
+using Lotofacil.Domain.Entities;
+using Lotofacil.Infra.Data.Context;
+using Lotofacil.Presentation.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lotofacil.Domain.Entities;
-using Lotofacil.Application.Services.Interfaces;
-using FluentValidation.Results;
-using FluentValidation;
-using Lotofacil.Presentation.Extensions;
-using ClosedXML.Excel;
-using Lotofacil.Application.DTO.Request;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 
 namespace Lotofacil.Presentation.Controllers
@@ -19,16 +20,20 @@ namespace Lotofacil.Presentation.Controllers
         private readonly IContestManagementService _managementService;
         private readonly IValidator<ContestViewModel> _validator;
         private readonly IContestService _contestService;
+        private readonly IMemoryCache _cache;
 
+        private const string CacheContestKey = "CacheContests";
         public ContestController(ApplicationDbContext context, 
             IContestManagementService managementService,
             IValidator<ContestViewModel> validator,
-            IContestService contestService)
+            IContestService contestService,
+            IMemoryCache cache)
         {
             _context = context;
             _managementService = managementService;
             _validator = validator;
             _contestService = contestService;
+            _cache = cache;
         }
 
         public async Task<IActionResult> List(string sortOrder)
@@ -148,6 +153,7 @@ namespace Lotofacil.Presentation.Controllers
                      _contestService.Create(contest);
                     savedContestsCount++;
                 }
+                _cache.Remove(CacheContestKey);
 
                 TempData["notice"] = "Importação concluída com sucesso!";
             }

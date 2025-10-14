@@ -11,6 +11,7 @@ builder.Host.ConfigureSerilog();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -18,11 +19,11 @@ var app = builder.Build();
 app.UseSerilogRequestLogging();
 
 // Inicialização do banco de dados
-using (var scope = app.Services.CreateScope())
-{
-    var initService = scope.ServiceProvider.GetRequiredService<IInitializationDbService>();
-    initService.Initialize();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var initService = scope.ServiceProvider.GetRequiredService<IInitializationDbService>();
+//    initService.Initialize();
+//}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
